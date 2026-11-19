@@ -1,0 +1,227 @@
+'use strict';
+const assert = require('assert');
+const { evaluate } = require('../lib/hands');
+const { Room } = require('../lib/game');
+
+// ---------- ทดสอบการจัดอันดับมือ ----------
+const C = (s) => {
+  const r = '23456789TJQKA'.indexOf(s[0]);
+  const su = 'shdc'.indexOf(s[1]);
+  return su * 13 + r;
+};
+const H = (str) => evaluate(str.split(' ').map(C));
+const cases = [
+  ['As Ks Qs Js Ts 2d 3c', 'รอยัลฟลัช'],
+  ['9h 8h 7h 6h 5h Ad Ac', 'สเตรทฟลัช'],
+  ['Ah 2h 3h 4h 5h Kd Kc', 'สเตรทฟลัช'], // wheel flush
+  ['Kh Kd Kc Ks 2d 3c 4s', 'โฟร์การ์ด'],
+  ['Kh Kd Kc 2s 2d 3c 4s', 'ฟูลเฮ้าส์'],
+  ['Kh Kd Kc 2s 2d 2c 4s', 'ฟูลเฮ้าส์'], // สองตอง เลือก KKK22
+  ['2h 9h 4h Jh Kh Ad 3c', 'ฟลัช'],
+  ['Ah 2d 3c 4s 5h 9d Kc', 'สเตรท'], // wheel
+  ['6h 7d 8c 9s Th 2d 2c', 'สเตรท'],
+  ['Kh Kd Kc 2s 5d 9c 4s', 'ตอง'],
+  ['Kh Kd 5c 5s 2d 9c 4s', 'สองคู่'],
+  ['Kh Kd 5c 6s 2d 9c 4s', 'หนึ่งคู่'],
+  ['Ah Kd 5c 6s 2d 9c 4s', 'ไฮการ์ด'],
+];
+for (const [hand, name] of cases) assert.strictEqual(H(hand).name, name, hand);
+
+// เปรียบเทียบผู้ชนะ
+const beats = (a, b) => assert(H(a).score > H(b).score, `${a} should beat ${b}`);
+beats('Ah Ad Kc 7s 2d 9c 4s', 'Kh Kd Ac 7s 2d 9c 4s');        // คู่ A > คู่ K
+beats('Ah Kd 5c 6s 2d 9c 4s', 'Ah Qd 5c 6s 2d 9c 4s');        // kicker
+beats('6h 7d 8c 9s Th 2d 2c', 'Ah 2d 3c 4s 5h 9d Kc');        // สเตรทสูง > wheel
+beats('Kh Kd Kc 2s 2d 3c 4s', 'Qh Qd Qc As Ad 3c 4s');        // ฟูลเฮ้าส์ตองสูงกว่า
+beats('Kh Kd 5c 5s 2d 9c 4s', 'Kh Kd 4c 4s 2d 9c Ts');        // สองคู่ ตัวล่างสูงกว่า
+assert.strictEqual(H('Ah Kd 5c 6s 2d 9c 4s').score, H('Ac Ks 5d 6h 2c 9s 4d').score); // เสมอ
+console.log('✓ hand ranking');
+
+// ---------- จำลองเล่นทั้งเกมหลายร้อยรอบ ----------
+function rand(n) { return Math.floor(Math.random() * n); }
+
+function playGame(nPlayers, opts = {}) {
+  const room = new Room('TEST', { startChips: opts.startChips || 500, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9 });
+  const ps = [];
+  for (let i = 0; i < nPlayers; i++) ps.push(room.addPlayer('P' + i));
+  const totalChips = ps.length * room.settings.startChips;
+  room.start(ps[0]);
+  let hands = 0;
+  let guard = 0;
+  while (room.phase !== 'ended' && hands < (opts.maxHands || 200)) {
+    if (++guard > 100000) throw new Error('infinite loop');
+    if (room.phase === 'hand') {
+      const p = room.players[room.toActIdx];
+      assert(p, 'ต้องมีคนถึงตา');
+      const o = room.optionsFor(p);
+      const r = Math.random();
+      let a;
+      if (r < 0.15 && !o.canCheck) a = { type: 'fold' };
+      else if (r < 0.25) a = { type: 'allin' };
+      else if (r < 0.45 && o.canRaise) a = { type: 'raise', amount: o.minRaiseTo + rand(Math.max(1, o.maxRaiseTo - o.minRaiseTo + 1)) };
+      else a = o.canCheck ? { type: 'check' } : { type: 'call' };
+      room.act(p, a);
+    } else if (room.phase === 'showdown') {
+      hands++;
+      // ชิปรวมต้องเท่าเดิมเสมอ
+      const sum = room.players.reduce((s, q) => s + q.chips, 0);
+      assert.strictEqual(sum, totalChips - 0, `chips must be conserved (hand ${hands}) got ${sum} want ${totalChips}`);
+      for (const q of room.players) assert(q.chips >= 0, 'negative chips');
+      const won = room.result.winners.reduce((s, w) => s + w.won, 0);
+      const potSum = room.result.pots.reduce((s, x) => s + x.amount, 0);
+      assert.strictEqual(won, potSum, 'winners should receive entire pot');
+      room.startHand();
+    } else break;
+  }
+  room.destroy();
+  return hands;
+}
+
+let total = 0;
+for (let g = 0; g < 300; g++) total += playGame(2 + (g % 8));
+console.log(`✓ simulated ${total} hands, chips always conserved`);
+
+// ---------- กรณีเฉพาะ ----------
+// 1) ไซด์พ็อต: A(100) B(300) C(300) ออลอินทั้งหมด
+{
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9 });
+  const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  a.chips = 100; b.chips = 300; c.chips = 300;
+  room.start(a);
+  // บังคับไพ่: A ได้ AA, B ได้ KK, C ได้ QQ ; บอร์ดไม่ช่วย
+  const set = (p, x, y) => { p.hole = [C(x), C(y)]; };
+  set(a, 'As', 'Ad'); set(b, 'Ks', 'Kd'); set(c, 'Qs', 'Qd');
+  room.deck = ['2c', '3d', '8h', '9c', '4s', '6d', '7s', 'Jh', '5c'].reverse().map(C); // pop ได้จากท้าย
+  // ต้องมีไพ่พอสำหรับเผา+บอร์ด: ลำดับ pop: burn, f1,f2,f3, burn, turn, burn, river
+  room.deck = ['Td', '2c', '3d', '8h', '9c', '4s', '6d', '7s', 'Jh', '5c'].reverse().map(C);
+  for (let i = 0; i < 3 && room.phase === 'hand'; i++) {
+    const p = room.players[room.toActIdx];
+    room.act(p, { type: 'allin' });
+  }
+  assert.strictEqual(room.phase, 'showdown');
+  const byName = Object.fromEntries(room.players.map((p) => [p.name, p.chips]));
+  assert.strictEqual(byName.A, 300, 'A ชนะพ็อตหลัก 3x100');
+  assert.strictEqual(byName.B, 400, 'B ชนะไซด์พ็อต 2x200');
+  assert.strictEqual(byName.C, 0);
+  assert.strictEqual(room.result.pots.length, 2);
+  console.log('✓ side pot');
+}
+
+// 2) ทุกคนโฟลด์ → ได้พ็อตโดยไม่เปิดไพ่
+{
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9 });
+  const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(a);
+  room.act(room.players[room.toActIdx], { type: 'fold' });
+  room.act(room.players[room.toActIdx], { type: 'fold' });
+  assert.strictEqual(room.phase, 'showdown');
+  assert.strictEqual(room.result.showdown, false);
+  const v = room.viewFor(a.token);
+  assert(v.players.every((p) => p.id === a.id ? true : p.hole.every((x) => x === null) || p.hole.length === 0), 'ต้องไม่เห็นไพ่คนอื่น');
+  assert.strictEqual(room.players.reduce((s, p) => s + p.chips, 0), 3000);
+  console.log('✓ fold-out win');
+}
+
+// 3) เฮดส์อัพ: ดีลเลอร์เป็น SB และเล่นก่อนพรีฟลอป
+{
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9 });
+  const [a, b] = ['A', 'B'].map((n) => room.addPlayer(n));
+  room.start(a);
+  const dealer = room.players[room.dealerIdx];
+  assert.strictEqual(room.players[room.toActIdx], dealer);
+  assert.strictEqual(dealer.bet, 5);
+  console.log('✓ heads-up blinds');
+}
+
+// 4) ตรวจกันโกง: ไพ่คนอื่นไม่รั่วใน view, ทำผิดตา/ผิดกติกาแล้ว error
+{
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9 });
+  const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(a);
+  const view = JSON.stringify(room.viewFor(a.token));
+  for (const p of [b, c]) for (const card of p.hole) {
+    // ไพ่ของคนอื่นห้ามปรากฏเป็นค่าใน players[].hole ของ view
+    const parsed = JSON.parse(view);
+    for (const pl of parsed.players) if (pl.id === p.id) assert(pl.hole.every((x) => x === null));
+  }
+  const notTurn = room.players.find((p, i) => i !== room.toActIdx);
+  assert.throws(() => room.act(notTurn, { type: 'fold' }), /ยังไม่ถึงตา/);
+  const cur = room.players[room.toActIdx];
+  assert.throws(() => room.act(cur, { type: 'raise', amount: 11 }), /อย่างน้อย/);
+  assert.throws(() => room.act(cur, { type: 'check' }), /เช็คไม่ได้/);
+  console.log('✓ hidden cards & validation');
+}
+
+// 4b) ออกจากห้องกลางตา / จบเกม / เริ่มใหม่ / ซื้อชิป / หลุดการเชื่อมต่อ
+{
+  const mk = (n) => {
+    const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, offlineDelay: 50 });
+    const ps = Array.from({ length: n }, (_, i) => room.addPlayer('P' + i));
+    return { room, ps };
+  };
+  // สองคน: คนหนึ่งออกกลางตา → อีกคนชนะทันที
+  let { room, ps } = mk(2);
+  room.start(ps[0]);
+  room.leave(ps[1]);
+  assert.strictEqual(room.phase, 'showdown');
+  assert.strictEqual(room.result.winners[0].id, ps[0].id);
+  assert(ps[0].chips > 1000, 'ผู้ชนะได้บลายด์ของคนที่ออก');
+  assert.strictEqual(ps[0].chips + ps[1].chips, 2000, 'ชิปรวมต้องเท่าเดิม');
+  room.destroy();
+
+  // สามคน: คนที่ถึงตาออก → เกมเดินต่อ ไม่ค้าง
+  ({ room, ps } = mk(3));
+  room.start(ps[0]);
+  const cur = room.players[room.toActIdx];
+  room.leave(cur);
+  assert.strictEqual(room.phase, 'hand');
+  assert.notStrictEqual(room.players[room.toActIdx], cur);
+  assert(room.players[room.toActIdx], 'ต้องมีคนถึงตาต่อ');
+  room.destroy();
+
+  // จบเกม: คนหนึ่งชนะหมด → ended, ซื้อชิป, เริ่มใหม่
+  ({ room, ps } = mk(2));
+  ps[0].chips = 1000; ps[1].chips = 20;
+  room.start(ps[0]);
+  ps[0].hole = [C('As'), C('Ad')]; ps[1].hole = [C('2c'), C('7d')];
+  room.deck = ['Td', '3h', '4s', '9c', 'Jd', '8h', 'Qs', 'Kc'].reverse().map(C);
+  for (let g = 0; g < 20 && room.phase === 'hand'; g++) room.act(room.players[room.toActIdx], { type: 'allin' });
+  assert.strictEqual(room.phase, 'showdown');
+  room.startHand();
+  const loser = ps.find((p) => p.chips === 0);
+  assert.strictEqual(loser, ps[1], 'คนที่ชิปหมดต้องเป็น P1');
+  {
+    assert.strictEqual(room.phase, 'ended');
+    assert.throws(() => room.rebuy(ps.find((p) => p.chips > 0)), /ยังมีชิป/);
+    room.rebuy(loser);
+    assert.strictEqual(loser.chips, 1000);
+    room.start(room.playerById(room.hostId));
+    assert.strictEqual(room.phase, 'hand');
+    assert.strictEqual(room.handNo, 1);
+  }
+  room.destroy();
+
+  // ผู้เล่นหลุดการเชื่อมต่อตอนถึงตา → ระบบโฟลด์ให้หลังหน่วงสั้นๆ
+  ({ room, ps } = mk(3));
+  room.start(ps[0]);
+  const t = room.players[room.toActIdx];
+  room.setConnected(t, false);
+  global.__offline = new Promise((r) => setTimeout(() => { assert(t.folded, 'คนหลุดต้องถูกโฟลด์อัตโนมัติ'); room.destroy(); r(); }, 200));
+  console.log('✓ leave mid-hand / game end / restart / rebuy');
+}
+
+// 5) ไทเมอร์: หมดเวลาแล้วเช็ค/โฟลด์อัตโนมัติ
+(async () => {
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 1 }, { nextHandDelay: 1e9 });
+  const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(a);
+  const first = room.players[room.toActIdx];
+  await new Promise((r) => setTimeout(r, 1200));
+  assert(first.folded, 'หมดเวลาแล้วต้องโฟลด์ (มีบิ๊กให้คอล)');
+  room.destroy();
+  console.log('✓ turn timer');
+  await global.__offline;
+  console.log('✓ offline auto-fold');
+  console.log('ALL PASSED');
+  process.exit(0);
+})();

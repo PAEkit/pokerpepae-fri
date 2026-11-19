@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PokerPEPAE&amp;Fri">
+<meta name="theme-color" content="#07241b">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-192.png">
+<title>PokerPEPAE&amp;Fri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07241b; --bg2:#0b2f23; --felt1:#17805a; --felt2:#0c4b34; --rail:#4a2e1b;
+  --gold:#f4c95d; --gold2:#d79a1e; --red:#ef4a55; --ink:#eaf6ef; --mute:#8db5a2; --line:rgba(255,255,255,.1);
+  --card:#fbfaf5;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:'Kanit',system-ui,-apple-system,'Sukhumvit Set',sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{background:radial-gradient(120% 80% at 50% 0%,#0f3a2b 0%,var(--bg) 60%)}
+button,input,select{font:inherit;color:inherit}
+#app{height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);max-width:560px;margin:0 auto;position:relative}
+.screen{display:none;flex:1;min-height:0;flex-direction:column}
+.screen.on{display:flex}
+
+/* ---------- ปุ่ม ---------- */
+.b{height:48px;border:0;border-radius:12px;padding:0 14px;font-weight:600;font-size:16px;background:#1b4a39;color:var(--ink);cursor:pointer;transition:transform .08s,filter .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.b:active{transform:scale(.97)}
+.b[disabled]{opacity:.4;pointer-events:none}
+.b.gold{background:linear-gradient(#f8d675,var(--gold2));color:#2a1b00}
+.b.red{background:linear-gradient(#f2606a,#c9303b);color:#fff}
+.b.green{background:linear-gradient(#25a974,#14764f);color:#fff}
+.b.ghost{background:transparent;border:1px solid var(--line)}
+.b.sm{height:36px;font-size:14px;padding:0 10px;border-radius:10px}
+.b.full{width:100%}
+
+/* ---------- หน้าแรก / ล็อบบี้ ---------- */
+.pad{padding:20px 18px;overflow:auto;flex:1}
+.logo{text-align:center;margin:18px 0 22px}
+.logo .suits{font-size:26px;letter-spacing:10px;color:var(--gold)}
+.logo h1{margin:2px 0 0;font-size:34px;line-height:1.1;font-weight:700;background:linear-gradient(#fff3c4,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo p{margin:6px 0 0;color:var(--mute);font-size:14px}
+.card-box{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
+.card-box h3{margin:0 0 10px;font-size:16px;font-weight:600}
+label.f{display:block;font-size:13px;color:var(--mute);margin:8px 0 4px}
+.in{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.28);padding:0 12px;font-size:17px;outline:none}
+.in:focus{border-color:var(--gold)}
+.in.code{text-transform:uppercase;letter-spacing:8px;text-align:center;font-size:24px;font-weight:600}
+.row{display:flex;gap:10px}
+.row>*{flex:1;min-width:0}
+details summary{cursor:pointer;color:var(--mute);font-size:14px;padding:8px 0;list-style:none}
+details summary::before{content:'⚙️ '}
+.sep{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;margin:14px 0}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--line)}
+.bigcode{font-size:56px;font-weight:700;letter-spacing:12px;text-align:center;color:var(--gold);padding-left:12px;line-height:1.1}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:17px}
+.plist li:last-child{border:0}
+.dot{width:9px;height:9px;border-radius:50%;background:#3ddc84;flex:none}
+.dot.off{background:#777}
+.plist .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:12px;color:var(--gold);border:1px solid var(--gold);border-radius:8px;padding:1px 6px}
+.hint{color:var(--mute);font-size:13px;text-align:center;margin:8px 0}
+
+/* ---------- เกม ---------- */
+.top{display:flex;align-items:center;gap:8px;padding:8px 10px 4px;font-size:13px;color:var(--mute)}
+.top .code{background:rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-weight:600;color:var(--gold);letter-spacing:3px;border:0;font-size:14px;cursor:pointer}
+.top .mid{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .ic{width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
+.top .ic .badge{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
+.top .ic.has .badge{display:block}
+.conn{display:none;background:#8a5a00;color:#fff;text-align:center;font-size:13px;padding:3px}
+.conn.on{display:block}
+
+.tablewrap{flex:1;min-height:300px;position:relative;margin:0 4px}
+.felt{position:absolute;inset:6% 2.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 38%,var(--felt1),var(--felt2) 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,0,0,.5)}
+.felt::after{content:'PokerPEPAE&Fri';position:absolute;left:0;right:0;top:63%;text-align:center;color:rgba(255,255,255,.07);font-weight:700;font-size:20px;letter-spacing:1px}
+.center{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:78%;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2}
+.potline{background:rgba(0,0,0,.35);border-radius:20px;padding:2px 12px;font-size:14px;color:#dff5e8}
+.potline b{color:var(--gold);font-weight:600}
+.board{display:flex;gap:4px;--cw:min(11.2vw,50px)}
+.slot{width:var(--cw);height:calc(var(--cw)*1.4);border:1.5px dashed rgba(255,255,255,.18);border-radius:calc(var(--cw)*.14)}
+.banner{min-height:20px;text-align:center;font-size:14px;line-height:1.25;color:#fff;max-width:100%}
+.banner .w{color:var(--gold);font-weight:600}
+
+.card{width:var(--cw);height:calc(var(--cw)*1.4);background:var(--card);border-radius:calc(var(--cw)*.14);color:#15171c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;line-height:1;box-shadow:0 2px 5px rgba(0,0,0,.45);font-size:calc(var(--cw)*.5);flex:none;transition:opacity .2s}
+.card i{font-style:normal;font-size:calc(var(--cw)*.5);margin-top:1px}
+.card.red{color:#d62839}
+.card.back{background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);border:calc(var(--cw)*.08) solid #fff}
+.card.dim{opacity:.35}
+.card.hl{box-shadow:0 0 0 2px var(--gold),0 0 12px rgba(244,201,93,.8);transform:translateY(-3px)}
+.card.deal{animation:deal .35s ease-out}
+@keyframes deal{from{transform:translateY(-14px) scale(.8);opacity:0}to{transform:none;opacity:1}}
+
+.seat{position:absolute;transform:translate(-50%,-50%);width:76px;z-index:3;text-align:center}
+.seat .mini{display:flex;justify-content:center;gap:2px;--cw:24px;height:22px;position:relative;z-index:0;margin-bottom:-8px}
+.seat .mini.rev{--cw:30px;height:42px;margin-bottom:3px}
+.seat .mini.rev .card{transform:none!important}
+.seat .mini .card{box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.seat .mini .card:first-child{transform:rotate(-7deg)}
+.seat .mini .card:last-child{transform:rotate(7deg)}
+.plate{position:relative;z-index:1;background:linear-gradient(#17352a,#0c241b);border:1.5px solid rgba(255,255,255,.18);border-radius:12px;padding:3px 4px 4px;box-shadow:0 3px 8px rgba(0,0,0,.45);overflow:hidden}
+.plate .nm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.plate .ch{font-size:13px;font-weight:600;color:var(--gold);line-height:1.2}
+.plate .tm{height:3px;background:rgba(255,255,255,.12);border-radius:3px;margin-top:2px;visibility:hidden}
+.plate .tm i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px}
+.seat.turn .plate{border-color:var(--gold);box-shadow:0 0 0 2px rgba(244,201,93,.45),0 0 16px rgba(244,201,93,.55)}
+.seat.turn .plate .tm{visibility:visible}
+.seat.turn.warn .plate .tm i{background:var(--red)}
+.seat.me .plate{border-color:#5ad6a0}
+.seat.folded .plate,.seat.folded .mini{opacity:.45}
+.seat.win .plate{border-color:var(--gold);background:linear-gradient(#5b4310,#2c2007);box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(244,201,93,.9)}
+.seat .act{margin:3px auto 0;display:inline-block;max-width:92px;font-size:11px;line-height:1.2;background:rgba(0,0,0,.55);border-radius:9px;padding:1px 7px;color:#fff;white-space:nowrap}
+.seat .act.off{color:#ffb4b4}
+.dbtn{position:absolute;right:-4px;top:12px;z-index:4;width:20px;height:20px;border-radius:50%;background:#fff;color:#111;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.bubble{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:6px;background:#fff;color:#111;border-radius:12px;padding:4px 9px;font-size:13px;max-width:150px;width:max-content;z-index:9;box-shadow:0 2px 8px rgba(0,0,0,.4);animation:deal .2s ease-out;line-height:1.25;word-break:break-word}
+.bet{position:absolute;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;background:rgba(0,0,0,.45);border-radius:14px;padding:1px 8px 1px 3px;color:#fff}
+.chip{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0 20%,#d33 21% 55%,#fff 56% 62%,#d33 63%);border:1px solid #fff;flex:none}
+
+.dense .seat{width:62px}
+.dense .plate{border-radius:10px;padding:2px 3px 3px}
+.dense .plate .nm{font-size:11px}
+.dense .plate .ch{font-size:12px}
+.dense .seat .mini{--cw:19px;height:17px}
+.dense .seat .mini.rev{--cw:25px;height:35px}
+.dense .seat .act{font-size:10px;max-width:68px;padding:0 5px}
+.dense .board{--cw:min(9.4vw,42px);gap:3px}
+.dense .bet{font-size:12px}
+.dense .dbtn{width:17px;height:17px;font-size:10px;top:10px;right:-3px}
+
+.panel{background:linear-gradient(#0d3123,#082018);border-top:1px solid var(--line);padding:8px 10px 10px;min-height:178px;border-radius:18px 18px 0 0}
+.mine{display:flex;align-items:center;gap:8px;--cw:46px;min-height:66px}
+.mine .mi{margin-left:6px;min-width:0}
+.mine .hn{font-weight:600;color:var(--gold);font-size:16px;line-height:1.2}
+.mine .st{font-size:13px;color:var(--mute);line-height:1.3}
+.acts{display:flex;gap:8px;margin-top:8px}
+.acts .b{flex:1;padding:0 6px}
+.acts .b.call{flex:1.2}
+.raisebar{margin-top:8px}
+.raisebar .sl{display:flex;align-items:center;gap:8px}
+.raisebar input[type=range]{flex:1;accent-color:var(--gold);height:32px}
+.raisebar .pre{display:flex;gap:6px;margin-top:6px}
+.raisebar .pre .b{flex:1;height:34px;font-size:13px;padding:0}
+.stepbtn{width:38px;height:36px;border-radius:10px;border:0;background:#1b4a39;font-size:20px;font-weight:600;cursor:pointer}
+.msg{margin-top:10px;text-align:center;font-size:15px;color:var(--ink)}
+.msg .b{margin-top:8px}
+
+/* ---------- ลิ้นชัก ---------- */
+.drawer{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.55)}
+.drawer.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;height:72dvh;background:#0c2a20;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.tabs{display:flex;gap:6px;padding:10px 10px 0}
+.tabs button{flex:1;height:38px;border:0;border-radius:10px;background:rgba(255,255,255,.06);font-weight:500;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#2a1b00;font-weight:600}
+.tabbody{flex:1;min-height:0;overflow:auto;padding:10px 14px}
+.logl p{margin:0;padding:4px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.chatl .m{margin:6px 0;font-size:15px}
+.chatl .m b{color:var(--gold);font-weight:500}
+.emo{display:flex;gap:6px;padding:6px 10px;overflow:auto}
+.emo button{border:0;background:rgba(255,255,255,.08);border-radius:12px;font-size:22px;padding:2px 10px;cursor:pointer;flex:none}
+.chatin{display:flex;gap:8px;padding:6px 10px 10px}
+.chatin .in{height:42px}
+
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:9px 16px;font-size:15px;z-index:99;max-width:86vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- หน้าแรก -->
+  <section id="home" class="screen">
+    <div class="pad">
+      <div class="logo">
+        <div class="suits">♠ ♥ ♦ ♣</div>
+        <h1>PokerPEPAE&amp;Fri</h1>
+        <p>เท็กซัสโฮลเดม ชิปสมมติ เล่นกับเพื่อนผ่านเน็ต</p>
+      </div>
+      <div class="card-box">
+        <label class="f" for="name">ชื่อของคุณ</label>
+        <input id="name" class="in" maxlength="14" placeholder="เช่น PEPAE" autocomplete="off">
+      </div>
+      <div class="card-box">
+        <h3>สร้างห้องใหม่</h3>
+        <details>
+          <summary>ตั้งค่าห้อง</summary>
+          <label class="f" for="sChips">ชิปเริ่มต้นต่อคน</label>
+          <select id="sChips" class="in">
+            <option>500</option><option selected>1000</option><option>2000</option><option>5000</option><option>10000</option>
+          </select>
+          <label class="f" for="sBlinds">บลายด์ (เล็ก/ใหญ่)</label>
+          <select id="sBlinds" class="in">
+            <option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option><option value="50/100">50 / 100</option>
+          </select>
+          <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
+          <select id="sTime" class="in">
+            <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
+          </select>
+        </details>
+        <button id="btnCreate" class="b gold full" style="margin-top:8px">สร้างห้อง</button>
+      </div>
+      <div class="card-box">
+        <h3>เข้าห้องของเพื่อน</h3>
+        <input id="joinCode" class="in code" maxlength="4" placeholder="รหัสห้อง" autocomplete="off" autocapitalize="characters">
+        <button id="btnJoin" class="b green full" style="margin-top:10px">เข้าร่วม</button>
+      </div>
+      <p class="hint">ชิปทั้งหมดเป็นชิปสมมติ ไม่เกี่ยวข้องกับเงินจริง</p>
+    </div>
+  </section>
+
+  <!-- ล็อบบี้ -->
+  <section id="lobby" class="screen">
+    <div class="pad">
+      <div class="logo" style="margin-bottom:8px"><h1 style="font-size:24px">PokerPEPAE&amp;Fri</h1></div>
+      <div class="hint">รหัสห้อง</div>
+      <div class="bigcode" id="lbCode"></div>
+      <button id="btnShare" class="b ghost full" style="margin:12px 0">🔗 ส่งลิงก์ให้เพื่อน</button>
+      <div class="card-box">
+        <h3>ผู้เล่นในห้อง (<span id="lbCount">0</span>/9)</h3>
+        <ul class="plist" id="lbPlayers"></ul>
+      </div>
+      <p class="hint" id="lbInfo"></p>
+      <button id="btnStart" class="b gold full">เริ่มเกม</button>
+      <p class="hint" id="lbWait"></p>
+      <button id="btnLeaveLobby" class="b ghost full" style="margin-top:8px">ออกจากห้อง</button>
+    </div>
+  </section>
+
+  <!-- เกม -->
+  <section id="game" class="screen">
+    <div class="conn" id="conn">กำลังเชื่อมต่อใหม่…</div>
+    <div class="top">
+      <button class="code" id="gCode" title="แตะเพื่อคัดลอกลิงก์"></button>
+      <div class="mid" id="gMid"></div>
+      <button class="ic" id="btnMenu" aria-label="เมนู">💬<span class="badge"></span></button>
+    </div>
+    <div class="tablewrap" id="tablewrap">
+      <div class="felt"></div>
+      <div class="center">
+        <div class="potline">พ็อต <b id="gPot">0</b></div>
+        <div class="board" id="gBoard"></div>
+        <div class="banner" id="gBanner"></div>
+      </div>
+      <div id="gSeats"></div>
+    </div>
+    <div class="panel" id="panel"></div>
+  </section>
+</div>
+
+<!-- ลิ้นชัก แชท/ประวัติ/ห้อง -->
+<div class="drawer" id="drawer">
+  <div class="sheet">
+    <div class="tabs">
+      <button data-tab="chat" class="on">แชท</button>
+      <button data-tab="log">ประวัติ</button>
+      <button data-tab="room">ห้อง</button>
+    </div>
+    <div class="tabbody" id="tabbody"></div>
+    <div id="chatbar">
+      <div class="emo" id="emo"></div>
+      <div class="chatin">
+        <input id="chatText" class="in" maxlength="80" placeholder="พิมพ์ข้อความ…" autocomplete="off">
+        <button id="chatSend" class="b gold">ส่ง</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n) => Number(n).toLocaleString('en-US');
+const SUIT = ['♠', '♥', '♦', '♣'];
+const RK = '23456789TJQKA';
+const EMOJI = ['👍', '😂', '😎', '😭', '🔥', '🤝', '😱', '🍀', '💸', '🙏'];
+
+let session = null;      // {code, token}
+let state = null;        // ข้อมูลล่าสุดจากเซิร์ฟเวอร์
+let es = null;
+let clockOffset = 0;     // เวลาเซิร์ฟเวอร์ - เวลาเครื่อง
+let turnTotal = 1;
+let raiseTo = 0;
+let panelSig = '';
+let lastBoardLen = 0, lastHandNo = -1;
+let lastChatId = null;
+let bubbles = {};        // playerId -> {text, until}
+let unread = false;
+let drawerTab = 'chat';
+let lastToAct = null;
+
+// ---------- ตัวช่วย ----------
+function ls(k, v) {
+  try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* ใช้ไม่ได้ก็ข้าม */ }
+  return null;
+}
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+async function api(path, body) {
+  let r;
+  try {
+    r = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  } catch (e) { toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); throw e; }
+  let d = {};
+  try { d = await r.json(); } catch (e) { /* ว่าง */ }
+  if (!r.ok) { toast(d.error || 'เกิดข้อผิดพลาด'); throw new Error(d.error || 'error'); }
+  return d;
+}
+const act = (type, amount) => api('action', { ...session, type, amount }).catch(() => {});
+
+function cardEl(c, cls = '') {
+  if (c == null) return `<div class="card back ${cls}"></div>`;
+  const r = RK[c % 13], s = Math.floor(c / 13);
+  return `<div class="card ${s === 1 || s === 2 ? 'red' : ''} ${cls}"><b>${r === 'T' ? '10' : r}</b><i>${SUIT[s]}</i></div>`;
+}
+function show(id) {
+  for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id);
+}
+const nameOf = (id) => { const p = state && state.players.find((q) => q.id === id); return p ? p.name : '?'; };
+
+// ---------- หน้าแรก ----------
+$('#name').value = ls('pp_name') || '';
+const urlRoom = new URLSearchParams(location.search).get('room');
+if (urlRoom) $('#joinCode').value = urlRoom.toUpperCase().slice(0, 4);
+
+function getName() {
+  const n = $('#name').value.trim();
+  if (!n) { toast('ใส่ชื่อก่อนนะ'); $('#name').focus(); return null; }
+  ls('pp_name', n);
+  return n;
+}
+$('#btnCreate').onclick = async () => {
+  const name = getName(); if (!name) return;
+  const [sb, bb] = $('#sBlinds').value.split('/').map(Number);
+  try {
+    const d = await api('create', { name, settings: { startChips: Number($('#sChips').value), sb, bb, turnTime: Number($('#sTime').value) } });
+    startSession(d);
+  } catch (e) { /* แจ้งไปแล้ว */ }
+};
+$('#btnJoin').onclick = async () => {
+  const name = getName(); if (!name) return;
+  const code = $('#joinCode').value.trim().toUpperCase();
+  if (code.length !== 4) { toast('รหัสห้องมี 4 ตัวอักษร'); return; }
+  const saved = JSON.parse(ls('pp_session') || 'null');
+  try {
+    const d = await api('join', { code, name, token: saved && saved.code === code ? saved.token : undefined });
+    startSession(d);
+  } catch (e) { /* แจ้งไปแล้ว */ }
+};
+$('#joinCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btnJoin').click(); });
+
+function startSession(d) {
+  session = { code: d.code, token: d.token };
+  ls('pp_session', JSON.stringify(session));
+  history.replaceState(null, '', location.pathname);
+  state = null; lastChatId = null; bubbles = {}; lastHandNo = -1;
+  connect();
+}
+function dropSession(msg) {
+  if (es) es.close(); es = null;
+  session = null; state = null;
+  ls('pp_session', null);
+  show('home');
+  if (msg) toast(msg);
+}
+
+// ---------- เชื่อมต่อเรียลไทม์ ----------
+function connect() {
+  if (es) es.close();
+  if (!session) return;
+  const q = `code=${encodeURIComponent(session.code)}&token=${encodeURIComponent(session.token)}`;
+  es = new EventSource('/api/events?' + q);
+  es.addEventListener('state', (e) => { setConn(true); onState(JSON.parse(e.data)); });
+  es.onopen = () => setConn(true);
+  es.onerror = async () => {
+    setConn(false);
+    try {
+      const r = await fetch('/api/session?' + q);
+      if (r.status === 404 || r.status === 403) dropSession('ห้องนี้ไม่อยู่แล้ว (อาจเซิร์ฟเวอร์เพิ่งรีสตาร์ท)');
+    } catch (e2) { /* ออฟไลน์ ปล่อยให้ลองใหม่เอง */ }
+  };
+}
+function setConn(ok) { $('#conn').classList.toggle('on', !ok && !!session); }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    document.title = 'PokerPEPAE&Fri';
+    if (session && (!es || es.readyState !== 1)) connect();
+  }
+});
+
+function onState(s) {
+  clockOffset = s.serverNow - Date.now();
+  const prev = state;
+  state = s;
+  const me = s.you && s.players.find((p) => p.id === s.you.id);
+  if (!me || me.left) { dropSession('คุณออกจากห้องแล้ว'); return; }
+
+  // แชทใหม่ → บับเบิล
+  const maxId = s.chat.length ? s.chat[s.chat.length - 1].id : 0;
+  if (lastChatId === null) lastChatId = maxId;
+  for (const m of s.chat) {
+    if (m.id > lastChatId) {
+      bubbles[m.from] = { text: m.text, until: Date.now() + 4500 };
+      setTimeout(render, 4600);
+      if (!$('#drawer').classList.contains('on') || drawerTab !== 'chat') unread = true;
+    }
+  }
+  lastChatId = maxId;
+
+  // ถึงตาเรา
+  if (s.toAct === me.id && lastToAct !== me.id) {
+    if (navigator.vibrate) navigator.vibrate(180);
+    if (document.hidden) document.title = '🔔 ถึงตาคุณ! PokerPEPAE&Fri';
+  }
+  lastToAct = s.toAct;
+
+  if (s.turnDeadline) turnTotal = Math.max(1, s.turnDeadline - s.serverNow);
+  render();
+}
+
+// ---------- วาดหน้าจอ ----------
+function render() {
+  if (!state) return;
+  if (state.phase === 'lobby') { renderLobby(); show('lobby'); } else { renderGame(); show('game'); }
+  if ($('#drawer').classList.contains('on')) renderDrawer();
+}
+
+function inviteLink() { return location.origin + '/?room=' + state.code; }
+async function share() {
+  const url = inviteLink();
+  const text = `มาเล่นโป๊กเกอร์กัน! รหัสห้อง ${state.code}`;
+  if (navigator.share) { try { await navigator.share({ title: 'PokerPEPAE&Fri', text, url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(`${text}\n${url}`); toast('คัดลอกลิงก์แล้ว'); }
+  catch (e) { prompt('คัดลอกลิงก์นี้', url); }
+}
+$('#btnShare').onclick = share;
+$('#gCode').onclick = share;
+
+function renderLobby() {
+  const s = state, me = s.players.find((p) => p.id === s.you.id);
+  $('#lbCode').textContent = s.code;
+  $('#lbCount').textContent = s.players.length;
+  $('#lbPlayers').innerHTML = s.players.map((p) =>
+    `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('');
+  $('#lbInfo').textContent = `ชิปเริ่มต้น ${fmt(s.settings.startChips)} · บลายด์ ${s.settings.sb}/${s.settings.bb} · ` + (s.settings.turnTime ? `${s.settings.turnTime} วินาที/ตา` : 'ไม่จำกัดเวลา');
+  $('#btnStart').style.display = me.isHost ? '' : 'none';
+  $('#btnStart').disabled = s.players.length < 2;
+  $('#lbWait').textContent = me.isHost ? (s.players.length < 2 ? 'รอเพื่อนเข้าห้องอย่างน้อย 1 คน' : '') : 'รอเจ้าของห้องกดเริ่มเกม…';
+}
+$('#lbPlayers').onclick = (e) => {
+  const id = e.target.dataset && e.target.dataset.kick;
+  if (id && confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: id }).catch(() => {});
+};
+$('#btnStart').onclick = () => api('start', session).catch(() => {});
+$('#btnLeaveLobby').onclick = leaveRoom;
+async function leaveRoom() {
+  if (!confirm('ออกจากห้องนี้?')) return;
+  try { await api('leave', session); } catch (e) { /* ไม่เป็นไร */ }
+  closeDrawer();
+  dropSession();
+}
+
+function renderGame() {
+  const s = state;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const n = s.players.length;
+  const meIdx = s.players.indexOf(me);
+  const res = s.result;
+  const winIds = new Set(res ? res.winners.map((w) => w.id) : []);
+  const hlCards = new Set();
+  if (res && res.showdown) for (const w of res.winners) (res.hands[w.id] ? res.hands[w.id].best : []).forEach((c) => hlCards.add(c));
+  const showHL = hlCards.size > 0;
+
+  $('#gCode').textContent = s.code;
+  $('#gMid').textContent = `ตาที่ ${s.handNo} · ${s.settings.sb}/${s.settings.bb}`;
+  $('#gPot').textContent = fmt(s.pot);
+  $('#btnMenu').classList.toggle('has', unread);
+
+  // ไพ่กลาง
+  const newHand = s.handNo !== lastHandNo;
+  let boardHTML = '';
+  for (let i = 0; i < 5; i++) {
+    if (i < s.community.length) {
+      const c = s.community[i];
+      const cls = (!newHand && i >= lastBoardLen ? 'deal ' : '') + (showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '');
+      boardHTML += cardEl(c, cls);
+    } else boardHTML += '<div class="slot"></div>';
+  }
+  $('#gBoard').innerHTML = boardHTML;
+  lastBoardLen = s.community.length; lastHandNo = s.handNo;
+
+  // ข้อความผลตา
+  let banner = '';
+  if (s.phase === 'showdown' && res) {
+    banner = res.winners.map((w) => `<div><span class="w">🏆 ${esc(nameOf(w.id))}</span> +${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</div>`).join('');
+    if (res.pots.length > 1) banner += `<div style="opacity:.75;font-size:12px">มีไซด์พ็อต ${res.pots.length - 1} ก้อน</div>`;
+  } else if (s.phase === 'hand') {
+    banner = { preflop: 'พรีฟลอป', flop: 'ฟลอป', turn: 'เทิร์น', river: 'ริเวอร์' }[s.street];
+    banner = `<span style="opacity:.7">${banner}</span>`;
+  }
+  $('#gBanner').innerHTML = banner;
+
+  // ที่นั่ง
+  const dense = n >= 7;
+  $('#tablewrap').classList.toggle('dense', dense);
+  const rx = dense ? 43 : 41, ry = dense ? 39 : 37;
+  let seats = '';
+  s.players.forEach((p, i) => {
+    const rel = (i - meIdx + n) % n;
+    const th = ((90 + (rel * 360) / n) * Math.PI) / 180;
+    const x = 50 + rx * Math.cos(th), y = 50 + ry * Math.sin(th);
+    const isMe = p.id === me.id;
+    const showCards = !isMe && p.hole.length > 0;
+    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : ''].join(' ');
+    const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
+    let label = p.lastAction;
+    if (!label && s.phase !== 'lobby') {
+      if (p.chips === 0 && !p.inHand) label = 'หมดชิป';
+      else if (!p.inHand) label = 'รอตาหน้า';
+    }
+    if (res && res.showdown && res.hands[p.id] && !p.folded) label = res.hands[p.id].name;
+    const off = !p.connected ? '<div class="act off">ออฟไลน์</div>' : (label ? `<div class="act">${esc(label)}</div>` : '');
+    const b = bubbles[p.id] && bubbles[p.id].until > Date.now() ? `<div class="bubble">${esc(bubbles[p.id].text)}</div>` : '';
+    seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
+      ${b}<div class="mini${showCards && p.hole[0] != null ? ' rev' : ''}">${mini}</div>
+      <div class="plate"><div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div></div>
+      ${p.isDealer ? '<span class="dbtn">D</span>' : ''}${off}</div>`;
+    if (p.bet > 0) {
+      const k = dense ? 0.52 : 0.4;
+      const bx = x + (50 - x) * k, by = y + (46 - y) * k;
+      seats += `<div class="bet" style="left:${bx.toFixed(1)}%;top:${by.toFixed(1)}%"><span class="chip"></span>${fmt(p.bet)}</div>`;
+    }
+  });
+  $('#gSeats').innerHTML = seats;
+
+  renderPanel(me, hlCards);
+}
+
+function status(me) {
+  const s = state;
+  if (s.phase === 'showdown') return `ตาถัดไปใน <b id="cd">–</b> วินาที`;
+  if (s.phase === 'ended') return 'จบเกมแล้ว';
+  if (s.options) return s.options.toCall > 0 ? `ถึงตาคุณ · ต้องจ่ายเพิ่ม ${fmt(s.options.toCall)}` : 'ถึงตาคุณ · เช็คหรือเดิมพันได้';
+  if (me.folded) return 'คุณโฟลด์แล้ว';
+  if (!me.inHand) return me.chips === 0 ? 'คุณหมดชิปแล้ว' : 'รอเริ่มตาหน้า';
+  if (me.allIn) return 'ออลอิน! ลุ้นเลย 🤞';
+  return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
+}
+
+function potRaise(frac) {
+  const s = state, o = s.options;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const to = Math.round(s.currentBet + frac * (s.pot + o.toCall));
+  return Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, to));
+}
+
+function renderPanel(me, hlCards) {
+  const s = state, o = s.options;
+  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.endedWinnerId, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length]);
+  if (sig === panelSig) return;
+  panelSig = sig;
+  if (o) raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, raiseTo || o.minRaiseTo));
+  if (o && (raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
+
+  const hole = me.hole || [];
+  let h = `<div class="mine">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}
+    <div class="mi"><div class="hn">${esc(s.you.handName || (hole.length && s.phase !== 'showdown' ? '' : ''))}</div><div class="st">${status(me)}</div></div></div>`;
+
+  if (o) {
+    const callAll = !o.canCheck && o.toCall >= me.chips;
+    h += `<div class="acts">
+      <button class="b red" id="aFold">โฟลด์</button>
+      <button class="b green call" id="aCall">${o.canCheck ? 'เช็ค' : callAll ? 'ออลอิน ' + fmt(me.chips) : 'คอล ' + fmt(o.toCall)}</button>
+      ${o.canRaise ? `<button class="b gold" id="aRaise"></button>` : ''}
+    </div>`;
+    if (o.canRaise && o.minRaiseTo < o.maxRaiseTo) {
+      h += `<div class="raisebar"><div class="sl">
+        <button class="stepbtn" id="rMinus">−</button>
+        <input type="range" id="rSlider" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" step="1" value="${raiseTo}">
+        <button class="stepbtn" id="rPlus">+</button></div>
+        <div class="pre"><button class="b sm" data-f="0.5">½ พ็อต</button><button class="b sm" data-f="0.75">¾ พ็อต</button><button class="b sm" data-f="1">พ็อต</button><button class="b sm" data-f="max">ออลอิน</button></div></div>`;
+    }
+  } else if (s.phase === 'ended') {
+    const w = s.endedWinnerId ? nameOf(s.endedWinnerId) : '';
+    h += `<div class="msg">🏆 ${esc(w)} ชนะทั้งเกม!${me.isHost ? '<br><button class="b gold" id="aRestart">เริ่มเกมใหม่</button>' : '<br><span style="color:var(--mute);font-size:13px">รอเจ้าของห้องเริ่มเกมใหม่</span>'}</div>`;
+  }
+  if (me.chips === 0 && !(s.phase === 'hand' && me.inHand)) {
+    h += `<div class="msg"><button class="b gold" id="aRebuy">ซื้อชิปเพิ่ม ${fmt(s.settings.startChips)}</button></div>`;
+  }
+  const panel = $('#panel');
+  panel.innerHTML = h;
+
+  const $p = (q) => panel.querySelector(q);
+  if (o) {
+    $p('#aFold').onclick = () => act('fold');
+    $p('#aCall').onclick = () => act(o.canCheck ? 'check' : 'call');
+    const rb = $p('#aRaise');
+    const upd = () => {
+      if (!rb) return;
+      const isAll = raiseTo >= o.maxRaiseTo;
+      rb.innerHTML = isAll ? `ออลอิน ${fmt(o.maxRaiseTo)}` : `${o.isBet ? 'เดิมพัน' : 'เรสเป็น'} ${fmt(raiseTo)}`;
+      const sl = $p('#rSlider'); if (sl) sl.value = raiseTo;
+    };
+    upd();
+    if (rb) rb.onclick = () => act(raiseTo >= o.maxRaiseTo ? 'allin' : 'raise', raiseTo);
+    const sl = $p('#rSlider');
+    if (sl) {
+      sl.oninput = () => { raiseTo = Number(sl.value); upd(); };
+      const step = s.settings.bb;
+      $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - step); upd(); };
+      $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + step); upd(); };
+      panel.querySelectorAll('[data-f]').forEach((b) => {
+        b.onclick = () => { raiseTo = b.dataset.f === 'max' ? o.maxRaiseTo : potRaise(Number(b.dataset.f)); upd(); };
+      });
+    }
+  }
+  const rs = $p('#aRestart'); if (rs) rs.onclick = () => api('start', session).catch(() => {});
+  const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});
+}
+
+// ---------- นาฬิกา (แถบเวลา + นับถอยหลังตาถัดไป) ----------
+setInterval(() => {
+  if (!state || state.phase === 'lobby') return;
+  const now = Date.now() + clockOffset;
+  if (state.phase === 'hand' && state.turnDeadline && state.toAct) {
+    const seat = document.querySelector(`.seat[data-pid="${state.toAct}"]`);
+    if (seat) {
+      const left = Math.max(0, state.turnDeadline - now);
+      seat.querySelector('.tm i').style.width = Math.min(100, (left / turnTotal) * 100) + '%';
+      seat.classList.toggle('warn', left < 6000);
+    }
+  }
+  const cd = document.getElementById('cd');
+  if (cd && state.nextHandAt) cd.textContent = Math.max(0, Math.ceil((state.nextHandAt - now) / 1000));
+}, 200);
+
+// ---------- ลิ้นชัก ----------
+function openDrawer() { $('#drawer').classList.add('on'); unread = false; $('#btnMenu').classList.remove('has'); renderDrawer(); }
+function closeDrawer() { $('#drawer').classList.remove('on'); }
+$('#btnMenu').onclick = openDrawer;
+$('#drawer').onclick = (e) => { if (e.target.id === 'drawer') closeDrawer(); };
+document.querySelectorAll('.tabs button').forEach((b) => {
+  b.onclick = () => { drawerTab = b.dataset.tab; renderDrawer(); };
+});
+$('#emo').innerHTML = EMOJI.map((e) => `<button>${e}</button>`).join('');
+$('#emo').onclick = (e) => { if (e.target.tagName === 'BUTTON') api('chat', { ...session, text: e.target.textContent }).catch(() => {}); };
+function sendChat() {
+  const t = $('#chatText').value.trim(); if (!t) return;
+  $('#chatText').value = '';
+  api('chat', { ...session, text: t }).catch(() => {});
+}
+$('#chatSend').onclick = sendChat;
+$('#chatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat(); });
+
+function renderDrawer() {
+  document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
+  $('#chatbar').style.display = drawerTab === 'chat' ? '' : 'none';
+  const body = $('#tabbody');
+  const s = state; if (!s) return;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const stick = body.scrollTop + body.clientHeight >= body.scrollHeight - 40;
+  if (drawerTab === 'chat') {
+    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ลองส่งอิโมจิดูสิ</p>') + '</div>';
+  } else if (drawerTab === 'log') {
+    body.innerHTML = '<div class="logl">' + s.log.map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+  } else {
+    body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
+      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
+      <button class="b red full" id="dLeave" style="margin-top:14px">ออกจากห้อง</button>`;
+    $('#dShare').onclick = share;
+    $('#dLeave').onclick = leaveRoom;
+    body.querySelectorAll('[data-kick]').forEach((b) => { b.onclick = () => { if (confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: b.dataset.kick }).catch(() => {}); }; });
+  }
+  if (stick || drawerTab !== 'room') body.scrollTop = body.scrollHeight;
+}
+
+// ---------- เริ่มต้น ----------
+(function init() {
+  const saved = JSON.parse(ls('pp_session') || 'null');
+  if (saved && saved.code && saved.token && !(urlRoom && urlRoom.toUpperCase() !== saved.code)) {
+    session = saved; show('game'); connect();
+  } else show('home');
+})();
+</script>
+</body>
+</html>
