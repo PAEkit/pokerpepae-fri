@@ -67,9 +67,18 @@ function lookup(code, token) {
   const entry = rooms.get(String(code || '').toUpperCase());
   if (!entry) throw new UserError('ไม่พบห้องนี้ (อาจหมดอายุหรือเซิร์ฟเวอร์รีสตาร์ท)', 404);
   const player = token ? entry.room.playerByToken(token) : null;
-  return { entry, room: entry.room, player };
+  const spec = token && !player ? entry.room.spectatorByToken(token) : null;
+  return { entry, room: entry.room, player, spec };
 }
+// ผู้เล่นหรือผู้ชมก็ได้ (ใช้กับการดูข้อมูล)
+function needMember(ctx) {
+  if (ctx.player && !ctx.player.left) return ctx.player;
+  if (ctx.spec) return ctx.spec;
+  throw new UserError('คุณไม่ได้อยู่ในห้องนี้แล้ว', 403);
+}
+// เฉพาะผู้เล่น (ใช้กับทุกการกระทำ) — ผู้ชมทำอะไรไม่ได้ ล็อกที่ฝั่งเซิร์ฟเวอร์
 function needPlayer(ctx) {
+  if (ctx.spec) throw new UserError('โหมดผู้ชมดูได้อย่างเดียว', 403);
   if (!ctx.player || ctx.player.left) throw new UserError('คุณไม่ได้อยู่ในห้องนี้แล้ว', 403);
   return ctx.player;
 }
@@ -79,7 +88,9 @@ async function handleApi(req, res, url) {
 
   if (req.method === 'GET' && route === '/api/events') {
     const ctx = lookup(url.searchParams.get('code'), url.searchParams.get('token'));
-    const p = needPlayer(ctx);
+    const p = needMember(ctx);
+    const isSpec = !!ctx.spec;
+    const setOnline = (v) => (isSpec ? ctx.room.setSpecConnected(p, v) : ctx.room.setConnected(p, v));
     res.writeHead(200, {
       'Content-Type': 'text/event-stream; charset=utf-8',
       'Cache-Control': 'no-cache, no-transform',
@@ -89,22 +100,35 @@ async function handleApi(req, res, url) {
     res.write('retry: 2000\n\n');
     const client = { res, token: p.token };
     ctx.entry.clients.add(client);
-    ctx.room.setConnected(p, true);
+    setOnline(true);
     send(client, ctx.room);
     const ping = setInterval(() => { try { res.write(': ping\n\n'); } catch (e) { /* noop */ } }, 20000);
     req.on('close', () => {
       clearInterval(ping);
       ctx.entry.clients.delete(client);
       const still = [...ctx.entry.clients].some((c) => c.token === p.token);
-      if (!still) ctx.room.setConnected(p, false);
+      if (!still) setOnline(false);
     });
     return;
   }
 
   if (req.method === 'GET' && route === '/api/session') {
     const ctx = lookup(url.searchParams.get('code'), url.searchParams.get('token'));
-    needPlayer(ctx);
+    needMember(ctx);
     return json(res, 200, { ok: true });
+  }
+
+  // รายการห้องที่ออนไลน์อยู่ (ไม่รวมห้องส่วนตัว และห้องที่ไม่มีผู้เล่นออนไลน์)
+  if (req.method === 'GET' && route === '/api/rooms') {
+    const list = [...rooms.values()]
+      .map((e) => e.room)
+      .filter((r) => !r.settings.private)
+      .map((r) => ({ lastActive: r.lastActive, ...r.summary() }))
+      .filter((r) => r.online > 0)
+      .sort((a, b) => b.lastActive - a.lastActive)
+      .slice(0, 20)
+      .map(({ lastActive, ...rest }) => rest);
+    return json(res, 200, list);
   }
 
   if (req.method === 'GET' && route === '/api/health') return json(res, 200, { ok: true, rooms: rooms.size });
@@ -123,7 +147,17 @@ async function handleApi(req, res, url) {
     return json(res, 200, { code: ctx.room.code, token: p.token });
   }
 
+  if (route === '/api/watch') {
+    const ctx = lookup(body.code, null);
+    const s = ctx.room.addSpectator(body.name);
+    return json(res, 200, { code: ctx.room.code, token: s.token });
+  }
+
   const ctx = lookup(body.code, body.token);
+  if (ctx.spec && route === '/api/leave') {
+    ctx.room.removeSpectator(ctx.spec);
+    return json(res, 200, { ok: true });
+  }
   const p = needPlayer(ctx);
   switch (route) {
     case '/api/action': ctx.room.act(p, { type: body.type, amount: body.amount }); break;

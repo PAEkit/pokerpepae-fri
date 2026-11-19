@@ -167,6 +167,30 @@ details summary::before{content:'⚙️ '}
 .chatin{display:flex;gap:8px;padding:6px 10px 10px}
 .chatin .in{height:42px}
 
+.sub{font-size:13px;color:var(--mute);margin:-4px 0 8px}
+label.chk{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:12px;color:var(--ink)}
+label.chk input{width:20px;height:20px;accent-color:var(--gold)}
+.rm{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.rm .rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rm .rh b{color:var(--gold);letter-spacing:3px;font-size:19px;font-weight:600}
+.rm .rh span{font-size:12px;color:var(--mute);text-align:right}
+.rm .rn{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 8px}
+.rm .rn i{font-style:normal;font-size:12px;background:rgba(255,255,255,.1);border-radius:10px;padding:1px 8px 1px 6px;display:inline-flex;align-items:center;gap:5px;max-width:100%}
+.rm .rn i::before{content:'';width:6px;height:6px;border-radius:50%;background:#3ddc84;flex:none}
+.rm .rn i.off{opacity:.5}
+.rm .rn i.off::before{background:#777}
+.rm .ra{display:flex;gap:8px}
+.rm .ra .b{flex:1}
+.sheettitle{display:none;padding:14px 16px 0;font-weight:600;font-size:18px}
+.raisebar .amt{display:flex;align-items:center;gap:8px;margin-top:6px}
+.raisebar .amt span{font-size:13px;color:var(--mute);white-space:nowrap}
+.raisebar .amt .in{height:38px;font-size:17px;text-align:center;font-weight:600;color:var(--gold)}
+.raisebar .pre .b.allin{background:linear-gradient(#ff9a4d,#e0481f);color:#fff;font-weight:700;box-shadow:0 0 10px rgba(255,120,50,.6)}
+.bi{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
+.bi h4{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--gold)}
+.bi .r{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:15px}
+.bi .r i{font-style:normal;color:var(--mute);font-size:12px}
+.bi .r b{font-weight:600}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:9px 16px;font-size:15px;z-index:99;max-width:86vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
 </style>
@@ -180,7 +204,7 @@ details summary::before{content:'⚙️ '}
       <div class="logo">
         <div class="suits">♠ ♥ ♦ ♣</div>
         <h1>PokerPEPAE&amp;Fri</h1>
-        <p>เท็กซัสโฮลเดม ชิปสมมติ เล่นกับเพื่อนผ่านเน็ต</p>
+        <p>Texas Hold'em เปเป้และผองเพื่อน</p>
       </div>
       <div class="card-box">
         <label class="f" for="name">ชื่อของคุณ</label>
@@ -202,15 +226,21 @@ details summary::before{content:'⚙️ '}
           <select id="sTime" class="in">
             <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
           </select>
+          <label class="f chk"><input type="checkbox" id="sPrivate"> ห้องส่วนตัว (ไม่แสดงในรายการห้อง)</label>
         </details>
         <button id="btnCreate" class="b gold full" style="margin-top:8px">สร้างห้อง</button>
       </div>
       <div class="card-box">
         <h3>เข้าห้องของเพื่อน</h3>
+        <div class="sub">ห้องที่ออนไลน์อยู่ตอนนี้</div>
+        <div id="roomList"><p class="hint">กำลังโหลดรายการห้อง…</p></div>
+        <div class="sep">หรือใส่รหัสห้อง</div>
         <input id="joinCode" class="in code" maxlength="4" placeholder="รหัสห้อง" autocomplete="off" autocapitalize="characters">
-        <button id="btnJoin" class="b green full" style="margin-top:10px">เข้าร่วม</button>
+        <div class="row" style="margin-top:10px">
+          <button id="btnJoin" class="b green">เข้าร่วมเล่น</button>
+          <button id="btnWatch" class="b ghost">👁 ดูอย่างเดียว</button>
+        </div>
       </div>
-      <p class="hint">ชิปทั้งหมดเป็นชิปสมมติ ไม่เกี่ยวข้องกับเงินจริง</p>
     </div>
   </section>
 
@@ -226,7 +256,9 @@ details summary::before{content:'⚙️ '}
         <ul class="plist" id="lbPlayers"></ul>
       </div>
       <p class="hint" id="lbInfo"></p>
+      <p class="hint" id="lbSpec"></p>
       <button id="btnStart" class="b gold full">เริ่มเกม</button>
+      <button id="btnLobbyJoin" class="b green full" style="display:none">เข้าร่วมเล่น</button>
       <p class="hint" id="lbWait"></p>
       <button id="btnLeaveLobby" class="b ghost full" style="margin-top:8px">ออกจากห้อง</button>
     </div>
@@ -238,7 +270,8 @@ details summary::before{content:'⚙️ '}
     <div class="top">
       <button class="code" id="gCode" title="แตะเพื่อคัดลอกลิงก์"></button>
       <div class="mid" id="gMid"></div>
-      <button class="ic" id="btnMenu" aria-label="เมนู">💬<span class="badge"></span></button>
+      <button class="ic" id="btnRoom" aria-label="ห้อง">🏠</button>
+      <button class="ic" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
     </div>
     <div class="tablewrap" id="tablewrap">
       <div class="felt"></div>
@@ -256,10 +289,10 @@ details summary::before{content:'⚙️ '}
 <!-- ลิ้นชัก แชท/ประวัติ/ห้อง -->
 <div class="drawer" id="drawer">
   <div class="sheet">
-    <div class="tabs">
+    <div class="sheettitle" id="sheetTitle">🏠 ห้อง</div>
+    <div class="tabs" id="tabs">
       <button data-tab="chat" class="on">แชท</button>
       <button data-tab="log">ประวัติ</button>
-      <button data-tab="room">ห้อง</button>
     </div>
     <div class="tabbody" id="tabbody"></div>
     <div id="chatbar">
@@ -325,6 +358,7 @@ function cardEl(c, cls = '') {
 }
 function show(id) {
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id);
+  if (id === 'home') { lastRoomsTxt = null; loadRooms(); }
 }
 const nameOf = (id) => { const p = state && state.players.find((q) => q.id === id); return p ? p.name : '?'; };
 
@@ -343,19 +377,57 @@ $('#btnCreate').onclick = async () => {
   const name = getName(); if (!name) return;
   const [sb, bb] = $('#sBlinds').value.split('/').map(Number);
   try {
-    const d = await api('create', { name, settings: { startChips: Number($('#sChips').value), sb, bb, turnTime: Number($('#sTime').value) } });
+    const d = await api('create', { name, settings: { startChips: Number($('#sChips').value), sb, bb, turnTime: Number($('#sTime').value), private: $('#sPrivate').checked } });
     startSession(d);
   } catch (e) { /* แจ้งไปแล้ว */ }
 };
-$('#btnJoin').onclick = async () => {
+async function doJoin(code) {
   const name = getName(); if (!name) return;
-  const code = $('#joinCode').value.trim().toUpperCase();
-  if (code.length !== 4) { toast('รหัสห้องมี 4 ตัวอักษร'); return; }
   const saved = JSON.parse(ls('pp_session') || 'null');
   try {
     const d = await api('join', { code, name, token: saved && saved.code === code ? saved.token : undefined });
     startSession(d);
   } catch (e) { /* แจ้งไปแล้ว */ }
+}
+async function doWatch(code) {
+  const name = $('#name').value.trim() || 'ผู้ชม'; // ผู้ชมไม่ต้องใส่ชื่อก็ได้
+  try { startSession(await api('watch', { code, name })); } catch (e) { /* แจ้งไปแล้ว */ }
+}
+function typedCode() {
+  const code = $('#joinCode').value.trim().toUpperCase();
+  if (code.length !== 4) { toast('รหัสห้องมี 4 ตัวอักษร'); return null; }
+  return code;
+}
+$('#btnJoin').onclick = () => { const c = typedCode(); if (c) doJoin(c); };
+$('#btnWatch').onclick = () => { const c = typedCode(); if (c) doWatch(c); };
+
+// ---------- รายการห้องออนไลน์ ----------
+let lastRoomsTxt = null;
+const PHASE = (r) => (r.phase === 'lobby' ? 'รอเริ่มเกม' : r.phase === 'ended' ? 'จบเกมแล้ว' : `กำลังเล่น ตาที่ ${r.handNo}`);
+function renderRooms(list) {
+  const el = $('#roomList');
+  if (!list.length) { el.innerHTML = '<p class="hint">ยังไม่มีห้องที่ออนไลน์ตอนนี้ — สร้างห้องใหม่ได้เลย</p>'; return; }
+  el.innerHTML = list.map((r) => `<div class="rm" data-code="${esc(r.code)}">
+    <div class="rh"><b>${esc(r.code)}</b><span>${r.count}/9 คน · ${PHASE(r)}<br>บลายด์ ${r.settings.sb}/${r.settings.bb}${r.spectators ? ` · 👁 ${r.spectators}` : ''}</span></div>
+    <div class="rn">${r.players.map((p) => `<i class="${p.online ? '' : 'off'}">${esc(p.name)}</i>`).join('')}</div>
+    <div class="ra"><button class="b sm green" data-join ${r.full ? 'disabled' : ''}>${r.full ? 'ห้องเต็ม' : 'เข้าเล่น'}</button><button class="b sm ghost" data-watch>👁 ดู</button></div></div>`).join('');
+}
+async function loadRooms() {
+  if (session || document.hidden || !$('#home').classList.contains('on')) return;
+  try {
+    const r = await fetch('/api/rooms', { cache: 'no-store' });
+    if (!r.ok) return;
+    const txt = await r.text();
+    if (txt === lastRoomsTxt) return;
+    lastRoomsTxt = txt;
+    renderRooms(JSON.parse(txt));
+  } catch (e) { /* ออฟไลน์ ลองใหม่รอบหน้า */ }
+}
+setInterval(loadRooms, 4000);
+$('#roomList').onclick = (e) => {
+  const rm = e.target.closest('.rm'); if (!rm) return;
+  if (e.target.closest('[data-join]')) doJoin(rm.dataset.code);
+  else if (e.target.closest('[data-watch]')) doWatch(rm.dataset.code);
 };
 $('#joinCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btnJoin').click(); });
 
@@ -402,8 +474,10 @@ function onState(s) {
   clockOffset = s.serverNow - Date.now();
   const prev = state;
   state = s;
-  const me = s.you && s.players.find((p) => p.id === s.you.id);
-  if (!me || me.left) { dropSession('คุณออกจากห้องแล้ว'); return; }
+  if (!s.you) { dropSession('คุณออกจากห้องแล้ว'); return; }
+  const spectating = !!s.you.spectator;
+  const me = spectating ? null : s.players.find((p) => p.id === s.you.id);
+  if (!spectating && (!me || me.left)) { dropSession('คุณออกจากห้องแล้ว'); return; }
 
   // แชทใหม่ → บับเบิล
   const maxId = s.chat.length ? s.chat[s.chat.length - 1].id : 0;
@@ -418,7 +492,7 @@ function onState(s) {
   lastChatId = maxId;
 
   // ถึงตาเรา
-  if (s.toAct === me.id && lastToAct !== me.id) {
+  if (me && s.toAct === me.id && lastToAct !== me.id) {
     if (navigator.vibrate) navigator.vibrate(180);
     if (document.hidden) document.title = '🔔 ถึงตาคุณ! PokerPEPAE&Fri';
   }
@@ -447,7 +521,11 @@ $('#btnShare').onclick = share;
 $('#gCode').onclick = share;
 
 function renderLobby() {
-  const s = state, me = s.players.find((p) => p.id === s.you.id);
+  const s = state, me = s.players.find((p) => p.id === s.you.id) || {};
+  const spec = !!s.you.spectator;
+  $('#lbSpec').textContent = s.spectators.length ? '👁 ผู้ชม: ' + s.spectators.join(', ') : '';
+  $('#btnLobbyJoin').style.display = spec ? '' : 'none';
+  $('#btnLobbyJoin').disabled = s.players.length >= 9;
   $('#lbCode').textContent = s.code;
   $('#lbCount').textContent = s.players.length;
   $('#lbPlayers').innerHTML = s.players.map((p) =>
@@ -455,7 +533,7 @@ function renderLobby() {
   $('#lbInfo').textContent = `ชิปเริ่มต้น ${fmt(s.settings.startChips)} · บลายด์ ${s.settings.sb}/${s.settings.bb} · ` + (s.settings.turnTime ? `${s.settings.turnTime} วินาที/ตา` : 'ไม่จำกัดเวลา');
   $('#btnStart').style.display = me.isHost ? '' : 'none';
   $('#btnStart').disabled = s.players.length < 2;
-  $('#lbWait').textContent = me.isHost ? (s.players.length < 2 ? 'รอเพื่อนเข้าห้องอย่างน้อย 1 คน' : '') : 'รอเจ้าของห้องกดเริ่มเกม…';
+  $('#lbWait').textContent = spec ? '👁 คุณกำลังดูอยู่ (ดูได้อย่างเดียว)' : me.isHost ? (s.players.length < 2 ? 'รอเพื่อนเข้าห้องอย่างน้อย 1 คน' : '') : 'รอเจ้าของห้องกดเริ่มเกม…';
 }
 $('#lbPlayers').onclick = (e) => {
   const id = e.target.dataset && e.target.dataset.kick;
@@ -474,7 +552,7 @@ function renderGame() {
   const s = state;
   const me = s.players.find((p) => p.id === s.you.id);
   const n = s.players.length;
-  const meIdx = s.players.indexOf(me);
+  const meIdx = Math.max(0, s.players.indexOf(me)); // ผู้ชม: ให้ผู้เล่นคนแรกอยู่ล่างสุด
   const res = s.result;
   const winIds = new Set(res ? res.winners.map((w) => w.id) : []);
   const hlCards = new Set();
@@ -482,7 +560,7 @@ function renderGame() {
   const showHL = hlCards.size > 0;
 
   $('#gCode').textContent = s.code;
-  $('#gMid').textContent = `ตาที่ ${s.handNo} · ${s.settings.sb}/${s.settings.bb}`;
+  $('#gMid').textContent = `ตาที่ ${s.handNo} · ${s.settings.sb}/${s.settings.bb}` + (s.spectators.length ? ` · 👁 ${s.spectators.length}` : '');
   $('#gPot').textContent = fmt(s.pot);
   $('#btnMenu').classList.toggle('has', unread);
 
@@ -519,7 +597,7 @@ function renderGame() {
     const rel = (i - meIdx + n) % n;
     const th = ((90 + (rel * 360) / n) * Math.PI) / 180;
     const x = 50 + rx * Math.cos(th), y = 50 + ry * Math.sin(th);
-    const isMe = p.id === me.id;
+    const isMe = !!me && p.id === me.id;
     const showCards = !isMe && p.hole.length > 0;
     const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : ''].join(' ');
     const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
@@ -564,7 +642,42 @@ function potRaise(frac) {
   return Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, to));
 }
 
+// ---------- แผงล่างของผู้ชม ----------
+function specStatus(s) {
+  if (s.phase === 'showdown') return 'ตาถัดไปใน <b id="cd">–</b> วินาที';
+  if (s.phase === 'ended') return `🏆 ${esc(s.endedWinnerId ? nameOf(s.endedWinnerId) : '')} ชนะทั้งเกม`;
+  if (s.phase === 'hand' && s.toAct) return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
+  return 'กำลังเริ่มตาใหม่…';
+}
+async function specJoin() {
+  const s = state; if (!s || !s.you.spectator) return;
+  const name = (ls('pp_name') || $('#name').value || '').trim() || (prompt('ชื่อของคุณ?') || '').trim();
+  if (!name) return;
+  ls('pp_name', name);
+  const old = session;
+  try {
+    const d = await api('join', { code: old.code, name });
+    api('leave', old).catch(() => {}); // เอาตัวเองออกจากรายชื่อผู้ชม
+    startSession(d);
+    toast(s.phase === 'hand' ? 'เข้านั่งแล้ว เริ่มเล่นตาหน้า' : 'เข้านั่งแล้ว');
+  } catch (e) { /* แจ้งไปแล้ว */ }
+}
+function renderSpecPanel() {
+  const s = state;
+  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.endedWinnerId]);
+  if (sig === panelSig) return;
+  panelSig = sig;
+  const full = s.players.filter((p) => !p.left).length >= 9;
+  $('#panel').innerHTML = `<div class="msg" style="margin-top:6px"><div style="font-weight:600;color:var(--gold);font-size:17px">👁 โหมดผู้ชม · ดูได้อย่างเดียว</div>
+    <div style="color:var(--mute);font-size:14px;margin-top:4px">${specStatus(s)}</div></div>
+    <div class="acts" style="margin-top:14px"><button class="b green" id="sJoin" ${full ? 'disabled' : ''}>${full ? 'ห้องเต็ม' : 'เข้าร่วมเล่น'}</button><button class="b ghost" id="sLeave">ออกจากห้อง</button></div>`;
+  $('#sJoin').onclick = specJoin;
+  $('#sLeave').onclick = leaveRoom;
+}
+$('#btnLobbyJoin').onclick = specJoin;
+
 function renderPanel(me, hlCards) {
+  if (!me) { renderSpecPanel(); return; }
   const s = state, o = s.options;
   const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.endedWinnerId, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length]);
   if (sig === panelSig) return;
@@ -588,7 +701,8 @@ function renderPanel(me, hlCards) {
         <button class="stepbtn" id="rMinus">−</button>
         <input type="range" id="rSlider" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" step="1" value="${raiseTo}">
         <button class="stepbtn" id="rPlus">+</button></div>
-        <div class="pre"><button class="b sm" data-f="0.5">½ พ็อต</button><button class="b sm" data-f="0.75">¾ พ็อต</button><button class="b sm" data-f="1">พ็อต</button><button class="b sm" data-f="max">ออลอิน</button></div></div>`;
+        <div class="amt"><span>ระบุจำนวนเอง</span><input id="rNum" class="in" type="number" inputmode="numeric" pattern="[0-9]*" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" value="${raiseTo}"></div>
+        <div class="pre"><button class="b sm" data-f="0.5">½ พ็อต</button><button class="b sm" data-f="0.75">¾ พ็อต</button><button class="b sm" data-f="1">พ็อต</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
     }
   } else if (s.phase === 'ended') {
     const w = s.endedWinnerId ? nameOf(s.endedWinnerId) : '';
@@ -610,12 +724,22 @@ function renderPanel(me, hlCards) {
       const isAll = raiseTo >= o.maxRaiseTo;
       rb.innerHTML = isAll ? `ออลอิน ${fmt(o.maxRaiseTo)}` : `${o.isBet ? 'เดิมพัน' : 'เรสเป็น'} ${fmt(raiseTo)}`;
       const sl = $p('#rSlider'); if (sl) sl.value = raiseTo;
+      const nm = $p('#rNum'); if (nm && document.activeElement !== nm) nm.value = raiseTo;
     };
     upd();
     if (rb) rb.onclick = () => act(raiseTo >= o.maxRaiseTo ? 'allin' : 'raise', raiseTo);
     const sl = $p('#rSlider');
     if (sl) {
       sl.oninput = () => { raiseTo = Number(sl.value); upd(); };
+      const nm = $p('#rNum');
+      nm.oninput = () => {
+        const v = Math.floor(Number(nm.value));
+        if (nm.value === '' || !Number.isFinite(v)) return;
+        raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, v)); // ปรับเข้าช่วงที่เรสได้
+        upd();
+      };
+      nm.onblur = () => { nm.value = raiseTo; };
+      nm.onkeydown = (e) => { if (e.key === 'Enter') nm.blur(); };
       const step = s.settings.bb;
       $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - step); upd(); };
       $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + step); upd(); };
@@ -645,9 +769,15 @@ setInterval(() => {
 }, 200);
 
 // ---------- ลิ้นชัก ----------
-function openDrawer() { $('#drawer').classList.add('on'); unread = false; $('#btnMenu').classList.remove('has'); renderDrawer(); }
+function openDrawer(tab) {
+  drawerTab = tab;
+  $('#drawer').classList.add('on');
+  if (tab === 'chat') { unread = false; $('#btnMenu').classList.remove('has'); }
+  renderDrawer();
+}
 function closeDrawer() { $('#drawer').classList.remove('on'); }
-$('#btnMenu').onclick = openDrawer;
+$('#btnMenu').onclick = () => openDrawer(drawerTab === 'log' ? 'log' : 'chat');
+$('#btnRoom').onclick = () => openDrawer('room');
 $('#drawer').onclick = (e) => { if (e.target.id === 'drawer') closeDrawer(); };
 document.querySelectorAll('.tabs button').forEach((b) => {
   b.onclick = () => { drawerTab = b.dataset.tab; renderDrawer(); };
@@ -664,24 +794,31 @@ $('#chatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendC
 
 function renderDrawer() {
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
-  $('#chatbar').style.display = drawerTab === 'chat' ? '' : 'none';
+  const isSpec = !!(state && state.you && state.you.spectator);
+  $('#chatbar').style.display = drawerTab === 'chat' && !isSpec ? '' : 'none';
+  $('#tabs').style.display = drawerTab === 'room' ? 'none' : '';
+  $('#sheetTitle').style.display = drawerTab === 'room' ? 'block' : 'none';
   const body = $('#tabbody');
   const s = state; if (!s) return;
-  const me = s.players.find((p) => p.id === s.you.id);
-  const stick = body.scrollTop + body.clientHeight >= body.scrollHeight - 40;
+  const me = s.players.find((p) => p.id === s.you.id) || {};
+  const stick =body.scrollTop + body.clientHeight >= body.scrollHeight - 40;
   if (drawerTab === 'chat') {
-    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ลองส่งอิโมจิดูสิ</p>') + '</div>';
+    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`).join('') : `<p class="hint">${isSpec ? 'ยังไม่มีข้อความ' : 'ยังไม่มีข้อความ ลองส่งอิโมจิดูสิ'}</p>`) + (isSpec ? '<p class="hint">👁 ผู้ชมอ่านแชทได้อย่างเดียว</p>' : '') + '</div>';
   } else if (drawerTab === 'log') {
-    body.innerHTML = '<div class="logl">' + s.log.map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+    const buyIn = s.settings.startChips;
+    const summary = `<div class="bi"><h4>ยอดบายอินรวม</h4>${s.players.map((p) =>
+      `<div class="r"><span>${esc(p.name)}</span><span><b>${fmt(buyIn * (1 + p.rebuys))}</b>${p.rebuys ? ` <i>(ซื้อเพิ่ม ${p.rebuys} ครั้ง)</i>` : ''}</span></div>`).join('')}</div>`;
+    body.innerHTML = summary + '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
       <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
+      ${s.spectators.length ? `<p class="hint">👁 ผู้ชม (${s.spectators.length}): ${esc(s.spectators.join(', '))}</p>` : ''}
       <button class="b red full" id="dLeave" style="margin-top:14px">ออกจากห้อง</button>`;
     $('#dShare').onclick = share;
     $('#dLeave').onclick = leaveRoom;
     body.querySelectorAll('[data-kick]').forEach((b) => { b.onclick = () => { if (confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: b.dataset.kick }).catch(() => {}); }; });
   }
-  if (stick || drawerTab !== 'room') body.scrollTop = body.scrollHeight;
+  if (drawerTab === 'chat') body.scrollTop = body.scrollHeight;
 }
 
 // ---------- เริ่มต้น ----------

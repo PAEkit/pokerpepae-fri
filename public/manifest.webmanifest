@@ -1,7 +1,7 @@
 {
   "name": "PokerPEPAE&Fri",
   "short_name": "PokerPEPAE",
-  "description": "เท็กซัสโฮลเดม ชิปสมมติ เล่นกับเพื่อนผ่านเน็ต",
+  "description": "Texas Hold'em เปเป้และผองเพื่อน",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
