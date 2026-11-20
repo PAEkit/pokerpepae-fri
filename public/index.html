@@ -72,7 +72,7 @@ details summary::before{content:'⚙️ '}
 .top{display:flex;align-items:center;gap:8px;padding:8px 10px 4px;font-size:13px;color:var(--mute)}
 .top .code{background:rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-weight:600;color:var(--gold);letter-spacing:3px;border:0;font-size:14px;cursor:pointer}
 .top .mid{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ic{width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
+.ic{display:inline-flex;align-items:center;justify-content:center;width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
 .ic .badge{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
 .ic.has .badge{display:block}
 .conn{display:none;background:#8a5a00;color:#fff;text-align:center;font-size:13px;padding:3px}
@@ -288,8 +288,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
     <div class="top">
       <button class="code" id="gCode" title="แตะเพื่อคัดลอกลิงก์"></button>
       <div class="mid" id="gMid"></div>
-      <button class="ic" id="btnMic" aria-label="ไมค์">🎤</button>
-      <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ">🪙</button>
+      <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#f4c95d" stroke="#b9821a" stroke-width="2"/><circle cx="16" cy="16" r="10.5" fill="none" stroke="#d79a1e" stroke-width="1"/><polyline points="8,21 13,15 17,18 24,10" fill="none" stroke="#6b4300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="1.8" fill="#6b4300"/></svg></button>
       <button class="ic" id="btnRoom" aria-label="ห้อง">🏠</button>
     </div>
     <div class="tablewrap" id="tablewrap">
@@ -301,6 +300,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
       </div>
       <div id="gSeats"></div>
       <canvas id="fx"></canvas>
+      <button class="ic fab" id="btnMic" aria-label="ไมค์" style="bottom:52px">🎤</button>
       <button class="ic fab" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
     </div>
     <div class="panel" id="panel"></div>
@@ -829,7 +829,7 @@ function renderPanel(me, hlCards) {
         <input type="range" id="rSlider" min="0" max="${nSteps}" step="1" value="0">
         <button class="stepbtn" id="rPlus">+</button></div>
         <div class="r2"><input id="rNum" class="in" type="number" inputmode="numeric" pattern="[0-9]*" aria-label="ระบุจำนวนเอง" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" value="${raiseTo}">
-          <button class="b sm" data-add="${sb}">+${fmt(sb)} <small>SB</small></button><button class="b sm" data-add="${bb}">+${fmt(bb)} <small>BB</small></button></div>
+          <button class="b sm" data-add="${sb}">+${fmt(sb)}</button><button class="b sm" data-add="${bb}">+${fmt(bb)}</button></div>
         <div class="pre"><button class="b sm" data-add="${bb * 2}">+${fmt(bb * 2)}</button><button class="b sm" data-add="${bb * 3}">+${fmt(bb * 3)}</button><button class="b sm" data-f="clear">ล้าง</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
     }
   } else if (s.phase === 'waiting') {
@@ -972,7 +972,7 @@ function renderDrawer() {
   const solo = drawerTab === 'room' || drawerTab === 'coin';
   $('#tabs').style.display = solo ? 'none' : '';
   $('#sheetTitle').style.display = solo ? 'block' : 'none';
-  $('#sheetTitle').textContent = drawerTab === 'coin' ? '🪙 ยอดบายอินและสถิติ' : '🏠 ห้อง';
+  $('#sheetTitle').textContent = drawerTab === 'coin' ? 'ยอดบายอินและสถิติ' : '🏠 ห้อง';
   const body = $('#tabbody');
   const s = state; if (!s) return;
   const me = s.players.find((p) => p.id === s.you.id) || {};
@@ -990,8 +990,8 @@ function renderDrawer() {
       return `<div class="lg"><span class="sw" style="background:${colors[p.id] || '#999'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span><span class="sk">${k ? '💀'.repeat(Math.min(k, 5)) + `<i>×${k}</i>` : '<i>–</i>'}</span></div>`;
     }).join('');
     body.innerHTML = `<div class="bi"><h4>ยอดบายอินรวม</h4>${rows}</div>
-      <div class="coinbox"><h4>📈 กราฟชิปรายตา</h4>${chartSVG(s, colors)}</div>
-      <div class="coinbox"><h4>💀 สถิติกำจัดผู้เล่น (ทำให้ชิปคนอื่นเหลือ 0)</h4>${lg}</div>`;
+      <div class="coinbox"><h4>📈 กราฟชิป</h4>${chartSVG(s, colors)}</div>
+      <div class="coinbox"><h4>💀 สถิติกำจัดผู้เล่น</h4>${lg}</div>`;
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
       <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
