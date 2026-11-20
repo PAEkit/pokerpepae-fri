@@ -72,9 +72,9 @@ details summary::before{content:'⚙️ '}
 .top{display:flex;align-items:center;gap:8px;padding:8px 10px 4px;font-size:13px;color:var(--mute)}
 .top .code{background:rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-weight:600;color:var(--gold);letter-spacing:3px;border:0;font-size:14px;cursor:pointer}
 .top .mid{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top .ic{width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
-.top .ic .badge{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
-.top .ic.has .badge{display:block}
+.ic{width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
+.ic .badge{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
+.ic.has .badge{display:block}
 .conn{display:none;background:#8a5a00;color:#fff;text-align:center;font-size:13px;padding:3px}
 .conn.on{display:block}
 
@@ -136,22 +136,26 @@ details summary::before{content:'⚙️ '}
 .dense .bet{font-size:12px}
 .dense .dbtn{width:17px;height:17px;font-size:10px;top:10px;right:-3px}
 
-.panel{background:linear-gradient(#0d3123,#082018);border-top:1px solid var(--line);padding:8px 10px 10px;min-height:178px;border-radius:18px 18px 0 0}
-.mine{display:flex;align-items:center;gap:8px;--cw:46px;min-height:66px}
+.panel{background:linear-gradient(#0d3123,#082018);border-top:1px solid var(--line);padding:6px 10px 8px;height:240px;flex:none;overflow:hidden;border-radius:18px 18px 0 0}
+.mine{display:flex;align-items:center;gap:8px;--cw:38px;height:56px}
 .mine .mi{margin-left:6px;min-width:0}
 .mine .hn{font-weight:600;color:var(--gold);font-size:16px;line-height:1.2}
 .mine .st{font-size:13px;color:var(--mute);line-height:1.3}
-.acts{display:flex;gap:8px;margin-top:8px}
+.acts{display:flex;gap:8px;margin-top:6px}
+.acts .b{height:44px}
 .acts .b{flex:1;padding:0 6px}
 .acts .b.call{flex:1.2}
-.raisebar{margin-top:8px}
-.raisebar .sl{display:flex;align-items:center;gap:8px}
-.raisebar input[type=range]{flex:1;accent-color:var(--gold);height:32px}
-.raisebar .pre{display:flex;gap:6px;margin-top:6px}
-.raisebar .pre .b{flex:1;height:34px;font-size:13px;padding:0}
-.stepbtn{width:38px;height:36px;border-radius:10px;border:0;background:#1b4a39;font-size:20px;font-weight:600;cursor:pointer}
-.msg{margin-top:10px;text-align:center;font-size:15px;color:var(--ink)}
-.msg .b{margin-top:8px}
+.raisebar{margin-top:5px}
+.raisebar .sl{display:flex;align-items:center;gap:8px;height:34px}
+.raisebar input[type=range]{flex:1;accent-color:var(--gold);height:30px}
+.raisebar .pre{display:flex;gap:6px;margin-top:5px}
+.raisebar .r2{display:flex;gap:6px;margin-top:5px}
+.raisebar .r2 .in{flex:0 0 50%;width:50%;height:34px;font-size:16px;text-align:center;font-weight:600;color:var(--gold);padding:0 6px}
+.raisebar .r2 .b{flex:1;height:34px;font-size:13px;padding:0}
+.raisebar .pre .b{flex:1;height:32px;font-size:13px;padding:0}
+.stepbtn{width:38px;height:32px;border-radius:10px;border:0;background:#1b4a39;font-size:20px;font-weight:600;cursor:pointer}
+.msg{margin-top:6px;text-align:center;font-size:15px;color:var(--ink)}
+.msg .b{margin-top:6px}
 
 /* ---------- ลิ้นชัก ---------- */
 .drawer{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.55)}
@@ -183,6 +187,19 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .rm .rn i.off::before{background:#777}
 .rm .ra{display:flex;gap:8px}
 .rm .ra .b{flex:1}
+.ic.mic-on{background:#1d7a52}
+.ic.mic-muted{background:#8a2b34}
+.ic.mic-listen{background:#2b5a8a}
+.seat.talking .plate{border-color:#3ddc84;box-shadow:0 0 0 2px rgba(61,220,132,.55),0 0 16px rgba(61,220,132,.85)}
+.vb{position:absolute;left:-5px;top:12px;z-index:4;min-width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,.72);font-size:11px;display:flex;align-items:center;justify-content:center}
+.vbox{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:12px 0}
+.vbox h4{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--gold)}
+.vbox .vr{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:15px}
+.vbox .vr .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbox small{color:var(--mute);font-size:12px}
+.vbox small.ok{color:#3ddc84}
+.vbox small.bad{color:#ff8a8a}
+.vbox .tip{font-size:12px;color:var(--mute);margin:8px 0 0}
 .sheettitle{display:none;padding:14px 16px 0;font-weight:600;font-size:18px}
 .raisebar .amt{display:flex;align-items:center;gap:8px;margin-top:6px}
 .raisebar .amt span{font-size:13px;color:var(--mute);white-space:nowrap}
@@ -193,6 +210,24 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .bi .r{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:15px}
 .bi .r i{font-style:normal;color:var(--mute);font-size:12px}
 .bi .r b{font-weight:600}
+.fab{position:absolute;right:6px;bottom:4px;z-index:20;width:44px;height:42px;border-radius:14px;background:rgba(0,0,0,.45);border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.ic{color:inherit}
+.mbox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,420px);background:#0c2a20;border:1px solid var(--line);border-radius:18px;padding:16px 18px 18px}
+.mbox h3{margin:0 0 6px;font-size:19px;color:var(--gold)}
+.mbox label.chk{margin-top:14px}
+.pos{position:absolute;right:-5px;z-index:4;min-width:21px;height:18px;padding:0 3px;border-radius:9px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.5);color:#fff}
+.pos.sb{background:#2f7fd1;top:34px}
+.pos.bb{background:#e0861f;top:34px}
+.pos.sb+.pos.bb{top:54px}
+.dense .pos{top:30px;height:16px;min-width:19px;font-size:9px}
+.dense .pos.sb+.pos.bb{top:48px}
+.coinbox{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
+.coinbox h4{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--gold)}
+.lg{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px}
+.lg .sw{width:12px;height:12px;border-radius:50%;flex:none}
+.lg .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg .sk{font-size:14px;letter-spacing:1px;white-space:nowrap}
+.lg .sk i{font-style:normal;font-size:12px;color:var(--mute);letter-spacing:0;margin-left:2px}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:9px 16px;font-size:15px;z-index:99;max-width:86vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
 </style>
@@ -212,26 +247,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
         <label class="f" for="name">ชื่อของคุณ</label>
         <input id="name" class="in" maxlength="14" placeholder="เช่น PEPAE" autocomplete="off">
       </div>
-      <div class="card-box">
-        <h3>สร้างห้องใหม่</h3>
-        <details>
-          <summary>ตั้งค่าห้อง</summary>
-          <label class="f" for="sChips">ชิปเริ่มต้นต่อคน</label>
-          <select id="sChips" class="in">
-            <option>500</option><option selected>1000</option><option>2000</option><option>5000</option><option>10000</option>
-          </select>
-          <label class="f" for="sBlinds">บลายด์ (เล็ก/ใหญ่)</label>
-          <select id="sBlinds" class="in">
-            <option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option><option value="50/100">50 / 100</option>
-          </select>
-          <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
-          <select id="sTime" class="in">
-            <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
-          </select>
-          <label class="f chk"><input type="checkbox" id="sPrivate"> ห้องส่วนตัว (ไม่แสดงในรายการห้อง)</label>
-        </details>
-        <button id="btnCreate" class="b gold full" style="margin-top:8px">สร้างห้อง</button>
-      </div>
+      <button id="btnCreate" class="b gold full" style="margin-bottom:14px">➕ สร้างห้อง</button>
       <div class="card-box">
         <h3>เข้าห้องของเพื่อน</h3>
         <div class="sub">ห้องที่ออนไลน์อยู่ตอนนี้</div>
@@ -272,8 +288,9 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
     <div class="top">
       <button class="code" id="gCode" title="แตะเพื่อคัดลอกลิงก์"></button>
       <div class="mid" id="gMid"></div>
+      <button class="ic" id="btnMic" aria-label="ไมค์">🎤</button>
+      <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ">🪙</button>
       <button class="ic" id="btnRoom" aria-label="ห้อง">🏠</button>
-      <button class="ic" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
     </div>
     <div class="tablewrap" id="tablewrap">
       <div class="felt"></div>
@@ -284,6 +301,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
       </div>
       <div id="gSeats"></div>
       <canvas id="fx"></canvas>
+      <button class="ic fab" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
     </div>
     <div class="panel" id="panel"></div>
   </section>
@@ -307,6 +325,29 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
     </div>
   </div>
 </div>
+<!-- หน้าต่างตั้งค่าห้อง (เปิดหลังกดสร้างห้อง) -->
+<div class="drawer" id="createModal">
+  <div class="mbox">
+    <h3>ตั้งค่าห้อง</h3>
+    <label class="f" for="sChips">ชิปเริ่มต้นต่อคน</label>
+    <select id="sChips" class="in">
+      <option>500</option><option selected>1000</option><option>2000</option><option>5000</option><option>10000</option>
+    </select>
+    <label class="f" for="sBlinds">บลายด์ (เล็ก/ใหญ่)</label>
+    <select id="sBlinds" class="in">
+      <option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option><option value="50/100">50 / 100</option>
+    </select>
+    <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
+    <select id="sTime" class="in">
+      <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="sPrivate"> ห้องส่วนตัว (ไม่แสดงในรายการห้อง)</label>
+    <div class="row" style="margin-top:16px">
+      <button id="btnCreateCancel" class="b ghost">ยกเลิก</button>
+      <button id="btnCreateOk" class="b gold">สร้างห้อง</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -323,7 +364,7 @@ let state = null;        // ข้อมูลล่าสุดจากเซ�
 let es = null;
 let clockOffset = 0;     // เวลาเซิร์ฟเวอร์ - เวลาเครื่อง
 let turnTotal = 1;
-let raiseTo = 0;
+let raiseTo = 0, raiseKey = '';
 let panelSig = '';
 let lastBoardLen = 0, lastHandNo = -1, lastBoardKey = '';
 let fxKey = '';          // กันพลุซ้ำในตาเดียวกัน
@@ -377,8 +418,12 @@ function getName() {
   ls('pp_name', n);
   return n;
 }
-$('#btnCreate').onclick = async () => {
+$('#btnCreate').onclick = () => { if (getName()) $('#createModal').classList.add('on'); };
+$('#btnCreateCancel').onclick = () => $('#createModal').classList.remove('on');
+$('#createModal').onclick = (e) => { if (e.target.id === 'createModal') $('#createModal').classList.remove('on'); };
+$('#btnCreateOk').onclick = async () => {
   const name = getName(); if (!name) return;
+  $('#createModal').classList.remove('on');
   const [sb, bb] = $('#sBlinds').value.split('/').map(Number);
   try {
     const d = await api('create', { name, settings: { startChips: Number($('#sChips').value), sb, bb, turnTime: Number($('#sTime').value), private: $('#sPrivate').checked } });
@@ -436,6 +481,7 @@ $('#roomList').onclick = (e) => {
 $('#joinCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btnJoin').click(); });
 
 function startSession(d) {
+  leaveVoice(true);
   session = { code: d.code, token: d.token };
   ls('pp_session', JSON.stringify(session));
   history.replaceState(null, '', location.pathname);
@@ -443,6 +489,7 @@ function startSession(d) {
   connect();
 }
 function dropSession(msg) {
+  leaveVoice(true);
   if (es) es.close(); es = null;
   session = null; state = null;
   ls('pp_session', null);
@@ -457,6 +504,7 @@ function connect() {
   const q = `code=${encodeURIComponent(session.code)}&token=${encodeURIComponent(session.token)}`;
   es = new EventSource('/api/events?' + q);
   es.addEventListener('state', (e) => { setConn(true); onState(JSON.parse(e.data)); });
+  es.addEventListener('signal', (e) => { try { onSignal(JSON.parse(e.data)); } catch (err) { /* ข้อมูลเสียหาย ข้ามไป */ } });
   es.onopen = () => setConn(true);
   es.onerror = async () => {
     setConn(false);
@@ -504,6 +552,8 @@ function onState(s) {
 
   if (s.turnDeadline) turnTotal = Math.max(1, s.turnDeadline - s.serverNow);
   render();
+  syncVoice();
+  renderMic();
 
   // พลุฉลองที่ที่นั่งผู้ชนะ (ครั้งเดียวต่อตา)
   if (s.phase === 'showdown' && s.result) {
@@ -665,7 +715,9 @@ function renderGame() {
     const x = 50 + rx * Math.cos(th), y = 50 + ry * Math.sin(th);
     const isMe = !!me && p.id === me.id;
     const showCards = !isMe && p.hole.length > 0;
-    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : ''].join(' ');
+    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const vm = (s.voice || []).find((m) => m.id === p.id);
+    const vb = vm ? `<span class="vb">${vm.mode === 'listen' ? '🎧' : vm.muted ? '🔇' : '🎤'}</span>` : '';
     const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
     let label = p.lastAction;
     if (!label && s.phase !== 'lobby') {
@@ -678,7 +730,7 @@ function renderGame() {
     seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
       ${b}<div class="mini${showCards && p.hole[0] != null ? ' rev' : ''}">${mini}</div>
       <div class="plate"><div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div></div>
-      ${p.isDealer ? '<span class="dbtn">D</span>' : ''}${off}</div>`;
+      ${p.isDealer ? '<span class="dbtn">D</span>' : ''}${p.isSB ? '<span class="pos sb">SB</span>' : ''}${p.isBB ? '<span class="pos bb">BB</span>' : ''}${vb}${off}</div>`;
     if (p.bet > 0) {
       const k = dense ? 0.52 : 0.4;
       const bx = x + (50 - x) * k, by = y + (46 - y) * k;
@@ -753,8 +805,10 @@ function renderPanel(me, hlCards) {
   const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length]);
   if (sig === panelSig) return;
   panelSig = sig;
-  if (o) raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, raiseTo || o.minRaiseTo));
-  if (o && (raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
+  // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
+  const rkey = o ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
+  if (o && (rkey !== raiseKey || raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
+  raiseKey = rkey;
 
   const hole = me.hole || [];
   let h = `<div class="mine">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}
@@ -768,12 +822,15 @@ function renderPanel(me, hlCards) {
       ${o.canRaise ? `<button class="b gold" id="aRaise"></button>` : ''}
     </div>`;
     if (o.canRaise && o.minRaiseTo < o.maxRaiseTo) {
+      const sb = s.settings.sb, bb = s.settings.bb;
+      const nSteps = Math.ceil((o.maxRaiseTo - o.minRaiseTo) / sb);
       h += `<div class="raisebar"><div class="sl">
         <button class="stepbtn" id="rMinus">−</button>
-        <input type="range" id="rSlider" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" step="1" value="${raiseTo}">
+        <input type="range" id="rSlider" min="0" max="${nSteps}" step="1" value="0">
         <button class="stepbtn" id="rPlus">+</button></div>
-        <div class="amt"><span>ระบุจำนวนเอง</span><input id="rNum" class="in" type="number" inputmode="numeric" pattern="[0-9]*" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" value="${raiseTo}"></div>
-        <div class="pre"><button class="b sm" data-f="0.5">½ พ็อต</button><button class="b sm" data-f="0.75">¾ พ็อต</button><button class="b sm" data-f="1">พ็อต</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
+        <div class="r2"><input id="rNum" class="in" type="number" inputmode="numeric" pattern="[0-9]*" aria-label="ระบุจำนวนเอง" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" value="${raiseTo}">
+          <button class="b sm" data-add="${sb}">+${fmt(sb)} <small>SB</small></button><button class="b sm" data-add="${bb}">+${fmt(bb)} <small>BB</small></button></div>
+        <div class="pre"><button class="b sm" data-add="${bb * 2}">+${fmt(bb * 2)}</button><button class="b sm" data-add="${bb * 3}">+${fmt(bb * 3)}</button><button class="b sm" data-f="clear">ล้าง</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
     }
   } else if (s.phase === 'waiting') {
     const w = s.soleId ? nameOf(s.soleId) : '';
@@ -794,28 +851,31 @@ function renderPanel(me, hlCards) {
       if (!rb) return;
       const isAll = raiseTo >= o.maxRaiseTo;
       rb.innerHTML = isAll ? `ออลอิน ${fmt(o.maxRaiseTo)}` : `${o.isBet ? 'เดิมพัน' : 'เรสเป็น'} ${fmt(raiseTo)}`;
-      const sl = $p('#rSlider'); if (sl) sl.value = raiseTo;
+      const sl = $p('#rSlider'); if (sl) sl.value = Math.round((raiseTo - o.minRaiseTo) / s.settings.sb);
       const nm = $p('#rNum'); if (nm && document.activeElement !== nm) nm.value = raiseTo;
     };
     upd();
     if (rb) rb.onclick = () => act(raiseTo >= o.maxRaiseTo ? 'allin' : 'raise', raiseTo);
     const sl = $p('#rSlider');
     if (sl) {
-      sl.oninput = () => { raiseTo = Number(sl.value); upd(); };
+      const sb = s.settings.sb;
+      sl.oninput = () => { raiseTo = Math.min(o.maxRaiseTo, o.minRaiseTo + Number(sl.value) * sb); upd(); };
       const nm = $p('#rNum');
       nm.oninput = () => {
         const v = Math.floor(Number(nm.value));
         if (nm.value === '' || !Number.isFinite(v)) return;
         raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, v)); // ปรับเข้าช่วงที่เรสได้
-        upd();
+        upd(true);
       };
       nm.onblur = () => { nm.value = raiseTo; };
       nm.onkeydown = (e) => { if (e.key === 'Enter') nm.blur(); };
-      const step = s.settings.bb;
-      $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - step); upd(); };
-      $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + step); upd(); };
+      $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - sb); upd(); };
+      $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + sb); upd(); };
+      panel.querySelectorAll('[data-add]').forEach((b) => {
+        b.onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + Number(b.dataset.add)); upd(); };
+      });
       panel.querySelectorAll('[data-f]').forEach((b) => {
-        b.onclick = () => { raiseTo = b.dataset.f === 'max' ? o.maxRaiseTo : potRaise(Number(b.dataset.f)); upd(); };
+        b.onclick = () => { raiseTo = b.dataset.f === 'max' ? o.maxRaiseTo : o.minRaiseTo; upd(); };
       });
     }
   }
@@ -838,6 +898,48 @@ setInterval(() => {
   if (cd && state.nextHandAt) cd.textContent = Math.max(0, Math.ceil((state.nextHandAt - now) / 1000));
 }, 200);
 
+// ---------- กราฟชิป ----------
+const LINE_COLORS = ['#f4c95d', '#4fc3f7', '#ef6b73', '#7be495', '#c792ea', '#ff9f43', '#5eead4', '#f78fb3', '#b8c0ff'];
+function chartColors(s) {
+  const m = {};
+  (s.chart ? s.chart.ids : []).forEach((id, i) => { m[id] = LINE_COLORS[i % LINE_COLORS.length]; });
+  return m;
+}
+function chartSVG(s, colors) {
+  const c = s.chart;
+  if (!c || c.pts.length < 2) return '<p class="hint" style="margin:6px 0">กราฟจะขึ้นหลังจบตาแรก</p>';
+  const W = 340, H = 210, L = 44, R = 10, T = 10, B = 24;
+  const pts = c.pts;
+  const xs = pts.map((p) => p[0]);
+  const x0 = xs[0], x1 = xs[xs.length - 1] || x0 + 1;
+  let ymax = 0;
+  pts.forEach((p) => p.slice(1).forEach((v) => { if (v != null && v > ymax) ymax = v; }));
+  ymax = Math.max(ymax, 1);
+  const step = Math.pow(10, Math.floor(Math.log10(ymax)));
+  const top = Math.ceil(ymax / step) * step;
+  const X = (h) => L + ((h - x0) / Math.max(1, x1 - x0)) * (W - L - R);
+  const Y = (v) => T + (1 - v / top) * (H - T - B);
+  let g = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = (top * i) / 4, y = Y(v);
+    g += `<line x1="${L}" x2="${W - R}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.1)"/><text x="${L - 5}" y="${y + 4}" text-anchor="end" fill="#8db5a2" font-size="10">${fmt(Math.round(v))}</text>`;
+  }
+  const every = Math.max(1, Math.ceil((x1 - x0) / 6));
+  for (let h = x0; h <= x1; h += every) g += `<text x="${X(h)}" y="${H - 7}" text-anchor="middle" fill="#8db5a2" font-size="10">${h}</text>`;
+  g += `<text x="${W - R}" y="${H - 7}" text-anchor="end" fill="#8db5a2" font-size="9"></text>`;
+  c.ids.forEach((id, i) => {
+    let d = '', last = null;
+    pts.forEach((p) => {
+      const v = p[i + 1];
+      if (v == null) { last = null; return; }
+      d += (last == null ? 'M' : 'L') + X(p[0]).toFixed(1) + ' ' + Y(v).toFixed(1) + ' ';
+      last = v;
+    });
+    if (d) g += `<path d="${d}" fill="none" stroke="${colors[id]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${g}</svg><div class="sub" style="text-align:center;margin:2px 0 0">แกนนอน = ตาที่ · แกนตั้ง = จำนวนชิป</div>`;
+}
+
 // ---------- ลิ้นชัก ----------
 function openDrawer(tab) {
   drawerTab = tab;
@@ -847,6 +949,7 @@ function openDrawer(tab) {
 }
 function closeDrawer() { $('#drawer').classList.remove('on'); }
 $('#btnMenu').onclick = () => openDrawer(drawerTab === 'log' ? 'log' : 'chat');
+$('#btnCoin').onclick = () => openDrawer('coin');
 $('#btnRoom').onclick = () => openDrawer('room');
 $('#drawer').onclick = (e) => { if (e.target.id === 'drawer') closeDrawer(); };
 document.querySelectorAll('.tabs button').forEach((b) => {
@@ -866,8 +969,10 @@ function renderDrawer() {
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
   const isSpec = !!(state && state.you && state.you.spectator);
   $('#chatbar').style.display = drawerTab === 'chat' && !isSpec ? '' : 'none';
-  $('#tabs').style.display = drawerTab === 'room' ? 'none' : '';
-  $('#sheetTitle').style.display = drawerTab === 'room' ? 'block' : 'none';
+  const solo = drawerTab === 'room' || drawerTab === 'coin';
+  $('#tabs').style.display = solo ? 'none' : '';
+  $('#sheetTitle').style.display = solo ? 'block' : 'none';
+  $('#sheetTitle').textContent = drawerTab === 'coin' ? '🪙 ยอดบายอินและสถิติ' : '🏠 ห้อง';
   const body = $('#tabbody');
   const s = state; if (!s) return;
   const me = s.players.find((p) => p.id === s.you.id) || {};
@@ -875,20 +980,384 @@ function renderDrawer() {
   if (drawerTab === 'chat') {
     body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`).join('') : `<p class="hint">${isSpec ? 'ยังไม่มีข้อความ' : 'ยังไม่มีข้อความ ลองส่งอิโมจิดูสิ'}</p>`) + (isSpec ? '<p class="hint">👁 ผู้ชมอ่านแชทได้อย่างเดียว</p>' : '') + '</div>';
   } else if (drawerTab === 'log') {
+    body.innerHTML = '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+  } else if (drawerTab === 'coin') {
     const buyIn = s.settings.startChips;
-    const summary = `<div class="bi"><h4>ยอดบายอินรวม</h4>${s.players.map((p) =>
-      `<div class="r"><span>${esc(p.name)}</span><span><b>${fmt(buyIn * (1 + p.rebuys))}</b>${p.rebuys ? ` <i>(ซื้อเพิ่ม ${p.rebuys} ครั้ง)</i>` : ''}</span></div>`).join('')}</div>`;
-    body.innerHTML = summary + '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+    const colors = chartColors(s);
+    const rows = s.players.map((p) => `<div class="r"><span>${esc(p.name)}</span><span><b>${fmt(buyIn * (1 + p.rebuys))}</b>${p.rebuys ? ` <i>(ซื้อเพิ่ม ${p.rebuys} ครั้ง)</i>` : ''}</span></div>`).join('');
+    const lg = s.players.map((p) => {
+      const k = p.kills || 0;
+      return `<div class="lg"><span class="sw" style="background:${colors[p.id] || '#999'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span><span class="sk">${k ? '💀'.repeat(Math.min(k, 5)) + `<i>×${k}</i>` : '<i>–</i>'}</span></div>`;
+    }).join('');
+    body.innerHTML = `<div class="bi"><h4>ยอดบายอินรวม</h4>${rows}</div>
+      <div class="coinbox"><h4>📈 กราฟชิปรายตา</h4>${chartSVG(s, colors)}</div>
+      <div class="coinbox"><h4>💀 สถิติกำจัดผู้เล่น (ทำให้ชิปคนอื่นเหลือ 0)</h4>${lg}</div>`;
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
       <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
       ${s.spectators.length ? `<p class="hint">👁 ผู้ชม (${s.spectators.length}): ${esc(s.spectators.join(', '))}</p>` : ''}
+      ${voiceBoxHTML(s)}
       <button class="b red full" id="dLeave" style="margin-top:14px">ออกจากห้อง</button>`;
+    bindVoiceBox(body);
     $('#dShare').onclick = share;
     $('#dLeave').onclick = leaveRoom;
     body.querySelectorAll('[data-kick]').forEach((b) => { b.onclick = () => { if (confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: b.dataset.kick }).catch(() => {}); }; });
   }
   if (drawerTab === 'chat') body.scrollTop = body.scrollHeight;
+}
+
+// ---------- ห้องเสียง (WebRTC เชื่อมตรงระหว่างเครื่อง เซิร์ฟเวอร์ส่งต่อแค่สัญญาณจับคู่) ----------
+const voice = {
+  mode: 'off',            // off | talk | listen
+  muted: false,
+  stream: null, ctx: null,
+  peers: new Map(),       // id -> peer
+  speaking: new Set(),
+  analysers: new Map(),   // id -> {an, buf, until}
+  localMute: new Set(),   // คนที่เราปิดเสียงเองฝั่งเรา
+  orphans: new Map(),     // id -> [ice ที่มาก่อน offer]
+  fails: new Map(),
+  ice: null, busy: false, chain: Promise.resolve(), needTap: false,
+};
+const myId = () => (state && state.you ? state.you.id : null);
+const isSpecNow = () => !!(state && state.you && state.you.spectator);
+const vmember = (id) => ((state && state.voice) || []).find((m) => m.id === id);
+
+async function getIce() {
+  if (voice.ice) return voice.ice;
+  try { voice.ice = (await (await fetch('/api/ice')).json()).iceServers; } catch (e) { /* ใช้ STUN สำรอง */ }
+  if (!voice.ice) voice.ice = [{ urls: 'stun:stun.l.google.com:19302' }];
+  return voice.ice;
+}
+
+function ensureCtx() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!voice.ctx) { try { voice.ctx = new AC(); } catch (e) { return null; } }
+  if (voice.ctx.state === 'suspended') voice.ctx.resume().catch(() => {});
+  return voice.ctx;
+}
+
+function watchStream(id, stream) {
+  const ctx = ensureCtx();
+  if (!ctx) return;
+  unwatch(id);
+  try {
+    const src = ctx.createMediaStreamSource(stream);
+    const an = ctx.createAnalyser(); an.fftSize = 512;
+    src.connect(an);
+    voice.analysers.set(id, { src, an, buf: new Uint8Array(an.fftSize), until: 0 });
+  } catch (e) { /* ตรวจเสียงพูดไม่ได้ก็ยังคุยได้ */ }
+}
+function unwatch(id) {
+  const a = voice.analysers.get(id);
+  if (a) { try { a.src.disconnect(); } catch (e) { /* noop */ } voice.analysers.delete(id); }
+  if (voice.speaking.delete(id)) paintTalking();
+}
+function paintTalking() {
+  document.querySelectorAll('.seat[data-pid]').forEach((el) => el.classList.toggle('talking', voice.speaking.has(el.dataset.pid)));
+}
+setInterval(() => {
+  if (!voice.analysers.size) return;
+  const now = Date.now(); let changed = false;
+  for (const [id, a] of voice.analysers) {
+    a.an.getByteTimeDomainData(a.buf);
+    let sum = 0;
+    for (let i = 0; i < a.buf.length; i++) { const v = (a.buf[i] - 128) / 128; sum += v * v; }
+    const loud = Math.sqrt(sum / a.buf.length) > 0.02;
+    const silent = id === myId() && voice.muted;
+    if (loud && !silent && !voice.localMute.has(id)) a.until = now + 350;
+    const on = a.until > now;
+    if (on !== voice.speaking.has(id)) { on ? voice.speaking.add(id) : voice.speaking.delete(id); changed = true; }
+  }
+  if (changed) paintTalking();
+}, 150);
+
+async function getMic() {
+  return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
+}
+
+async function joinVoice(want) {
+  if (!session || voice.busy) return;
+  voice.busy = true;
+  try {
+    let mode = isSpecNow() ? 'listen' : want;
+    closeAllPeers();
+    if (voice.stream) { voice.stream.getTracks().forEach((t) => t.stop()); voice.stream = null; unwatch(myId()); }
+    if (mode === 'talk') {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nomic');
+        voice.stream = await getMic();
+      } catch (e) {
+        toast(location.protocol === 'http:' && location.hostname !== 'localhost' ? 'ไมค์ใช้ได้เฉพาะเว็บ https' : 'เปิดไมค์ไม่ได้ (ตรวจสอบสิทธิ์ไมค์ในเบราว์เซอร์) เข้าโหมดฟังอย่างเดียวแทน');
+        mode = 'listen';
+      }
+    }
+    ensureCtx();
+    voice.mode = mode; voice.muted = false; voice.fails.clear();
+    if (voice.stream) watchStream(myId(), voice.stream);
+    await getIce();
+    await api('voice', { ...session, mode, muted: false });
+  } catch (e) { voice.mode = 'off'; }
+  voice.busy = false;
+  renderMic(); refreshVoiceUI(); syncVoice();
+}
+
+function leaveVoice(silent) {
+  const was = voice.mode !== 'off';
+  closeAllPeers();
+  if (voice.stream) { voice.stream.getTracks().forEach((t) => t.stop()); voice.stream = null; }
+  for (const id of [...voice.analysers.keys()]) unwatch(id);
+  voice.mode = 'off'; voice.muted = false; voice.orphans.clear(); voice.fails.clear(); voice.needTap = false;
+  if (was && !silent && session) api('voice', { ...session, mode: 'off' }).catch(() => {});
+  renderMic();
+}
+
+function toggleMute() {
+  if (voice.mode !== 'talk' || !voice.stream) return;
+  voice.muted = !voice.muted;
+  voice.stream.getAudioTracks().forEach((t) => { t.enabled = !voice.muted; });
+  if (voice.muted) { voice.speaking.delete(myId()); paintTalking(); }
+  api('voice', { ...session, mode: 'talk', muted: voice.muted }).catch(() => {});
+  renderMic();
+}
+
+// ----- เชื่อมต่อกับแต่ละคน -----
+function sendSignal(to, data) {
+  voice.chain = voice.chain.then(() => fetch('/api/signal', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...session, to, data }),
+  }).catch(() => {}));
+}
+
+function closePeer(id) {
+  const p = voice.peers.get(id);
+  if (!p) return;
+  voice.peers.delete(id);
+  p.closed = true;
+  clearTimeout(p.timer);
+  try { p.pc.ontrack = p.pc.onicecandidate = p.pc.onconnectionstatechange = null; p.pc.close(); } catch (e) { /* noop */ }
+  if (p.audio) { try { p.audio.pause(); p.audio.srcObject = null; p.audio.remove(); } catch (e) { /* noop */ } }
+  unwatch(id);
+}
+function closeAllPeers() { for (const id of [...voice.peers.keys()]) closePeer(id); }
+
+function newPeer(id, remoteMode) {
+  const pc = new RTCPeerConnection({ iceServers: voice.ice || [{ urls: 'stun:stun.l.google.com:19302' }] });
+  const p = { id, pc, sid: Math.random().toString(36).slice(2, 10), remoteSid: null, remoteMode, pending: [], haveRemote: false, status: 'connecting', audio: null, closed: false, timer: null };
+  voice.peers.set(id, p);
+  pc.onicecandidate = (e) => { if (e.candidate) sendSignal(id, { t: 'ice', sid: p.sid, for: p.remoteSid || undefined, c: e.candidate }); };
+  pc.ontrack = (e) => attachRemote(p, e.streams && e.streams[0] ? e.streams[0] : new MediaStream([e.track]));
+  pc.onconnectionstatechange = () => onPeerState(p);
+  return p;
+}
+
+function attachRemote(p, stream) {
+  if (!p.audio) {
+    const a = document.createElement('audio');
+    a.autoplay = true; a.playsInline = true; a.setAttribute('playsinline', '');
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    p.audio = a;
+  }
+  p.audio.srcObject = stream;
+  p.audio.muted = voice.localMute.has(p.id);
+  const pl = p.audio.play();
+  if (pl && pl.catch) pl.catch(() => { voice.needTap = true; refreshVoiceUI(); });
+  watchStream(p.id, stream);
+}
+// iOS บางทีไม่ยอมเล่นเสียงจนกว่าจะแตะหน้าจอ
+document.addEventListener('click', () => {
+  if (voice.mode === 'off') return;
+  ensureCtx();
+  voice.peers.forEach((p) => { if (p.audio && p.audio.paused) p.audio.play().then(() => { voice.needTap = false; refreshVoiceUI(); }).catch(() => {}); });
+}, true);
+
+function addLocalTracks(p, offerer) {
+  if (voice.mode === 'talk' && voice.stream) {
+    voice.stream.getAudioTracks().forEach((t) => p.pc.addTrack(t, voice.stream));
+  } else if (offerer) {
+    p.pc.addTransceiver('audio', { direction: 'recvonly' });
+  }
+}
+
+async function startCall(id, remoteMode) {
+  const p = newPeer(id, remoteMode);
+  try {
+    addLocalTracks(p, true);
+    const offer = await p.pc.createOffer();
+    await p.pc.setLocalDescription(offer);
+    if (p.closed) return;
+    sendSignal(id, { t: 'offer', sid: p.sid, sdp: p.pc.localDescription.sdp });
+  } catch (e) { setPeerStatus(p, 'bad'); }
+}
+
+async function onSignal(msg) {
+  if (voice.mode === 'off' || !msg || !msg.data) return;
+  const { from, data } = msg;
+  let p = voice.peers.get(from);
+  try {
+    if (data.t === 'offer') {
+      if (p && p.remoteSid === data.sid) return;      // ซ้ำ
+      if (p) closePeer(from);
+      const v = vmember(from);
+      p = newPeer(from, v ? v.mode : 'talk');
+      p.remoteSid = data.sid;
+      await p.pc.setRemoteDescription({ type: 'offer', sdp: data.sdp });
+      if (p.closed) return;
+      addLocalTracks(p, false);
+      const ans = await p.pc.createAnswer();
+      await p.pc.setLocalDescription(ans);
+      p.haveRemote = true;
+      const early = (voice.orphans.get(from) || []).filter((o) => o.sid === data.sid);
+      voice.orphans.delete(from);
+      early.forEach((o) => p.pending.push(o.c));
+      sendSignal(from, { t: 'answer', sid: p.sid, for: data.sid, sdp: p.pc.localDescription.sdp });
+      flushPending(p);
+    } else if (data.t === 'answer') {
+      if (!p || data.for !== p.sid || p.remoteSid) return;
+      p.remoteSid = data.sid;
+      await p.pc.setRemoteDescription({ type: 'answer', sdp: data.sdp });
+      p.haveRemote = true;
+      flushPending(p);
+    } else if (data.t === 'ice') {
+      if (!p) {                                        // มาก่อน offer เก็บไว้ก่อน
+        const list = voice.orphans.get(from) || [];
+        if (list.length < 40) list.push({ sid: data.sid, c: data.c });
+        voice.orphans.set(from, list);
+        return;
+      }
+      if (data.for && data.for !== p.sid) return;       // ของรอบเก่า
+      if (p.remoteSid && data.sid !== p.remoteSid) return;
+      p.pending.push(data.c);
+      if (p.haveRemote) flushPending(p);
+    }
+  } catch (e) { if (p) setPeerStatus(p, 'bad'); }
+}
+
+function flushPending(p) {
+  const list = p.pending.splice(0);
+  list.forEach((c) => { p.pc.addIceCandidate(c).catch(() => {}); });
+}
+
+function setPeerStatus(p, st) {
+  if (p.status === st) return;
+  p.status = st;
+  refreshVoiceUI();
+}
+
+function onPeerState(p) {
+  if (p.closed) return;
+  const st = p.pc.connectionState;
+  if (st === 'connected') { voice.fails.delete(p.id); setPeerStatus(p, 'ok'); }
+  else if (st === 'failed') {
+    const n = (voice.fails.get(p.id) || 0) + 1;
+    voice.fails.set(p.id, n);
+    closePeer(p.id);
+    if (n >= 3) { toast('ต่อเสียงกับ ' + nameOf(p.id) + ' ไม่ได้ (เครือข่ายอาจบล็อก)'); const dead = { id: p.id, status: 'bad', dead: true, pc: { close() {} }, closed: false }; voice.peers.set(p.id, dead); refreshVoiceUI(); return; }
+    setTimeout(syncVoice, 1500);
+  }
+}
+
+// เทียบรายชื่อห้องเสียงจากเซิร์ฟเวอร์กับสายที่ต่ออยู่
+function syncVoice() {
+  if (voice.mode === 'off' || !state || voice.busy) return;
+  const me = vmember(myId());
+  if (!me) { rejoinVoice(); return; }
+  const others = (state.voice || []).filter((m) => m.id !== myId());
+  const ids = new Set(others.map((m) => m.id));
+  for (const id of [...voice.peers.keys()]) if (!ids.has(id)) closePeer(id);
+  for (const id of [...voice.orphans.keys()]) if (!ids.has(id)) voice.orphans.delete(id);
+  for (const m of others) {
+    const need = voice.mode === 'talk' || m.mode === 'talk';
+    let p = voice.peers.get(m.id);
+    if (p && (p.remoteMode !== m.mode || !need)) { voice.fails.delete(m.id); closePeer(m.id); p = null; }
+    if (!need || p) continue;
+    if ((voice.fails.get(m.id) || 0) >= 3) continue;
+    if (myId() < m.id) startCall(m.id, m.mode);          // id น้อยกว่าเป็นฝ่ายโทรหา
+    // ฝ่ายอื่นรอ offer (สร้าง peer ตอนได้รับ)
+  }
+  // เมื่อโหมดเปลี่ยน ปรับ remoteMode ของสายที่รออยู่
+  for (const p of voice.peers.values()) { const m = vmember(p.id); if (m) p.remoteMode = m.mode; }
+}
+
+let rejoining = false;
+async function rejoinVoice() {
+  if (rejoining || !session) return;
+  rejoining = true;
+  try {
+    closeAllPeers();
+    let mode = voice.mode;
+    if (mode === 'talk' && (!voice.stream || voice.stream.getAudioTracks().every((t) => t.readyState === 'ended'))) {
+      try { voice.stream = await getMic(); watchStream(myId(), voice.stream); } catch (e) { mode = 'listen'; voice.mode = 'listen'; }
+    }
+    if (voice.stream) voice.stream.getAudioTracks().forEach((t) => { t.enabled = !voice.muted; });
+    await api('voice', { ...session, mode, muted: mode === 'talk' && voice.muted });
+  } catch (e) { /* ลองใหม่รอบถัดไป */ }
+  setTimeout(() => { rejoining = false; }, 1500);
+}
+
+// ----- หน้าตา -----
+function renderMic() {
+  const b = $('#btnMic'); if (!b) return;
+  const spec = isSpecNow();
+  b.classList.remove('mic-on', 'mic-muted', 'mic-listen');
+  if (voice.mode === 'talk') { b.classList.add(voice.muted ? 'mic-muted' : 'mic-on'); b.textContent = voice.muted ? '🔇' : '🎤'; }
+  else if (voice.mode === 'listen') { b.classList.add('mic-listen'); b.textContent = '🎧'; }
+  else b.textContent = spec ? '🎧' : '🎤';
+}
+$('#btnMic').onclick = () => {
+  if (!session) return;
+  if (voice.mode === 'off') joinVoice(isSpecNow() ? 'listen' : 'talk');
+  else if (voice.mode === 'talk') toggleMute();
+  else if (isSpecNow()) leaveVoice();
+  else joinVoice('talk');
+};
+
+function refreshVoiceUI() {
+  renderMic();
+  if ($('#drawer').classList.contains('on') && (drawerTab === 'room' || drawerTab === 'coin') && state) renderDrawer();
+}
+
+function voiceBoxHTML(s) {
+  const spec = !!(s.you && s.you.spectator);
+  const list = (s.voice || []);
+  const on = voice.mode !== 'off';
+  const rows = list.map((m) => {
+    const self = m.id === s.you.id;
+    const p = voice.peers.get(m.id);
+    let st = '';
+    if (!self && on) {
+      if (!(voice.mode === 'talk' || m.mode === 'talk')) st = '<small>ฟังอยู่ทั้งคู่</small>';
+      else if (p && p.status === 'ok') st = '<small class="ok">เชื่อมต่อแล้ว</small>';
+      else if (p && p.status === 'bad') st = '<small class="bad">ต่อไม่ได้</small>';
+      else st = '<small>กำลังเชื่อมต่อ…</small>';
+    }
+    const icon = m.mode === 'listen' ? '🎧' : m.muted ? '🔇' : '🎤';
+    const mute = !self && on ? `<button class="b sm ghost" data-vmute="${m.id}">${voice.localMute.has(m.id) ? '🔈 เปิดเสียงเขา' : '🔇 ปิดเสียงเขา'}</button>` : '';
+    return `<div class="vr"><span>${icon}</span><span class="grow">${esc(m.name)}${self ? ' (คุณ)' : ''} ${st}</span>${mute}</div>`;
+  }).join('');
+  const btns = !on
+    ? (spec ? '<button class="b green full" data-vjoin="listen">🎧 เข้าไปฟัง</button>'
+      : '<button class="b green full" data-vjoin="talk">🎤 เข้าห้องเสียง (พูดได้)</button><button class="b ghost full" style="margin-top:8px" data-vjoin="listen">🎧 ฟังอย่างเดียว</button>')
+    : `<button class="b ghost full" data-vleave="1">ออกจากห้องเสียง</button>${voice.mode === 'listen' && !spec ? '<button class="b green full" style="margin-top:8px" data-vjoin="talk">🎤 เปิดไมค์พูด</button>' : ''}`;
+  return `<div class="vbox"><h4>🎤 ห้องเสียง</h4>${rows || '<p class="hint" style="margin:4px 0">ยังไม่มีใครในห้องเสียง</p>'}
+    <div style="margin-top:8px">${btns}</div>
+    ${voice.needTap ? '<p class="tip">แตะหน้าจอหนึ่งครั้งเพื่อเปิดเสียง</p>' : ''}
+    <p class="tip">${spec ? 'ผู้ชมฟังได้อย่างเดียว' : 'ไมค์ปิดไว้จนกว่าจะกดเข้า · กดปุ่ม 🎤 ด้านบนเพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
+}
+function bindVoiceBox(root) {
+  root.querySelectorAll('[data-vjoin]').forEach((b) => { b.onclick = () => joinVoice(b.dataset.vjoin); });
+  root.querySelectorAll('[data-vleave]').forEach((b) => { b.onclick = () => { leaveVoice(); renderDrawer(); }; });
+  root.querySelectorAll('[data-vmute]').forEach((b) => {
+    b.onclick = () => {
+      const id = b.dataset.vmute;
+      if (voice.localMute.has(id)) voice.localMute.delete(id); else voice.localMute.add(id);
+      const p = voice.peers.get(id); if (p && p.audio) p.audio.muted = voice.localMute.has(id);
+      if (voice.localMute.has(id)) { voice.speaking.delete(id); paintTalking(); }
+      renderDrawer();
+    };
+  });
 }
 
 // ---------- เริ่มต้น ----------

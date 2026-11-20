@@ -98,7 +98,7 @@ async function handleApi(req, res, url) {
       'X-Accel-Buffering': 'no',
     });
     res.write('retry: 2000\n\n');
-    const client = { res, token: p.token };
+    const client = { res, token: p.token, mid: p.id };
     ctx.entry.clients.add(client);
     setOnline(true);
     send(client, ctx.room);
@@ -131,6 +131,16 @@ async function handleApi(req, res, url) {
     return json(res, 200, list);
   }
 
+  // ค่า ICE สำหรับเสียง: STUN ฟรีเป็นค่าเริ่มต้น ถ้าตั้งตัวแปร ICE_SERVERS (JSON) จะเพิ่มเข้าไป เช่น TURN ของผู้ให้บริการ
+  if (req.method === 'GET' && route === '/api/ice') {
+    const iceServers = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+    try {
+      const extra = process.env.ICE_SERVERS ? JSON.parse(process.env.ICE_SERVERS) : [];
+      if (Array.isArray(extra)) iceServers.push(...extra.filter((s) => s && s.urls));
+    } catch (e) { console.error('ICE_SERVERS ไม่ใช่ JSON ที่ถูกต้อง'); }
+    return json(res, 200, { iceServers });
+  }
+
   if (req.method === 'GET' && route === '/api/health') return json(res, 200, { ok: true, rooms: rooms.size });
 
   if (req.method !== 'POST') throw new UserError('ไม่พบหน้านี้', 404);
@@ -158,6 +168,28 @@ async function handleApi(req, res, url) {
     ctx.room.removeSpectator(ctx.spec);
     return json(res, 200, { ok: true });
   }
+  // ห้องเสียง: ทั้งผู้เล่นและผู้ชมใช้ได้ (ผู้ชมได้แค่โหมดฟัง — ตรวจใน room.setVoice)
+  if (route === '/api/voice') {
+    const m = needMember(ctx);
+    ctx.room.setVoice(m, body.mode, body.muted);
+    return json(res, 200, { ok: true });
+  }
+  if (route === '/api/signal') {
+    const m = needMember(ctx);
+    const data = body.data;
+    if (!data || !['offer', 'answer', 'ice'].includes(data.t) || JSON.stringify(data).length > 8000) throw new UserError('ข้อมูลสัญญาณไม่ถูกต้อง');
+    const target = ctx.room.memberById(String(body.to || ''));
+    if (!target || target.id === m.id) throw new UserError('ไม่พบปลายทาง', 404);
+    // ส่งต่อให้เฉพาะปลายทางในห้องเดียวกัน (เซิร์ฟเวอร์ไม่แตะต้องเนื้อหา)
+    let sent = 0;
+    for (const c of ctx.entry.clients) {
+      if (c.mid !== target.id) continue;
+      try { c.res.write(`event: signal\ndata: ${JSON.stringify({ from: m.id, data })}\n\n`); sent++; } catch (e) { /* ปิดไปแล้ว */ }
+    }
+    if (!sent) throw new UserError('ปลายทางไม่ได้ออนไลน์', 404);
+    return json(res, 200, { ok: true });
+  }
+
   const p = needPlayer(ctx);
   switch (route) {
     case '/api/action': ctx.room.act(p, { type: body.type, amount: body.amount }); break;

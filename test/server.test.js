@@ -11,7 +11,7 @@ const post = async (path, body) => {
 
 // ไคลเอนต์ SSE แบบง่าย
 function sse(code, token) {
-  const c = { state: null, req: null, waiters: [] };
+  const c = { state: null, req: null, waiters: [], signals: [] };
   c.req = http.get(`${base}/api/events?code=${code}&token=${token}`, (res) => {
     let buf = '';
     res.setEncoding('utf8');
@@ -20,8 +20,10 @@ function sse(code, token) {
       let i;
       while ((i = buf.indexOf('\n\n')) >= 0) {
         const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+        const ev = (chunk.match(/^event: (.*)$/m) || [])[1] || 'message';
         const m = chunk.match(/^data: (.*)$/m);
-        if (m) { c.state = JSON.parse(m[1]); c.waiters = c.waiters.filter((w) => !w(c.state)); }
+        if (m && ev === 'signal') c.signals.push(JSON.parse(m[1]));
+        else if (m) { c.state = JSON.parse(m[1]); c.waiters = c.waiters.filter((w) => !w(c.state)); }
       }
     });
   });
@@ -160,6 +162,56 @@ function sse(code, token) {
   assert.strictEqual((await fetch(`${base}/api/session?code=${code}&token=${w.body.token}`)).status, 403, 'ออกแล้ว token ใช้ไม่ได้');
   ws.close();
   console.log('✓ spectator: view-only, hidden cards, cannot act, can leave');
+
+  // ---------- ห้องเสียง ----------
+  const iceRes = await (await fetch(base + '/api/ice')).json();
+  assert(iceRes.iceServers.length >= 1 && iceRes.iceServers[0].urls, 'ต้องมี STUN เป็นค่าเริ่มต้น');
+  process.env.ICE_SERVERS = JSON.stringify([{ urls: 'turn:example.org:3478', username: 'u', credential: 'c' }, { bogus: 1 }]);
+  const ice2 = await (await fetch(base + '/api/ice')).json();
+  assert(ice2.iceServers.some((s) => s.urls === 'turn:example.org:3478'), 'ICE_SERVERS ต้องถูกเพิ่ม');
+  assert(!ice2.iceServers.some((s) => s.bogus), 'รายการที่ไม่มี urls ต้องถูกตัดทิ้ง');
+  delete process.env.ICE_SERVERS;
+
+  const id0 = cl[0].state.you.id, id1 = cl[1].state.you.id;
+  assert.strictEqual((await post('voice', { code, token: toks[0], mode: 'talk' })).status, 200);
+  assert.strictEqual((await post('voice', { code, token: toks[1], mode: 'talk', muted: true })).status, 200);
+  const vv = await cl[0].until((s) => s.voice.length === 2);
+  assert.deepStrictEqual(vv.voice.map((m) => [m.id, m.mode, m.muted]), [[id0, 'talk', false], [id1, 'talk', true]]);
+  assert.strictEqual((await post('voice', { code, token: toks[0], mode: 'bogus' })).status, 400);
+
+  // ผู้ชม: ฟังได้ พูดไม่ได้
+  const w2 = await post('watch', { code, name: 'ฟังเฉยๆ' });
+  const ws2 = sse(code, w2.body.token);
+  await ws2.until((s) => s.you && s.you.spectator);
+  assert.strictEqual((await post('voice', { code, token: w2.body.token, mode: 'talk' })).status, 403, 'ผู้ชมต้องพูดไม่ได้');
+  assert.strictEqual((await post('voice', { code, token: w2.body.token, mode: 'listen' })).status, 200);
+  const vv2 = await cl[0].until((s) => s.voice.length === 3);
+  assert.strictEqual(vv2.voice[2].mode, 'listen');
+
+  // ส่งสัญญาณ: ถึงเฉพาะปลายทาง พร้อมบอกว่าใครส่ง
+  const offer = { t: 'offer', sid: 'abc', sdp: 'v=0\r\n' };
+  assert.strictEqual((await post('signal', { code, token: toks[0], to: id1, data: offer })).status, 200);
+  await new Promise((r) => setTimeout(r, 100));
+  assert.deepStrictEqual(cl[1].signals, [{ from: id0, data: offer }]);
+  assert.strictEqual(cl[0].signals.length, 0, 'ผู้ส่งต้องไม่ได้รับซ้ำ');
+  assert.strictEqual(ws2.signals.length, 0, 'คนอื่นต้องไม่ได้รับสัญญาณที่ไม่ใช่ของตัวเอง');
+  // ผู้ชมส่งสัญญาณถึงผู้เล่นได้ (เพื่อเชื่อมต่อฟัง)
+  assert.strictEqual((await post('signal', { code, token: w2.body.token, to: id0, data: { t: 'ice', sid: 'z', cand: { candidate: 'x' } } })).status, 200);
+  await new Promise((r) => setTimeout(r, 100));
+  assert.strictEqual(cl[0].signals.length, 1);
+  // ข้อมูลผิดปกติ/ปลายทางไม่มี/ส่งหาตัวเอง/ใหญ่เกิน/ไม่ใช่สมาชิก
+  assert.strictEqual((await post('signal', { code, token: toks[0], to: 'pnope', data: offer })).status, 404);
+  assert.strictEqual((await post('signal', { code, token: toks[0], to: id0, data: offer })).status, 404);
+  assert.strictEqual((await post('signal', { code, token: toks[0], to: id1, data: { t: 'hack' } })).status, 400);
+  assert.strictEqual((await post('signal', { code, token: toks[0], to: id1, data: { t: 'offer', sdp: 'x'.repeat(9000) } })).status, 400);
+  assert.strictEqual((await post('signal', { code, token: 'bad', to: id1, data: offer })).status, 403);
+
+  // ออกจากห้องเสียง / หลุดการเชื่อมต่อ = หลุดห้องเสียงเอง
+  assert.strictEqual((await post('voice', { code, token: toks[0], mode: 'off' })).status, 200);
+  await cl[1].until((s) => s.voice.length === 2);
+  ws2.close();
+  await cl[1].until((s) => s.voice.length === 1 && s.voice[0].id === id1);
+  console.log('✓ voice: state, spectator listen-only, signaling relay, validation, auto-leave');
 
   cl.forEach((c) => c.close());
   console.log('SERVER TESTS PASSED');

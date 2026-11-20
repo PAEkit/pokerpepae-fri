@@ -252,6 +252,28 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   console.log('✓ all-in runout paced (0→3→4→5), hole cards revealed');
 })();
 
+// 4b) สถิติกำจัดผู้เล่น + กราฟชิป + ตำแหน่ง SB/BB
+(() => {
+  const room = new Room('K', { startChips: 500, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  const v0 = room.viewFor(ps[0].token);
+  assert.strictEqual(v0.players.filter((p) => p.isSB).length, 1);
+  assert.strictEqual(v0.players.filter((p) => p.isBB).length, 1);
+  for (let i = 0; i < 20 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; room.act(p, { type: 'allin' }); }
+  assert.strictEqual(room.phase, 'showdown');
+  const v = room.viewFor(ps[0].token);
+  const dead = v.players.filter((p) => p.chips === 0);
+  assert(dead.length >= 1, 'ต้องมีคนชิปหมด');
+  const kills = v.players.reduce((s, p) => s + p.kills, 0);
+  assert(kills >= dead.length, 'ต้องนับการกำจัด');
+  assert.strictEqual(v.chart.pts.length, 2);
+  assert.deepStrictEqual(v.chart.pts[0].slice(1), [500, 500, 500]);
+  assert.strictEqual(v.chart.pts[1].slice(1).reduce((a, b) => a + b, 0), 1500);
+  room.destroy();
+  console.log('✓ kills, chip chart, SB/BB flags');
+})();
+
 // 5) ไทเมอร์: หมดเวลาแล้วเช็ค/โฟลด์อัตโนมัติ
 (async () => {
   const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 1 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
