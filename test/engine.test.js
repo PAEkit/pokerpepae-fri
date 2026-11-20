@@ -274,6 +274,65 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   console.log('✓ kills, chip chart, SB/BB flags');
 })();
 
+// 4c) ทัวร์นาเมนต์
+(async () => {
+  const T = { nextHandDelay: 1e9, tourEndDelay: 0, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 };
+  const allinHand = (room) => { for (let i = 0; i < 40 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; room.act(p, { type: 'allin' }); } };
+  const foldHand = (room) => { for (let i = 0; i < 40 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; const o = room.optionsFor(p); room.act(p, { type: o.canCheck ? 'check' : 'fold' }); } };
+
+  // บลายด์เพิ่ม 2 เท่าทุก N ตา, ชิป = ฿ x 10, ล็อกคนเข้า
+  let room = new Room('TA', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 2, turnTime: 0 }, T);
+  let ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  assert.strictEqual(room.settings.startChips, 1000);
+  room.start(ps[0]);
+  assert.throws(() => room.addPlayer('Z'), /เริ่มไปแล้ว/);
+  const seen = [];
+  for (let h = 0; h < 4; h++) { seen.push(room.settings.bb); foldHand(room); room.startHand(); }
+  assert.deepStrictEqual(seen, [20, 20, 40, 40], 'บลายด์ต้องเพิ่ม 2 เท่าทุก 2 ตา ได้ ' + seen);
+  room.destroy();
+
+  // 3 คน: ชิปหมด = ตกรอบทันที (ปิดบายอิน) และกลายเป็นผู้ชม จนเหลือผู้ชนะ
+  room = new Room('TB', { tournament: true, buyIn: 100, sb: 10, bb: 20, turnTime: 0 }, T);
+  ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  for (let g = 0; g < 30 && room.phase !== 'over'; g++) {
+    if (room.phase === 'hand') allinHand(room);
+    else if (room.phase === 'showdown') room.startHand();
+    await new Promise((r) => setTimeout(r, 5));
+  }
+  assert.strictEqual(room.phase, 'over', 'ต้องจบทัวร์นาเมนต์');
+  const res = room.tour.result;
+  assert.deepStrictEqual(res.rows.map((r) => r.place), [1, 2, 3]);
+  assert.strictEqual(res.pool, 300);
+  assert.strictEqual(res.rows.reduce((a, r) => a + r.prize, 0), 300, 'รางวัลรวมต้องเท่ายอดบายอิน');
+  assert.deepStrictEqual(res.rows.map((r) => r.prize), [200, 100, 0]);
+  const loser = room.players.find((p) => p.place === 3);
+  assert(loser.out && room.viewFor(loser.token).you.spectator, 'ผู้ตกรอบต้องเป็นผู้ชม');
+  room.destroy();
+
+  // 6 คน: ชิปหมดแล้วบายอินเพิ่มได้ 2 ครั้ง, ครั้งที่ 3 ไม่ได้ → ตกรอบ
+  room = new Room('TC', { tournament: true, buyIn: 100, sb: 10, bb: 20, turnTime: 0 }, T);
+  ps = ['A', 'B', 'C', 'D', 'E', 'F'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  room.phase = 'showdown'; // จำลองหลังจบตา
+  room.players[1].chips = 0;
+  room.handNo = 1; room.tourAfterHand();
+  assert(!room.players[1].out && room.players[1].bustHand === 1, 'ต้องรอบายอินเพิ่ม ไม่ตกรอบทันที');
+  room.rebuy(room.players[1]);
+  assert.strictEqual(room.players[1].chips, 1000);
+  room.players[1].chips = 0; room.handNo = 2; room.tourAfterHand(); room.rebuy(room.players[1]);
+  room.players[1].chips = 0; room.handNo = 3; room.tourAfterHand();
+  assert(room.players[1].out, 'บายอินครบ 2 ครั้งแล้วชิปหมด ต้องตกรอบ');
+  assert.strictEqual(room.players[1].place, 6);
+  // หมดเวลา 5 ตาโดยไม่บายอิน = สละสิทธิ์
+  room.players[2].chips = 0; room.handNo = 3; room.tourAfterHand();
+  assert(!room.players[2].out);
+  room.handNo = 8; room.tourForfeit(); // ตาถัดไปคือ 9 > 3+5
+  assert(room.players[2].out, 'เกิน 5 ตาต้องสละสิทธิ์');
+  room.destroy();
+  console.log('✓ tournament: blind levels, join lock, elimination, rebuys, prizes');
+})();
+
 // 5) ไทเมอร์: หมดเวลาแล้วเช็ค/โฟลด์อัตโนมัติ
 (async () => {
   const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 1 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
