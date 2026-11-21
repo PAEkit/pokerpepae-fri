@@ -352,6 +352,49 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .tst .r.out{opacity:.55}
 .tst .pz{font-weight:700;color:var(--gold);white-space:nowrap}
 .lbchat{max-height:170px;overflow:auto;margin-bottom:6px}
+.pk{display:flex;flex-wrap:wrap;gap:6px}
+.pkb{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer}
+.pkb.on{background:var(--gold);color:#2a1b00;font-weight:600;border-color:var(--gold)}
+
+/* ---------- รอบแก้ไข 3 ---------- */
+.cf{width:100%;display:flex;align-items:center;gap:10px;height:56px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.05);padding:0 12px;cursor:pointer;text-align:left;color:var(--ink)}
+.cf .cft{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.cf .cft b{font-size:18px;font-weight:700;letter-spacing:.3px}
+.cf .cft small{font-size:12px;color:var(--mute)}
+.cf .cfs{font-size:13px;font-weight:700;color:var(--mute);width:28px;text-align:right}
+.cf .cfk{width:48px;height:27px;border-radius:14px;background:#4a5a52;position:relative;flex:none;transition:background .15s}
+.cf .cfk::after{content:'';position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s}
+.cf.on{border-color:var(--gold);background:rgba(244,201,93,.13);box-shadow:0 0 12px rgba(244,201,93,.3)}
+.cf.on .cft small{color:#ffe9a8}.cf.on .cfs{color:var(--gold)}
+.cf.on .cfk{background:#1d9a68}.cf.on .cfk::after{left:24px}
+.pos.d{background:#fff;color:#111}
+.card.shownc{box-shadow:0 0 0 2px #fff,0 0 14px rgba(255,255,255,.95);filter:brightness(1.1)}
+.seat .mini.rev.shown{--cw:34px;height:48px}
+.seat.folded .mini.shown{opacity:1}
+.banner .wn{font-size:21px;font-weight:700;color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.banner .wd{font-size:14px;color:#fff;font-weight:500}
+.banner .wl{margin-bottom:1px}
+.rrow .pz{text-align:right}
+.rrow .pz small,.netbox small{display:block;font-size:12px;font-weight:600}
+.net.up,.netbox.up b{color:#5ad6a0}.net.dn,.netbox.dn b{color:#ff7b86}
+.netbox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;margin:0 0 8px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.netbox span{font-size:15px;font-weight:600}.netbox small{color:var(--mute);font-weight:400}.netbox b{font-size:24px}
+.tst .r .nm small+small{margin-top:1px}
+.rbx{flex:none;width:76px;text-align:center;border-radius:12px;background:rgba(244,201,93,.14);border:1.5px solid var(--gold);padding:3px 4px;line-height:1.1}
+.rbx b{display:block;font-size:26px;color:var(--gold)}
+.rbx i{font-style:normal;display:block;font-size:11px;letter-spacing:2px;color:var(--gold)}
+.rbx small{display:block;font-size:10px;color:var(--mute)}
+.rbx.zero{background:rgba(255,255,255,.05);border-color:var(--line)}.rbx.zero b,.rbx.zero i{color:var(--mute)}
+.bubble.stkb{background:transparent;box-shadow:none;padding:0}
+.bubble.stkb .stk svg,.bubble.stkb .stk img{filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.bubble.stkb .stk small{color:#fff;font-size:12px;text-shadow:0 0 3px #000,0 0 3px #000,0 1px 2px #000}
+.stkpop{max-height:300px;overflow:auto}
+.top .ic{width:33px;height:31px;font-size:16px;border-radius:9px}
+.top .ic svg{width:19px;height:19px}
+#btnSnd{top:2px;right:6px;bottom:auto;width:32px;height:30px;font-size:16px;border-radius:10px}
+.blindbn{position:absolute;left:50%;top:12%;transform:translateX(-50%) scale(.85);z-index:42;background:linear-gradient(#ffd97a,#f0a91f);color:#2a1b00;border-radius:16px;padding:8px 16px;font-weight:700;font-size:17px;white-space:nowrap;opacity:0;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);transition:opacity .25s,transform .25s}
+.blindbn.on{opacity:1;transform:translateX(-50%) scale(1)}
+.blindbn.strong{background:linear-gradient(#ff9a4d,#e0481f);color:#fff;font-size:19px;box-shadow:0 0 18px rgba(255,120,50,.8)}
 </style>
 </head>
 <body>
@@ -417,7 +460,6 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
     <div class="top">
       <div class="codecol"><button class="code" id="gCode" title="แชร์ลิงก์ให้เพื่อน" aria-label="แชร์ลิงก์ห้องให้เพื่อน"><span id="gCodeTxt"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></svg></button><span class="wm">PokerPEPAE&amp;Fri</span></div>
       <div class="mid" id="gMid"></div>
-      <button class="ic" id="btnSnd" aria-label="เสียง">🔊</button>
       <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#f4c95d" stroke="#b9821a" stroke-width="2"/><circle cx="16" cy="16" r="10.5" fill="none" stroke="#d79a1e" stroke-width="1"/><polyline points="8,21 13,15 17,18 24,10" fill="none" stroke="#6b4300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="1.8" fill="#6b4300"/></svg></button>
       <button class="ic" id="btnRoom" aria-label="สมาชิกในห้อง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.2c2.8-.2 4.5 1.8 4.5 5"/></svg><b class="cnt" id="roomCnt"></b></button>
       <button class="ic" id="btnLeave" aria-label="ออกจากห้อง" style="color:#ff8a93"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><path d="M10 4H5v16h5"/><path d="M15 8l4 4-4 4M19 12H9"/></svg></button>
@@ -425,6 +467,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
     <div class="tablewrap" id="tablewrap">
       <div class="felt"></div>
       <div class="tmark" id="tmark"></div>
+      <div class="blindbn" id="blindBn"></div>
       <div class="center">
         <div class="potrow"><span id="potchips"></span><div class="potline">พ็อต <b id="gPot">0</b></div></div>
         <div class="board" id="gBoard"></div>
@@ -433,6 +476,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
       <div id="gSeats"></div>
       <div class="shuf" id="shuf"></div>
       <canvas id="fx"></canvas>
+      <button class="ic fab" id="btnSnd" aria-label="เสียง">🔊</button>
       <button class="ic fab" id="btnMic" aria-label="ไมค์"></button>
       <button class="ic fab" id="btnTour" aria-label="สถานะบายอินและเงินรางวัล">💰</button>
       <button class="ic fab" id="btnStk" aria-label="สติกเกอร์อารมณ์">😊</button>
@@ -505,6 +549,8 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 <div class="drawer" id="tstModal"><div class="mbox tst" id="tstBox"></div></div>
 <div class="toast" id="toast"></div>
 
+<script src="/sounds/card.js?v=2"></script>
+<script src="/sounds/bgm.js?v=2"></script>
 <script>
 'use strict';
 const $ = (s) => document.querySelector(s);
@@ -681,6 +727,13 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+let blindWarnKey = '', blindT = 0;
+function blindNotice(text, strong) {
+  const el = $('#blindBn'); if (!el) return;
+  el.textContent = text; el.className = 'blindbn on' + (strong ? ' strong' : '');
+  clearTimeout(blindT); blindT = setTimeout(() => { el.className = 'blindbn'; }, strong ? 5000 : 4000);
+  if (strong) { sfx('allin'); if (navigator.vibrate) navigator.vibrate([120, 80, 120]); } else sfx('raise');
+}
 function onState(s) {
   clockOffset = s.serverNow - Date.now();
   const prev = state;
@@ -702,6 +755,11 @@ function onState(s) {
   }
   lastChatId = maxId;
 
+  if (s.tourney && prev && prev.code === s.code && prev.settings && s.settings.bb > prev.settings.bb) blindNotice(`📈 บลายด์เพิ่มเป็น ${fmt(s.settings.sb)}/${fmt(s.settings.bb)}`, true);
+  if (s.tourney && !s.tourney.over && s.phase === 'hand' && s.tourney.nextLevelHand === s.handNo + 1 && blindWarnKey !== s.code + ':' + s.handNo) {
+    blindWarnKey = s.code + ':' + s.handNo;
+    blindNotice(`⏰ ตาหน้าบลายด์เพิ่มเป็น ${fmt(s.tourney.nextSB)}/${fmt(s.tourney.nextBB)}`, false);
+  }
   if (prev && prev.you && !prev.you.out && s.you.out) { sfx('elim'); toast('คุณตกรอบ — ดูต่อได้อย่างเดียว'); }
   // ถึงตาเรา
   if (me && s.toAct === me.id && lastToAct !== me.id) {
@@ -991,7 +1049,7 @@ function renderGame() {
   // ข้อความผลตา
   let banner = '';
   if (s.phase === 'showdown' && res) {
-    banner = res.winners.map((w) => `<div class="wl"><div class="wn">🏆 ${esc(nameOf(w.id))}</div><div class="wd">+${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</div></div>`).join('');
+    banner = res.winners.map((w) => `<div class="wl"><span class="wn">🏆 ${esc(nameOf(w.id))}</span> <span class="wd">+${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</span></div>`).join('');
     if (res.pots.length > 1) banner += `<div style="opacity:.75;font-size:12px">มีไซด์พ็อต ${res.pots.length - 1} ก้อน</div>`;
     banner += '<div class="cdbig"><span class="deckfx"><i></i><i></i><i></i></span>ตาถัดไปใน <b class="cdn">–</b> วินาที</div>';
   } else if (s.phase === 'shuffle') {
@@ -1020,11 +1078,13 @@ function renderGame() {
     const th = ((90 + (rel * 360) / n) * Math.PI) / 180;
     const x = Math.min(dense ? 90 : 89.5, Math.max(dense ? 10 : 10.5, 50 + rx * Math.cos(th))), y = 50 + ry * Math.sin(th);
     const isMe = !!me && p.id === me.id;
-    const showCards = !isMe && p.hole.length > 0;
+    const showCards = (!isMe || p.shown) && p.hole.length > 0;
     const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const bl = []; if (p.isDealer) bl.push(['d', 'D']); if (p.isSB) bl.push(['sb', 'SB']); if (p.isBB) bl.push(['bb', 'BB']);
+    const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${(dense ? 30 : 34) + k * (dense ? 17 : 20)}px">${x[1]}</span>`).join('');
     const vm = (s.voice || []).find((m) => m.id === p.id);
     const vb = vm ? `<span class="vb">${micIcon(vm.mode, vm.muted)}</span>` : '';
-    const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
+    const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && p.shown ? 'shownc' : c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
     let label = p.lastAction;
     if (!label && s.phase !== 'lobby') {
       if (p.chips === 0 && !p.inHand) label = 'หมดชิป';
@@ -1036,9 +1096,9 @@ function renderGame() {
     const bb = bubbles[p.id] && bubbles[p.id].until > Date.now() ? bubbles[p.id] : null;
     const b = bb ? `<div class="bubble${isSticker(bb.text) ? ' stkb' : ''}">${msgHTML(bb.text)}</div>` : '';
     seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
-      ${b}<div class="mini${!pdSeat && showCards && p.hole[0] != null ? ' rev' : ''}${fxPlan.deal || pdFresh ? ' dealin' : ''}"${fxPlan.deal || pdFresh ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${pdSeat ? cardEl(null) + cardEl(null) : mini}</div>
+      ${b}<div class="mini${!pdSeat && showCards && p.hole[0] != null ? ' rev' : ''}${p.shown && p.hole[0] != null ? ' shown' : ''}${fxPlan.deal || pdFresh ? ' dealin' : ''}"${fxPlan.deal || pdFresh ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${pdSeat ? cardEl(null) + cardEl(null) : mini}</div>
       <div class="plate">${winIds.has(p.id) ? CROWN : ''}<div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div></div>
-      ${p.isDealer ? '<span class="dbtn">D</span>' : ''}${p.isSB ? '<span class="pos sb">SB</span>' : ''}${p.isBB ? '<span class="pos bb">BB</span>' : ''}${vb}${off}</div>`;
+      ${badges}${vb}${off}</div>`;
     if (s.phase !== 'showdown' && (p.bet > 0 || (p.allIn && p.inHand && !p.folded))) {
       const k = dense ? 0.46 : 0.34;
       const bx = x + (50 - x) * k, by = y + (46 - y) * k;
@@ -1154,7 +1214,8 @@ function renderPanel(me, hlCards) {
         <div class="pre"><button class="b sm" data-add="${bb * 2}">+${fmt(bb * 2)}</button><button class="b sm" data-add="${bb * 3}">+${fmt(bb * 3)}</button><button class="b sm" data-f="clear">ล้าง</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
     }
   } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
-    h += `<div class="acts"><button class="b pre2 ${s.you.pre ? 'gold' : 'ghost'}" id="aPre">${s.you.pre ? '✔ เช็ค/โฟลด์ล่วงหน้า เปิดอยู่ (แตะเพื่อยกเลิก)' : '☐ เช็ค/โฟลด์ล่วงหน้า · เช็คถ้าไม่มีใครเพิ่ม โฟลด์ถ้ามีคนเพิ่ม'}</button></div>`;
+    const on = !!s.you.pre;
+    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b><small>${on ? 'เช็คถ้าไม่มีใครเพิ่ม · โฟลด์ถ้ามีคนเพิ่ม' : 'แตะเพื่อเปิดล่วงหน้า (ระหว่างรอคนอื่น)'}</small></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
   } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !me.shown && !(s.result && s.result.hands && s.result.hands[me.id])) {
     h += '<div class="acts"><button class="b gold" id="aShow">👁 โชว์ไพ่ให้เพื่อนดู</button></div>';
   } else if (s.phase === 'waiting') {
@@ -1245,24 +1306,49 @@ const IC_EAR = `<svg ${SVGA}><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y=
 function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_OFF : IC_MIC; }
 
 // ---------- สติกเกอร์อารมณ์ (ภาพวาดต้นฉบับ; ใส่ไฟล์ /stickers/1.png-8.png เพื่อใช้รูปของคุณเองแทน) ----------
-const STK = [{ cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' }, { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' }];
+const STK = [
+  { cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' },
+  { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' },
+  { cap: 'แอบกระซิบ', k: 'wink' }, { cap: 'งง?', k: 'think' }, { cap: 'อาย', k: 'shy' }, { cap: 'หึๆ', k: 'smug' },
+  { cap: 'โฮ!!', k: 'bigcry' }, { cap: 'เยี่ยม!', k: 'thumb' }, { cap: 'ปาร์ตี้!', k: 'party' }, { cap: 'นิ่งๆ', k: 'flat' },
+  { cap: 'รวยแล้ว!', k: 'rich' }, { cap: 'ช็อก!', k: 'shock' }, { cap: 'จุ๊บๆ', k: 'kiss' }, { cap: 'มึน', k: 'dizzy' },
+  { cap: 'ไม่ไหว', k: 'sick' }, { cap: 'ร้ายนะ', k: 'evil' }, { cap: 'ใสซื่อ', k: 'angel' }, { cap: 'ขอโทษ', k: 'sorry' },
+];
+const SK = 'stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"';
+const STK_SKIN = { shock: '#cfe3ff', sick: '#b9e6a0' };
 const STK_PART = {
-  laugh: '<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M27 51Q40 70 53 51Z" fill="#7a1f1f"/><path d="M33 60Q40 55 47 60Q40 66 33 60Z" fill="#ff7b8a"/><path d="M63 40q4 6 0 9q-4-3 0-9" fill="#5ab4ff"/>',
-  cool: '<rect x="21" y="36" width="17" height="11" rx="4" fill="#111"/><rect x="42" y="36" width="17" height="11" rx="4" fill="#111"/><path d="M38 40h4" stroke="#111" stroke-width="2.5"/><path d="M29 55Q40 63 51 55" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>',
-  cry: '<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 60Q40 52 50 60" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 46q-4 12-1 16q4-2 3-16M52 46q4 12 1 16q-4-2-3-16" fill="#5ab4ff"/>',
-  angry: '<path d="M23 34L37 40M57 34L43 40" stroke="#b00020" stroke-width="3.5" stroke-linecap="round"/><circle cx="30" cy="45" r="3" fill="#222"/><circle cx="50" cy="45" r="3" fill="#222"/><path d="M30 61Q40 52 50 61" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60 16l4 5-5 2 4 5" stroke="#e53935" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
-  wow: '<circle cx="30" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="50" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="30" cy="41" r="2.5" fill="#222"/><circle cx="50" cy="41" r="2.5" fill="#222"/><ellipse cx="40" cy="58" rx="6" ry="8" fill="#7a1f1f"/>',
-  sleep: '<path d="M24 43Q30 47 36 43M44 43Q50 47 56 43" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="57" rx="4" ry="3" fill="#7a1f1f"/><text x="56" y="22" font-size="14" font-weight="700" fill="#4a7bd6">Z</text><text x="64" y="12" font-size="10" font-weight="700" fill="#4a7bd6">z</text>',
-  love: '<path d="M30 46C20 40 23 33 30 36C37 33 40 40 30 46ZM50 46C40 40 43 33 50 36C57 33 60 40 50 46Z" fill="#e53950"/><path d="M28 55Q40 66 52 55" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>',
-  panic: '<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 33Q30 30 36 34M44 34Q50 30 56 33" stroke="#222" stroke-width="2.5" fill="none"/><path d="M29 60Q33 55 37 60Q41 55 45 60Q49 55 52 60" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M63 28q5 8 0 12q-5-4 0-12" fill="#5ab4ff"/>',
+  laugh: `<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M27 51Q40 70 53 51Z" fill="#7a1f1f"/><path d="M33 60Q40 55 47 60Q40 66 33 60Z" fill="#ff7b8a"/><path d="M63 40q4 6 0 9q-4-3 0-9" fill="#5ab4ff"/>`,
+  cool: `<rect x="21" y="36" width="17" height="11" rx="4" fill="#111"/><rect x="42" y="36" width="17" height="11" rx="4" fill="#111"/><path d="M38 40h4" stroke="#111" stroke-width="2.5"/><path d="M29 55Q40 63 51 55" ${SK}/>`,
+  cry: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><path d="M30 60Q40 52 50 60" ${SK}/><path d="M28 46q-4 12-1 16q4-2 3-16M52 46q4 12 1 16q-4-2-3-16" fill="#5ab4ff"/>`,
+  angry: `<path d="M23 34L37 40M57 34L43 40" stroke="#b00020" stroke-width="3.5" stroke-linecap="round"/><circle cx="30" cy="45" r="3" fill="#222"/><circle cx="50" cy="45" r="3" fill="#222"/><path d="M30 61Q40 52 50 61" ${SK}/><path d="M60 16l4 5-5 2 4 5" stroke="#e53935" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+  wow: `<circle cx="30" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="50" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="30" cy="41" r="2.5" fill="#222"/><circle cx="50" cy="41" r="2.5" fill="#222"/><ellipse cx="40" cy="58" rx="6" ry="8" fill="#7a1f1f"/>`,
+  sleep: `<path d="M24 43Q30 47 36 43M44 43Q50 47 56 43" ${SK}/><ellipse cx="40" cy="57" rx="4" ry="3" fill="#7a1f1f"/><text x="56" y="22" font-size="14" font-weight="700" fill="#4a7bd6">Z</text><text x="64" y="12" font-size="10" font-weight="700" fill="#4a7bd6">z</text>`,
+  love: `<path d="M30 46C20 40 23 33 30 36C37 33 40 40 30 46ZM50 46C40 40 43 33 50 36C57 33 60 40 50 46Z" fill="#e53950"/><path d="M28 55Q40 66 52 55" ${SK}/>`,
+  panic: `<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 33Q30 30 36 34M44 34Q50 30 56 33" stroke="#222" stroke-width="2.5" fill="none"/><path d="M29 60Q33 55 37 60Q41 55 45 60Q49 55 52 60" ${SK}/><path d="M63 28q5 8 0 12q-5-4 0-12" fill="#5ab4ff"/>`,
+  wink: `<circle cx="30" cy="42" r="3" fill="#222"/><path d="M44 42Q50 36 56 42" ${SK}/><path d="M28 54Q40 66 52 54" ${SK}/><ellipse cx="47" cy="61" rx="4" ry="3" fill="#ff7b8a"/><path d="M62 26l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z" fill="#ffd54a"/>`,
+  think: `<circle cx="30" cy="43" r="3" fill="#222"/><circle cx="50" cy="43" r="3" fill="#222"/><path d="M23 33Q30 27 37 32" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M44 36H57" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M32 60Q38 55 48 60" ${SK}/><text x="60" y="24" font-size="18" font-weight="700" fill="#7b4bd6">?</text>`,
+  shy: `<path d="M25 43Q30 38 35 43M45 43Q50 38 55 43" ${SK}/><circle cx="24" cy="52" r="7" fill="#ff7b8a" opacity=".85"/><circle cx="56" cy="52" r="7" fill="#ff7b8a" opacity=".85"/><path d="M35 58Q40 62 45 58" ${SK}/>`,
+  smug: `<path d="M23 43H37M43 43H57" stroke="#222" stroke-width="4" stroke-linecap="round"/><path d="M23 35L37 37M57 35L43 37" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M29 57Q42 64 53 51" ${SK}/>`,
+  bigcry: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><ellipse cx="40" cy="60" rx="9" ry="8" fill="#7a1f1f"/><path d="M27 46q-8 14-3 24q8-8 6-24M53 46q8 14 3 24q-8-8-6-24" fill="#5ab4ff"/>`,
+  thumb: `<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M28 52Q40 64 52 52" ${SK}/><rect x="57" y="50" width="8" height="18" rx="4" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/><rect x="50" y="62" width="22" height="16" rx="5" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/>`,
+  party: `<path d="M30 17L40 0L50 17Z" fill="#ff5d73" stroke="#c0303f" stroke-width="1.5"/><circle cx="40" cy="1.5" r="3" fill="#ffd54a"/><path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M27 51Q40 68 53 51Z" fill="#7a1f1f"/><rect x="8" y="22" width="4" height="4" fill="#59b7ff"/><rect x="69" y="18" width="4" height="4" fill="#ffd54a"/><rect x="72" y="44" width="4" height="4" fill="#5ad6a0"/><rect x="5" y="50" width="4" height="4" fill="#c77dff"/>`,
+  flat: `<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 35H36M44 35H56" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M31 58H49" ${SK}/>`,
+  rich: `<text x="30" y="49" text-anchor="middle" font-size="17" font-weight="700" fill="#1a9b4a">$</text><text x="50" y="49" text-anchor="middle" font-size="17" font-weight="700" fill="#1a9b4a">$</text><path d="M26 54Q40 70 54 54Z" fill="#7a1f1f"/>`,
+  shock: `<circle cx="30" cy="43" r="2.5" fill="#222"/><circle cx="50" cy="43" r="2.5" fill="#222"/><path d="M32 60Q36 56 40 60Q44 56 48 60" ${SK}/><path d="M22 20v8M30 17v9M50 17v9M58 20v8" stroke="#4a7bd6" stroke-width="2.5" stroke-linecap="round"/>`,
+  kiss: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><circle cx="40" cy="58" r="4" fill="#e53950"/><path d="M63 34C55 28 58 21 63 24C68 21 71 28 63 34Z" fill="#e53950"/>`,
+  dizzy: `<circle cx="30" cy="42" r="7" fill="none" stroke="#222" stroke-width="2"/><circle cx="30" cy="42" r="3" fill="none" stroke="#222" stroke-width="2"/><circle cx="50" cy="42" r="7" fill="none" stroke="#222" stroke-width="2"/><circle cx="50" cy="42" r="3" fill="none" stroke="#222" stroke-width="2"/><path d="M30 60Q35 55 40 60Q45 65 50 60" ${SK}/>`,
+  sick: `<path d="M24 42L36 42M44 42L56 42" ${SK}/><path d="M29 60Q35 54 40 60Q45 66 51 58" ${SK}/><path d="M62 30q4 7 0 10q-4-3 0-10" fill="#7fb069"/>`,
+  evil: `<path d="M20 26L24 8L34 20ZM60 26L56 8L46 20Z" fill="#d6283a" stroke="#8c1624" stroke-width="1.5"/><path d="M23 36L37 42M57 36L43 42" stroke="#222" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="46" r="3" fill="#222"/><circle cx="50" cy="46" r="3" fill="#222"/><path d="M26 54Q40 68 54 54Z" fill="#7a1f1f"/><path d="M32 54v4M40 55v5M48 54v4" stroke="#fff" stroke-width="2.5"/>`,
+  angel: `<ellipse cx="40" cy="7" rx="15" ry="4.5" fill="none" stroke="#f4c95d" stroke-width="3.2"/><circle cx="30" cy="43" r="3" fill="#222"/><circle cx="50" cy="43" r="3" fill="#222"/><path d="M32 56Q40 62 48 56" ${SK}/>`,
+  sorry: `<circle cx="30" cy="43" r="6" fill="#222"/><circle cx="50" cy="43" r="6" fill="#222"/><circle cx="28" cy="41" r="2" fill="#fff"/><circle cx="48" cy="41" r="2" fill="#fff"/><path d="M22 34L36 30M58 34L44 30" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M33 60Q40 55 47 60" ${SK}/><path d="M62 36q4 7 0 10q-4-3 0-10" fill="#5ab4ff"/>`,
 };
-const STK_BASE = '<circle cx="40" cy="42" r="30" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/><path d="M11 38Q12 9 40 10Q68 9 69 38Q58 25 40 27Q22 25 11 38Z" fill="#3a2a1e"/><circle cx="25" cy="50" r="4" fill="#ff9d8a" opacity=".6"/><circle cx="55" cy="50" r="4" fill="#ff9d8a" opacity=".6"/>';
+const stkBase = (k) => `<circle cx="40" cy="42" r="30" fill="${STK_SKIN[k] || '#ffd9a0'}" stroke="#c98a3b" stroke-width="2"/><path d="M11 38Q12 9 40 10Q68 9 69 38Q58 25 40 27Q22 25 11 38Z" fill="#3a2a1e"/><circle cx="25" cy="50" r="4" fill="#ff9d8a" opacity=".6"/><circle cx="55" cy="50" r="4" fill="#ff9d8a" opacity=".6"/>`;
 const stkImg = {};
 for (let i = 1; i <= STK.length; i++) { const im = new Image(); im.onload = () => { stkImg[i] = true; if (state && state.phase !== 'lobby') render(); }; im.src = '/stickers/' + i + '.png'; }
-const isSticker = (t) => /^::st[1-8]$/.test(t);
+const isSticker = (t) => /^::st\d{1,2}$/.test(t) && Number(t.slice(4)) >= 1 && Number(t.slice(4)) <= STK.length;
 function stkHTML(i) {
   const d = STK[i - 1];
-  const art = stkImg[i] ? `<img src="/stickers/${i}.png" alt="">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${STK_BASE}${STK_PART[d.k]}</svg>`;
+  const art = stkImg[i] ? `<img src="/stickers/${i}.png" alt="">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${stkBase(d.k)}${STK_PART[d.k]}</svg>`;
   return `<span class="stk">${art}<small>${d.cap}</small></span>`;
 }
 function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4))) : esc(t); }
@@ -1310,6 +1396,7 @@ function renderShuffle(s) {
 let preDeal = { key: '', ids: new Set(), t: 0 };
 const preDealActive = (s) => preDeal.key === s.code + ':' + s.handNo && (s.phase === 'showdown' || s.phase === 'waiting');
 function checkPreDeal() {
+  return; // ยกเลิกการแจกไพ่ระหว่างรอ — แจกตอนเริ่มตาแทน
   const s = state;
   if (!s || !s.nextHandAt || (s.phase !== 'showdown' && s.phase !== 'waiting')) return;
   const key = s.code + ':' + s.handNo;
@@ -1390,12 +1477,14 @@ function renderTourStatus() {
   const rows = s.players.filter((p) => !p.left).map((p) => {
     const used = 1 + (p.rebuys || 0), left = Math.max(0, T.maxRebuys - (p.rebuys || 0));
     const st = p.out ? `💀 ตกรอบ อันดับ ${p.place}` : p.chips === 0 ? '⏳ รอบายอินเพิ่ม' : '🟢 ยังอยู่ในเกม';
-    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small></span><span style="text-align:right">บายอิน ${used} ครั้ง<small>${fmt(T.buyIn * used)} ฿ · เหลือสิทธิ์เพิ่ม ${p.out ? 0 : left}</small></span></div>`;
+    const lf = p.out ? 0 : left;
+    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span><span class="rbx${lf ? '' : ' zero'}"><b>${lf}</b><i>${'●'.repeat(lf)}${'○'.repeat(Math.max(0, T.maxRebuys - lf))}</i><small>บายอินเหลือ</small></span></div>`;
   }).join('');
   const medals = ['🥇', '🥈', '🥉'];
   const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[60, 30, 10][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
   $('#tstBox').innerHTML = `<h3>💰 สถานะ Tournament #${T.no}</h3>
     <h4>สถานะบายอินของผู้เล่น</h4>${rows}
+    <div class="sub" style="margin:8px 0 0">📈 บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</div>
     <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>${prz}
     <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">คำนวณจากยอดบายอินปัจจุบัน อาจเพิ่มขึ้นถ้ามีคนบายอินเพิ่ม</p>
     <button class="b gold full" id="tstOk" style="margin-top:12px">ปิด</button>`;
@@ -1420,10 +1509,14 @@ const MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' };
 const dt = (ms) => { try { return new Date(ms).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return String(ms); } };
 function resultHTML(r, meName) {
   const mins = r.startedAt && r.endedAt ? Math.max(1, Math.round((r.endedAt - r.startedAt) / 60000)) : null;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${x.prize ? fmt(x.prize) + '฿' : '–'}</span></div>`).join('');
+  const netOf = (x) => (x.prize || 0) - x.buyIns * r.buyInAmount;
+  const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">รางวัล ${x.prize ? fmt(x.prize) + '฿' : '0฿'}${netTxt(netOf(x))}</span></div>`).join('');
+  const mine = r.rows.find((x) => meName && x.name === meName);
+  const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(mine.prize || 0)}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
   const sum = r.rows.reduce((a, x) => a + x.prize, 0);
-  return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${rows}
-    <div class="sub" style="margin:10px 0 0">เงินรางวัลรวม <b>${fmt(r.pool)}฿</b> (บายอินทั้งหมด ${r.buyIns} ครั้ง × ${fmt(r.buyInAmount)}฿) · แจกจริง ${fmt(sum)}฿<br>
+  return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${mineBox}${rows}
+    <div class="sub" style="margin:10px 0 0">ส่วนต่าง = เงินรางวัล − ยอดบายอินของแต่ละคน<br>เงินรางวัลรวม <b>${fmt(r.pool)}฿</b> (บายอินทั้งหมด ${r.buyIns} ครั้ง × ${fmt(r.buyInAmount)}฿) · แจกจริง ${fmt(sum)}฿<br>
     ชิปเริ่มต้น ${fmt(r.chips)} · บลายด์ ${fmt(r.blinds.sb)}/${fmt(r.blinds.bb)} เพิ่ม 2 เท่าทุก ${r.blinds.every} ตา (ตอนจบ ${fmt(r.blinds.lastSB)}/${fmt(r.blinds.lastBB)})<br>
     เล่นทั้งหมด ${r.hands} ตา${mins ? ' · ใช้เวลา ~' + mins + ' นาที' : ''} · ${dt(r.endedAt)}</div>`;
 }
@@ -1446,7 +1539,7 @@ function showHist() {
   const list = loadHist();
   const items = list.map((r, i) => {
     const mine = r.rows.find((x) => x.name === r.myName);
-    return `<div class="hrec" data-i="${i}"><b>${dt(r.endedAt)}</b> · ห้อง ${esc(r.code)}<small>${r.rows.length} คน · รางวัลรวม ${fmt(r.pool)}฿ · ผู้ชนะ ${esc(r.rows[0] ? r.rows[0].name : '-')}${mine ? ` · คุณได้อันดับ ${mine.place}${mine.prize ? ' (' + fmt(mine.prize) + '฿)' : ''}` : ''}</small></div>`;
+    return `<div class="hrec" data-i="${i}"><b>${dt(r.endedAt)}</b> · ห้อง ${esc(r.code)}<small>${r.rows.length} คน · รางวัลรวม ${fmt(r.pool)}฿ · ผู้ชนะ ${esc(r.rows[0] ? r.rows[0].name : '-')}${mine ? ` · คุณได้อันดับ ${mine.place}${mine.prize ? ' (' + fmt(mine.prize) + '฿)' : ''} · ส่วนต่าง ${((mine.prize || 0) - mine.buyIns * r.buyInAmount) > 0 ? '+' : ''}${fmt((mine.prize || 0) - mine.buyIns * r.buyInAmount)}฿` : ''}</small></div>`;
   }).join('');
   $('#resBox').innerHTML = `<h3>🏆 ประวัติทัวร์นาเมนต์</h3>${items || '<p class="hint">ยังไม่มีประวัติ — เล่นทัวร์นาเมนต์จนจบแล้วจะบันทึกไว้ที่นี่ (เก็บในเครื่องนี้)</p>'}<button class="b ghost full" id="resClose" style="margin-top:10px">ปิด</button>`;
   $('#resModal').classList.add('on');
@@ -1951,9 +2044,9 @@ function bindVoiceBox(root) {
 }
 
 // ---------- เสียง: เพลงพื้นหลัง / เอฟเฟกต์ / เสียงเพื่อน (สร้างเสียงเองด้วย WebAudio ไม่ต้องมีไฟล์เสียง) ----------
-const snd = { on: { bgm: true, sfx: true, voice: true, turn: true }, vol: { bgm: 0.5, sfx: 0.7, voice: 1, turn: 0.9 }, master: null, bgmGain: null, sfxGain: null, turnGain: null, mi: 3, timer: 0, nextT: 0, step: 0, noiseBuf: null };
-try { const sv = JSON.parse(ls('pp_snd') || 'null'); if (sv) { Object.assign(snd.on, sv.on); Object.assign(snd.vol, sv.vol); } } catch (e) { /* ใช้ค่าเริ่มต้น */ }
-function saveSnd() { ls('pp_snd', JSON.stringify({ on: snd.on, vol: snd.vol })); }
+const snd = { on: { bgm: true, sfx: true, voice: true, turn: true }, vol: { bgm: 0.5, sfx: 0.7, voice: 1, turn: 0.9 }, master: null, bgmGain: null, sfxGain: null, turnGain: null, track: 'bossa', card: 'classic', timer: 0, nextT: 0, step: 0, noiseBuf: null };
+try { const sv = JSON.parse(ls('pp_snd') || 'null'); if (sv) { Object.assign(snd.on, sv.on); Object.assign(snd.vol, sv.vol); if (sv.track) snd.track = sv.track; if (sv.card) snd.card = sv.card; } } catch (e) { /* ใช้ค่าเริ่มต้น */ }
+function saveSnd() { ls('pp_snd', JSON.stringify({ on: snd.on, vol: snd.vol, track: snd.track, card: snd.card })); }
 function sndInit() {
   const ctx = ensureCtx();
   if (!ctx) return null;
@@ -1989,12 +2082,6 @@ function applyVoiceVol() {
   });
 }
 const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
-// เพลงพื้นหลังใหม่: จังหวะบอสซ่าสบายๆ คอร์ดเมเจอร์สดใส มีเมโลดี้เล่นสุ่มบนสเกลเพนทาโทนิก
-const BCH = [
-  { r: 48, t: [60, 64, 67, 71] }, { r: 45, t: [57, 60, 64, 67] }, { r: 50, t: [57, 60, 62, 65] }, { r: 43, t: [59, 62, 65, 67] },
-  { r: 41, t: [57, 60, 64, 67] }, { r: 52, t: [55, 59, 62, 67] }, { r: 50, t: [57, 60, 62, 65] }, { r: 43, t: [59, 62, 65, 67] },
-];
-const BSCALE = [69, 72, 74, 76, 79, 81, 84, 86];
 function bgmNote(f, t, dur, type, vol, att, lpf) {
   const ctx = voice.ctx;
   const o = ctx.createOscillator(), g = ctx.createGain(), fl = ctx.createBiquadFilter();
@@ -2017,29 +2104,17 @@ function bgmKick(t) {
   g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
   o.connect(g); g.connect(snd.bgmGain); o.start(t); o.stop(t + 0.22);
 }
-function bgmStep(step, t) {
-  const c = BCH[Math.floor(step / 8) % BCH.length], k = step % 8;
-  if (k === 0) { bgmNote(mtof(c.r), t, 0.7, 'sine', 0.26, 0.01, 600); bgmKick(t); }
-  if (k === 3) bgmNote(mtof(c.r + 7), t, 0.45, 'sine', 0.18, 0.01, 600);
-  if (k === 4) bgmKick(t);
-  if (k === 6) bgmNote(mtof(c.r + 12), t, 0.4, 'sine', 0.12, 0.01, 700);
-  if (k === 2 || k === 5 || k === 7) c.t.forEach((m) => bgmNote(mtof(m), t + (k === 5 ? 0.03 : 0), 0.3, 'triangle', 0.05, 0.005, 2400));
-  bgmHat(t, k % 2 ? 0.05 : 0.03);
-  if (Math.random() < (k % 2 ? 0.35 : 0.6)) {
-    snd.mi = Math.max(0, Math.min(BSCALE.length - 1, snd.mi + [-2, -1, -1, 0, 1, 1, 2][Math.floor(Math.random() * 7)]));
-    bgmNote(mtof(BSCALE[snd.mi]), t, 0.5, 'triangle', 0.085, 0.005, 3400);
-    if (Math.random() < 0.25) bgmNote(mtof(BSCALE[snd.mi] + 12), t + 0.02, 0.35, 'sine', 0.03, 0.005, 4000);
-  }
-}
+const curTrack = () => (window.BGM_TRACKS || []).find((x) => x.id === snd.track) || (window.BGM_TRACKS || [])[0];
+const BGM_H = { note: bgmNote, hat: bgmHat, kick: bgmKick, mtof, state: {} };
+function bgmStep(step, t) { const tr = curTrack(); if (tr) tr.step(step, t, BGM_H); }
 function startBgm() {
   if (snd.timer) return;
   const ctx = voice.ctx; if (!ctx) return;
-  const eighth = 60 / 104 / 2;
   snd.nextT = ctx.currentTime + 0.15;
   snd.timer = setInterval(() => {
     const c = voice.ctx; if (!c || c.state !== 'running') return;
     if (snd.nextT < c.currentTime) snd.nextT = c.currentTime + 0.1;
-    while (snd.nextT < c.currentTime + 0.7) { bgmStep(snd.step, snd.nextT); snd.nextT += eighth; snd.step++; }
+    while (snd.nextT < c.currentTime + 0.7) { const tr = curTrack(); bgmStep(snd.step, snd.nextT); snd.nextT += 60 / (tr ? tr.bpm : 104) / 2; snd.step++; }
   }, 150);
 }
 function stopBgm() { clearInterval(snd.timer); snd.timer = 0; }
@@ -2066,7 +2141,7 @@ function noiseHit(dur, o = {}) {
 }
 const SFX = {
   click: () => tone(1250, 0.06, { type: 'triangle', vol: 0.16, slide: -450 }),
-  card: () => { noiseHit(0.11, { freq: 4200, vol: 0.32 }); tone(190, 0.07, { vol: 0.08, slide: -60 }); },
+  card: () => { const o = (window.CARD_SOUNDS || []).find((x) => x.id === snd.card) || (window.CARD_SOUNDS || [])[0]; if (o) o.play({ tone, noiseHit }); },
   chip: () => { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); },
   fold: () => tone(340, 0.24, { vol: 0.24, slide: -170 }),
   check: () => { tone(190, 0.1, { vol: 0.42, slide: -70 }); tone(190, 0.1, { vol: 0.42, slide: -70, delay: 0.13 }); },
@@ -2090,13 +2165,24 @@ function sndRowHTML(key, icon, label) {
   return `<div class="snd-row"><div class="t"><span>${icon} ${label}</span><button class="tg ${snd.on[key] ? 'on' : ''}" data-tg="${key}" aria-label="เปิดปิด${label}"></button></div>
     <input type="range" min="0" max="100" value="${Math.round(snd.vol[key] * 100)}" data-vol="${key}" aria-label="ระดับเสียง${label}"></div>`;
 }
+function pickHTML(key, label, list) {
+  return `<div class="snd-row"><div class="t"><span>🎼 ${label}</span></div><div class="pk">${(list || []).map((x) => `<button class="pkb${snd[key] === x.id ? ' on' : ''}" data-pk="${key}" data-id="${x.id}">${x.name}</button>`).join('')}</div></div>`;
+}
 function openSnd() {
-  $('#sndBox').innerHTML = `<h3>🔊 ตั้งค่าเสียง</h3>${sndRowHTML('bgm', '🎵', 'เพลงพื้นหลัง')}${sndRowHTML('sfx', '🔔', 'เสียงเอฟเฟกต์')}${sndRowHTML('turn', '⏰', 'เสียงเตือนถึงตา')}${sndRowHTML('voice', '🎙️', 'เสียงไมค์เพื่อน')}
+  $('#sndBox').innerHTML = `<h3>🔊 ตั้งค่าเสียง</h3>${sndRowHTML('bgm', '🎵', 'เพลงพื้นหลัง')}${pickHTML('track', 'เลือกเพลง', window.BGM_TRACKS)}${sndRowHTML('sfx', '🔔', 'เสียงเอฟเฟกต์')}${pickHTML('card', 'เสียงเปิดไพ่', window.CARD_SOUNDS)}${sndRowHTML('turn', '⏰', 'เสียงเตือนถึงตา')}${sndRowHTML('voice', '🎙️', 'เสียงไมค์เพื่อน')}
     <p class="tip" style="font-size:12px;color:var(--mute);margin:8px 0 0">iPhone: ถ้าไม่มีเสียง ลองปิดโหมดเงียบ (สวิตช์ข้างเครื่อง) และเพิ่มระดับเสียงเครื่อง</p>
     <button class="b gold full" id="sndClose" style="margin-top:12px">ตกลง</button>`;
   $('#sndModal').classList.add('on');
   $('#sndClose').onclick = () => $('#sndModal').classList.remove('on');
   $('#sndBox').querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; snd.on[k] = !snd.on[k]; b.classList.toggle('on', snd.on[k]); saveSnd(); applySnd(); if (k === 'sfx' && snd.on.sfx) sfx('chip'); if (k === 'turn' && snd.on.turn) sfx('turn'); }; });
+  $('#sndBox').querySelectorAll('[data-pk]').forEach((b) => {
+    b.onclick = () => {
+      const key = b.dataset.pk; snd[key] = b.dataset.id; saveSnd();
+      $('#sndBox').querySelectorAll(`[data-pk="${key}"]`).forEach((x) => x.classList.toggle('on', x === b));
+      if (key === 'card') { const was = snd.on.sfx; sfx('card'); if (!was) toast('เสียงเอฟเฟกต์ปิดอยู่'); }
+      else { snd.step = 0; BGM_H.state = {}; if (!snd.on.bgm) { snd.on.bgm = true; saveSnd(); const tg = $('#sndBox').querySelector('[data-tg="bgm"]'); if (tg) tg.classList.add('on'); } applySnd(); }
+    };
+  });
   $('#sndBox').querySelectorAll('[data-vol]').forEach((r) => {
     r.oninput = () => { snd.vol[r.dataset.vol] = Number(r.value) / 100; saveSnd(); applySnd(); };
     r.onchange = () => { if (r.dataset.vol === 'sfx') sfx('chip'); if (r.dataset.vol === 'turn') sfx('turn'); };
