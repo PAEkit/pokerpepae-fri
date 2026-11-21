@@ -41,7 +41,7 @@ console.log('✓ hand ranking');
 function rand(n) { return Math.floor(Math.random() * n); }
 
 function playGame(nPlayers, opts = {}) {
-  const room = new Room('TEST', { startChips: opts.startChips || 500, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('TEST', { startChips: opts.startChips || 500, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const ps = [];
   for (let i = 0; i < nPlayers; i++) ps.push(room.addPlayer('P' + i));
   const totalChips = ps.length * room.settings.startChips;
@@ -84,7 +84,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 // ---------- กรณีเฉพาะ ----------
 // 1) ไซด์พ็อต: A(100) B(300) C(300) ออลอินทั้งหมด
 {
-  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   a.chips = 100; b.chips = 300; c.chips = 300;
   room.start(a);
@@ -109,7 +109,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 
 // 2) ทุกคนโฟลด์ → ได้พ็อตโดยไม่เปิดไพ่
 {
-  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   room.start(a);
   room.act(room.players[room.toActIdx], { type: 'fold' });
@@ -124,7 +124,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 
 // 3) เฮดส์อัพ: ดีลเลอร์เป็น SB และเล่นก่อนพรีฟลอป
 {
-  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const [a, b] = ['A', 'B'].map((n) => room.addPlayer(n));
   room.start(a);
   const dealer = room.players[room.dealerIdx];
@@ -135,7 +135,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 
 // 4) ตรวจกันโกง: ไพ่คนอื่นไม่รั่วใน view, ทำผิดตา/ผิดกติกาแล้ว error
 {
-  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   room.start(a);
   const view = JSON.stringify(room.viewFor(a.token));
@@ -155,7 +155,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 // 4b) ออกจากห้องกลางตา / จบเกม / เริ่มใหม่ / ซื้อชิป / หลุดการเชื่อมต่อ
 {
   const mk = (n) => {
-    const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, offlineDelay: 50, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+    const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, offlineDelay: 50, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
     const ps = Array.from({ length: n }, (_, i) => room.addPlayer('P' + i));
     return { room, ps };
   };
@@ -220,7 +220,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 // 4c) ออลอิน: เปิดไพ่ในมือให้เห็น แล้วเปิดไพ่กลางทีละใบแบบเว้นจังหวะ (ใช้เวลาจริงสั้นๆ ในเทสต์)
 (async () => {
   const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 },
-    { nextHandDelay: 1e9, runoutFirstDelay: 60, runoutDelay: 60, resumeDelay: 0 });
+    { shuffleEvery: 0, nextHandDelay: 1e9, runoutFirstDelay: 60, runoutDelay: 60, resumeDelay: 0 });
   const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   room.start(a);
   const seen = [];
@@ -254,7 +254,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 
 // 4b) สถิติกำจัดผู้เล่น + กราฟชิป + ตำแหน่ง SB/BB
 (() => {
-  const room = new Room('K', { startChips: 500, sb: 5, bb: 10, turnTime: 0 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('K', { startChips: 500, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   room.start(ps[0]);
   const v0 = room.viewFor(ps[0].token);
@@ -276,7 +276,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
 
 // 4c) ทัวร์นาเมนต์
 (async () => {
-  const T = { nextHandDelay: 1e9, tourEndDelay: 0, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 };
+  const T = { shuffleEvery: 0, nextHandDelay: 1e9, tourEndDelay: 0, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 };
   const allinHand = (room) => { for (let i = 0; i < 40 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; room.act(p, { type: 'allin' }); } };
   const foldHand = (room) => { for (let i = 0; i < 40 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; const o = room.optionsFor(p); room.act(p, { type: o.canCheck ? 'check' : 'fold' }); } };
 
@@ -330,12 +330,90 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   room.handNo = 8; room.tourForfeit(); // ตาถัดไปคือ 9 > 3+5
   assert(room.players[2].out, 'เกิน 5 ตาต้องสละสิทธิ์');
   room.destroy();
+  // 4 คน: คนชิปหมดเป็นอันดับ 4 ยังบายอินได้ (ปิดเฉพาะตอนเหลือ 3 คนสุดท้าย)
+  room = new Room('TD', { tournament: true, buyIn: 100, sb: 10, bb: 20, turnTime: 0 }, T);
+  ps = ['A', 'B', 'C', 'D'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  room.phase = 'showdown';
+  room.players[3].chips = 0; room.handNo = 1; room.tourAfterHand();
+  assert(!room.players[3].out, 'อันดับ 4 ต้องยังไม่ตกรอบ');
+  room.rebuy(room.players[3]);
+  assert.strictEqual(room.players[3].chips, 1000);
+  assert(room.viewFor(room.players[0].token).tourney.no >= 1 && room.viewFor(room.players[0].token).tourney.prizes.length === 3);
+  room.players[3].chips = 0; room.handNo = 2; room.tourAfterHand();
+  room.players[3].bustHand = 2; room.handNo = 9; room.tourForfeit();
+  assert(room.players[3].out, 'ไม่บายอินในเวลาต้องตกรอบ');
+  room.players[2].chips = 0; room.handNo = 10; room.tourAfterHand();
+  assert(room.players[2].out, 'เหลือ 3 คนสุดท้ายแล้วชิปหมด ต้องตกรอบทันที');
+  room.destroy();
   console.log('✓ tournament: blind levels, join lock, elimination, rebuys, prizes');
+})();
+
+// 4d) สับที่นั่ง, โชว์ไพ่, ผู้นำระหว่างลุ้น
+(async () => {
+  const T = { shuffleEvery: 2, shufRevealDelay: 0, shufPickTimeout: 1e9, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 };
+  const room = new Room('SH', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, T);
+  const ps = ['A', 'B', 'C', 'D'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  const foldHand = () => { for (let i = 0; i < 40 && room.phase === 'hand'; i++) { const p = room.players[room.toActIdx]; if (!p) break; const o = room.optionsFor(p); room.act(p, { type: o.canCheck ? 'check' : 'fold' }); } };
+  foldHand();
+  // โชว์ไพ่หลังจบตา
+  const folded = room.players.find((p) => p.folded);
+  room.showCards(folded);
+  const v = room.viewFor(ps[0].token);
+  assert(v.players.find((p) => p.id === folded.id).hole.every((c) => Number.isInteger(c)), 'ไพ่ที่โชว์ต้องเห็นทุกคน');
+  assert.throws(() => room.showCards(folded), /ไม่มีไพ่/);
+  room.startHand(); foldHand();
+  room.startHand();                               // ตาที่ 2 จบแล้ว → ต้องเข้า phase สับที่นั่ง
+  assert.strictEqual(room.phase, 'shuffle');
+  const sv = room.viewFor(ps[1].token).shuffle;
+  assert.strictEqual(sv.n, 4); assert.strictEqual(sv.vals, null, 'ห้ามเห็นค่าไพ่ก่อนเปิด');
+  assert.throws(() => room.pickShuffle(ps[0], 9), /ไม่ถูกต้อง/);
+  room.pickShuffle(ps[0], 0); assert.throws(() => room.pickShuffle(ps[1], 0), /เลือกแล้ว/);
+  room.pickShuffle(ps[1], 1); room.pickShuffle(ps[2], 2);
+  room.pickShuffle(ps[3], 3);                     // ครบแล้ว เปิดผลและย้ายที่นั่ง (delay 0)
+  assert.strictEqual(room.phase, 'hand', 'หลังสับต้องเริ่มตาต่อ');
+  const val = {}; // ดูผลจาก log: D=,SB=,BB=
+  const log = room.log.find((l) => l.startsWith('🔀 ผลจั่วไพ่'));
+  const nm = (k) => log.match(new RegExp(k + '=([^,]+)'))[1].trim();
+  const D = room.players[room.dealerIdx].name, SB = room.players[room.sbIdx].name, BB = room.players[room.bbIdx].name;
+  assert.deepStrictEqual([D, SB, BB], [nm('D'), nm('SB'), nm('BB')], 'ตำแหน่ง D/SB/BB ต้องตรงกับผลจั่ว');
+  assert.strictEqual(room.players.filter((p) => p.inHand).length, 4);
+  room.destroy();
+  console.log('✓ shuffle seating, show cards');
+})();
+
+// 4e) ผู้นำระหว่างลุ้นไพ่
+(() => {
+  const room = new Room('LD', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 1e9, runoutFirstDelay: 1e9, resumeDelay: 0 });
+  const ps = ['A', 'B'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  for (let i = 0; i < 6 && room.phase === 'hand' && !room.runout; i++) { const p = room.players[room.toActIdx]; if (!p) break; room.act(p, { type: 'allin' }); }
+  assert(room.runout, 'ต้องเข้าโหมดลุ้นไพ่');
+  const v = room.viewFor(ps[0].token);
+  assert(Array.isArray(v.lead) && v.lead.length >= 1, 'ต้องมีผู้นำ');
+  room.destroy();
+  console.log('✓ runout leader');
+})();
+
+// 4.5) เช็ค/โฟลด์ล่วงหน้า
+(async () => {
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0, preDelay: 0 });
+  const ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  const idle = ps.find((q) => q !== room.players[room.toActIdx] && q.inHand);
+  room.setPre(idle, true);
+  assert(idle.pre, 'ต้องตั้งล่วงหน้าได้');
+  let guard = 0;
+  while (room.phase === 'hand' && room.players[room.toActIdx] !== idle && guard++ < 10) { const q = room.players[room.toActIdx]; room.act(q, { type: q.bet < room.currentBet ? 'call' : 'check' }); }
+  assert(room.phase !== 'hand' || idle.folded || idle.hasActed || room.players[room.toActIdx] !== idle, 'ล่วงหน้าต้องทำงานเมื่อถึงตา');
+  room.destroy();
+  console.log('✓ pre-action');
 })();
 
 // 5) ไทเมอร์: หมดเวลาแล้วเช็ค/โฟลด์อัตโนมัติ
 (async () => {
-  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 1 }, { nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10, turnTime: 1 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
   const [a, b, c] = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   room.start(a);
   const first = room.players[room.toActIdx];

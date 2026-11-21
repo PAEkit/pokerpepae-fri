@@ -149,10 +149,11 @@ function sse(code, token) {
   const revealing = sv.phase === 'showdown' && sv.result && sv.result.showdown;
   if (!revealing) for (const p of sv.players) assert(p.hole.every((c) => c === null), 'spectator sees hidden cards');
   // ทำอะไรไม่ได้เลย
-  for (const route of ['action', 'start', 'chat', 'rebuy', 'kick']) {
+  for (const route of ['action', 'start', 'rebuy', 'kick']) {
     const r = await post(route, { code, token: w.body.token, type: 'fold', text: 'hi', target: toks[0] });
     assert.strictEqual(r.status, 403, `ผู้ชมต้องถูกปฏิเสธที่ /api/${route}`);
   }
+  assert.strictEqual((await post('chat', { code, token: w.body.token, text: 'hi' })).status, 200, 'ผู้ชมแชทได้');
   // ผู้ชมที่ใช้ token ผิด/ไม่มี
   assert.strictEqual((await post('watch', { code: 'ZZZZ', name: 'x' })).status, 404);
   // ผู้เล่นเห็นจำนวนผู้ชมเปลี่ยน แล้วออกได้
@@ -183,9 +184,9 @@ function sse(code, token) {
   const w2 = await post('watch', { code, name: 'ฟังเฉยๆ' });
   const ws2 = sse(code, w2.body.token);
   await ws2.until((s) => s.you && s.you.spectator);
-  assert.strictEqual((await post('voice', { code, token: w2.body.token, mode: 'talk' })).status, 403, 'ผู้ชมต้องพูดไม่ได้');
+  assert.strictEqual((await post('voice', { code, token: w2.body.token, mode: 'talk' })).status, 200, 'ผู้ชมพูดได้');
   assert.strictEqual((await post('voice', { code, token: w2.body.token, mode: 'listen' })).status, 200);
-  const vv2 = await cl[0].until((s) => s.voice.length === 3);
+  const vv2 = await cl[0].until((s) => s.voice.length === 3 && s.voice[2].mode === 'listen');
   assert.strictEqual(vv2.voice[2].mode, 'listen');
 
   // ส่งสัญญาณ: ถึงเฉพาะปลายทาง พร้อมบอกว่าใครส่ง

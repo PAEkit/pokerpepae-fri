@@ -25,7 +25,7 @@
 html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:'Kanit',system-ui,-apple-system,'Sukhumvit Set',sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 body{background:radial-gradient(120% 80% at 50% 0%,#0f3a2b 0%,var(--bg) 60%)}
 button,input,select{font:inherit;color:inherit}
-#app{height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);max-width:560px;margin:0 auto;position:relative}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);max-width:560px;margin:0 auto;position:relative}
 .screen{display:none;flex:1;min-height:0;flex-direction:column}
 .screen.on{display:flex}
 
@@ -79,14 +79,13 @@ details summary::before{content:'⚙️ '}
 .conn.on{display:block}
 
 .tablewrap{flex:1;min-height:300px;position:relative;margin:0 4px}
-.felt{position:absolute;inset:6% 2.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 38%,var(--felt1),var(--felt2) 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,0,0,.5)}
-.felt::after{content:'PokerPEPAE&Fri';position:absolute;left:0;right:0;top:63%;text-align:center;color:rgba(255,255,255,.07);font-weight:700;font-size:20px;letter-spacing:1px}
-.center{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:78%;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2}
+.felt{position:absolute;top:6%;bottom:6%;left:2.5%;right:2.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 38%,var(--felt1),var(--felt2) 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,0,0,.5)}
+.center{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:78%;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:40;pointer-events:none}
 .potline{background:rgba(0,0,0,.35);border-radius:20px;padding:2px 12px;font-size:14px;color:#dff5e8}
 .potline b{color:var(--gold);font-weight:600}
 .board{display:flex;gap:4px;--cw:min(11.2vw,50px)}
 .slot{width:var(--cw);height:calc(var(--cw)*1.4);border:1.5px dashed rgba(255,255,255,.18);border-radius:calc(var(--cw)*.14)}
-.banner{min-height:20px;text-align:center;font-size:14px;line-height:1.25;color:#fff;max-width:100%}
+.banner{position:absolute;left:0;right:0;top:100%;margin-top:4px;min-height:20px;text-align:center;font-size:14px;line-height:1.25;color:#fff;max-width:100%}
 .banner .w{color:var(--gold);font-weight:600}
 
 .card{width:var(--cw);height:calc(var(--cw)*1.4);background:var(--card);border-radius:calc(var(--cw)*.14);color:#15171c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;line-height:1;box-shadow:0 2px 5px rgba(0,0,0,.45);font-size:calc(var(--cw)*.5);flex:none;transition:opacity .2s}
@@ -97,7 +96,7 @@ details summary::before{content:'⚙️ '}
 .card.hl{box-shadow:0 0 0 2px var(--gold),0 0 12px rgba(244,201,93,.8);transform:translateY(-3px)}
 .card.deal{animation:flip .8s cubic-bezier(.2,.8,.3,1) backwards}
 @keyframes flip{0%{transform:perspective(500px) rotateY(100deg) translateY(-18px) scale(.8);opacity:0}45%{opacity:1}100%{transform:none;opacity:1}}
-#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+#fx{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:30}
 @keyframes deal{from{transform:translateY(-14px) scale(.8);opacity:0}to{transform:none;opacity:1}}
 
 .seat{position:absolute;transform:translate(-50%,-50%);width:76px;z-index:3;text-align:center}
@@ -121,7 +120,8 @@ details summary::before{content:'⚙️ '}
 .seat .act{margin:3px auto 0;display:inline-block;max-width:92px;font-size:11px;line-height:1.2;background:rgba(0,0,0,.55);border-radius:9px;padding:1px 7px;color:#fff;white-space:nowrap}
 .seat .act.off{color:#ffb4b4}
 .dbtn{position:absolute;right:-4px;top:12px;z-index:4;width:20px;height:20px;border-radius:50%;background:#fff;color:#111;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.5)}
-.bubble{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:6px;background:#fff;color:#111;border-radius:12px;padding:4px 9px;font-size:13px;max-width:150px;width:max-content;z-index:9;box-shadow:0 2px 8px rgba(0,0,0,.4);animation:deal .2s ease-out;line-height:1.25;word-break:break-word}
+.bubble{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:6px;background:#fff;color:#111;border-radius:12px;padding:4px 9px;font-size:13px;max-width:150px;width:max-content;z-index:9;box-shadow:0 2px 8px rgba(0,0,0,.4);animation:bpop .2s ease-out;line-height:1.25;word-break:break-word}
+@keyframes bpop{from{transform:translateX(-50%) scale(.85);opacity:0}to{transform:translateX(-50%);opacity:1}}
 .bet{position:absolute;transform:translate(-50%,-50%);z-index:4;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;background:rgba(0,0,0,.45);border-radius:14px;padding:1px 8px 1px 3px;color:#fff}
 .chip{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0 20%,#d33 21% 55%,#fff 56% 62%,#d33 63%);border:1px solid #fff;flex:none}
 
@@ -158,7 +158,7 @@ details summary::before{content:'⚙️ '}
 .msg .b{margin-top:6px}
 
 /* ---------- ลิ้นชัก ---------- */
-.drawer{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.55)}
+.drawer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;display:none;background:rgba(0,0,0,.55)}
 .drawer.on{display:block}
 .sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;height:72dvh;background:#0c2a20;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
 .tabs{display:flex;gap:6px;padding:10px 10px 0}
@@ -250,7 +250,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .cdbig{display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;color:#fff}
 .cdbig .cdn{font-size:26px;border-radius:12px;padding:0 12px;line-height:1.3}
 .deckfx{position:relative;width:26px;height:34px}
-.deckfx i{position:absolute;inset:0;border-radius:4px;border:2px solid #fff;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.deckfx i{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:4px;border:2px solid #fff;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .deckfx i:nth-child(1){transform:translate(-3px,3px)}
 .deckfx i:nth-child(2){transform:translate(-1px,1px)}
 .deckfx i:nth-child(3){animation:shuf 1.1s ease-in-out infinite}
@@ -278,6 +278,80 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .tbadge{display:inline-block;background:linear-gradient(#f8d675,var(--gold2));color:#2a1b00;border-radius:8px;padding:0 6px;font-size:11px;font-weight:700;margin-left:6px}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:9px 16px;font-size:15px;z-index:99;max-width:86vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
+
+/* ---------- รอบแก้ไข: เลย์เอาต์ / เหรียญ / สติกเกอร์ ---------- */
+.top .codecol{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex:none}
+.wm{font-size:9px;font-weight:600;color:rgba(244,201,93,.6);letter-spacing:.3px;line-height:1;padding-left:3px;white-space:nowrap}
+.banner .wl{line-height:1.1;margin-bottom:2px}
+.banner .wn{font-size:28px;font-weight:700;color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.banner .wd{font-size:14px}
+.board{position:relative;z-index:41}
+.potrow{min-height:44px}
+.pile{position:relative;display:inline-block;vertical-align:middle;flex:none}
+.coin,.fchip{--c:#d33a3a;border-radius:50%;background:radial-gradient(circle,var(--c) 0 46%,rgba(0,0,0,.3) 47% 53%,transparent 54%),repeating-conic-gradient(#fff 0 16deg,var(--c) 16deg 36deg);box-shadow:0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(0,0,0,.4)}
+.pile .coin{position:absolute;display:block}
+.fchip{border:0}
+.bet{flex-direction:column;gap:1px;padding:2px 8px 2px 6px;border-radius:12px;align-items:center}
+.bet .br{display:flex;align-items:center;gap:4px}
+.seat.lead .plate{border-color:#ff5d73;animation:leadp .9s ease-in-out infinite}
+@keyframes leadp{0%,100%{box-shadow:0 0 0 2px rgba(255,93,115,.5),0 0 10px rgba(255,93,115,.7)}50%{box-shadow:0 0 0 3px rgba(255,93,115,.9),0 0 22px rgba(255,93,115,1)}}
+#btnMic{width:34px;height:32px;right:10px;bottom:52px;border-radius:11px}
+#btnMic svg,.vb svg{width:18px;height:18px}
+.vb svg{width:12px;height:12px}
+.vbox .vr svg{width:17px;height:17px;vertical-align:middle}
+#btnStk{left:6px;right:auto;bottom:4px;width:34px;height:32px;font-size:17px;border-radius:11px}
+.stkpop{position:absolute;left:6px;bottom:42px;z-index:60;background:#0c2a20;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.55);width:min(92%,300px)}
+.stkpop.on{display:grid}
+.stkpop button{border:0;background:rgba(255,255,255,.07);border-radius:10px;padding:3px 0 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.stkpop .stk svg,.stkpop .stk img{width:50px;height:50px}
+.stk{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05}
+.stk svg,.stk img{width:56px;height:56px}
+.stk small{font-size:11px;font-weight:600;color:#7a3b00}
+.stkpop .stk small{color:var(--ink)}
+.bubble.stkb{padding:3px 8px}
+.chatl .m .stk{vertical-align:middle}
+.chatl .m .stk svg,.chatl .m .stk img{width:44px;height:44px}
+.chatl .m .stk small{color:var(--mute)}
+.shuf{position:absolute;left:5%;right:5%;top:47%;transform:translateY(-50%);z-index:45;display:none;flex-direction:column;align-items:center;gap:8px;text-align:center;background:rgba(5,26,19,.92);border:1px solid rgba(244,201,93,.35);border-radius:18px;padding:10px 6px;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+.tablewrap.shufon .center{visibility:hidden}
+.shuf .st{padding:0 8px;font-size:14px}
+.shuf .st b{color:#1b1200}
+.shgrid{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 6px}
+.shslot{display:flex;flex-direction:column;align-items:center;width:17%;min-width:50px;font-size:11px;color:#fff}
+.shc{width:44px;height:62px;border-radius:7px;border:3px solid #fff;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);box-shadow:0 2px 6px rgba(0,0,0,.55);padding:0;cursor:pointer;color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+.shc.mine{box-shadow:0 0 0 3px var(--gold),0 0 12px rgba(244,201,93,.9)}
+.shc.tk{opacity:.5}
+.shc[disabled]{cursor:default}
+.shc:not(.tk):not([disabled]):not(.up){animation:shpulse 1.4s ease-in-out infinite}
+@keyframes shpulse{50%{transform:translateY(-4px)}}
+.shc.up{background:var(--card);color:#15171c;font-size:26px}
+.shc.up.flipin{animation:flip .8s cubic-bezier(.2,.8,.3,1) backwards}
+.shslot .who{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.role{font-weight:700;border-radius:8px;padding:0 5px;font-size:10px;color:#fff;margin-top:1px;display:inline-block}
+.role.d{background:#fff;color:#111}.role.sb{background:#2f7fd1}.role.bb{background:#e0861f}
+.b.pre2{height:auto;min-height:42px;white-space:normal;line-height:1.2;font-size:14px;padding:6px 10px}
+
+.top .code{display:inline-flex;align-items:center}
+.top .code svg{width:14px;height:14px;margin-left:6px}
+.ic .cnt{position:absolute;right:1px;bottom:1px;font-size:10px;font-weight:700;background:var(--gold);color:#2a1b00;border-radius:7px;padding:0 4px;line-height:13px}
+.tablewrap.tour .felt{background:radial-gradient(ellipse at 50% 38%,#2d8fdc,#0f4c8a 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,20,60,.55)}
+.tmark{position:absolute;left:0;right:0;top:27%;text-align:center;color:rgba(255,255,255,.16);font-weight:700;font-size:15px;letter-spacing:2px;pointer-events:none;z-index:1;display:none}
+.tablewrap.tour .tmark{display:block}
+#btnTour{left:6px;right:auto;bottom:44px;width:34px;height:32px;border-radius:11px;font-size:17px;display:none}
+.tablewrap.tour #btnTour{display:inline-flex}
+.rules h3{font-size:24px;text-align:center;margin:0 0 12px;color:var(--gold)}
+.rules .ru{display:flex;gap:10px;align-items:flex-start;font-size:20px;line-height:1.3;font-weight:600;padding:8px 10px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.07)}
+.rules .ru i{font-style:normal;font-size:26px;flex:none}
+.rules .ru b{color:#ffd54a}
+.rules .ru.r1{border-left:5px solid #ffd54a}.rules .ru.r2{border-left:5px solid #5ad6a0}.rules .ru.r3{border-left:5px solid #ff7b86}.rules .ru.r4{border-left:5px solid #59b7ff}
+.rules .gl{text-align:center;font-size:34px;font-weight:700;margin:12px 0 4px;background:linear-gradient(#fff3c4,#f0a91f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tst h4{margin:12px 0 6px;color:var(--gold);font-size:16px}
+.tst .r{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.tst .r .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tst .r small{display:block;color:var(--mute);font-size:11px}
+.tst .r.out{opacity:.55}
+.tst .pz{font-weight:700;color:var(--gold);white-space:nowrap}
+.lbchat{max-height:170px;overflow:auto;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -322,6 +396,12 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
         <h3>ผู้เล่นในห้อง (<span id="lbCount">0</span>/9)</h3>
         <ul class="plist" id="lbPlayers"></ul>
       </div>
+      <div class="card-box">
+        <h3>💬 แชท</h3>
+        <div class="chatl lbchat" id="lbChat"></div>
+        <div class="emo" id="lbEmo"></div>
+        <div class="chatin" style="padding:6px 0 0"><input id="lbChatText" class="in" maxlength="80" placeholder="พิมพ์ข้อความ…" autocomplete="off"><button id="lbChatSend" class="b gold">ส่ง</button></div>
+      </div>
       <p class="hint" id="lbInfo"></p>
       <p class="hint" id="lbSpec"></p>
       <button id="btnStart" class="b gold full">เริ่มเกม</button>
@@ -335,22 +415,28 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
   <section id="game" class="screen">
     <div class="conn" id="conn">กำลังเชื่อมต่อใหม่…</div>
     <div class="top">
-      <button class="code" id="gCode" title="แตะเพื่อคัดลอกลิงก์"></button>
+      <div class="codecol"><button class="code" id="gCode" title="แชร์ลิงก์ให้เพื่อน" aria-label="แชร์ลิงก์ห้องให้เพื่อน"><span id="gCodeTxt"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></svg></button><span class="wm">PokerPEPAE&amp;Fri</span></div>
       <div class="mid" id="gMid"></div>
       <button class="ic" id="btnSnd" aria-label="เสียง">🔊</button>
       <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#f4c95d" stroke="#b9821a" stroke-width="2"/><circle cx="16" cy="16" r="10.5" fill="none" stroke="#d79a1e" stroke-width="1"/><polyline points="8,21 13,15 17,18 24,10" fill="none" stroke="#6b4300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="1.8" fill="#6b4300"/></svg></button>
-      <button class="ic" id="btnRoom" aria-label="ห้อง">🏠</button>
+      <button class="ic" id="btnRoom" aria-label="สมาชิกในห้อง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.2c2.8-.2 4.5 1.8 4.5 5"/></svg><b class="cnt" id="roomCnt"></b></button>
+      <button class="ic" id="btnLeave" aria-label="ออกจากห้อง" style="color:#ff8a93"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><path d="M10 4H5v16h5"/><path d="M15 8l4 4-4 4M19 12H9"/></svg></button>
     </div>
     <div class="tablewrap" id="tablewrap">
       <div class="felt"></div>
+      <div class="tmark" id="tmark"></div>
       <div class="center">
         <div class="potrow"><span id="potchips"></span><div class="potline">พ็อต <b id="gPot">0</b></div></div>
         <div class="board" id="gBoard"></div>
         <div class="banner" id="gBanner"></div>
       </div>
       <div id="gSeats"></div>
+      <div class="shuf" id="shuf"></div>
       <canvas id="fx"></canvas>
-      <button class="ic fab" id="btnMic" aria-label="ไมค์" style="bottom:52px">🎤</button>
+      <button class="ic fab" id="btnMic" aria-label="ไมค์"></button>
+      <button class="ic fab" id="btnTour" aria-label="สถานะบายอินและเงินรางวัล">💰</button>
+      <button class="ic fab" id="btnStk" aria-label="สติกเกอร์อารมณ์">😊</button>
+      <div class="stkpop" id="stkPop"></div>
       <button class="ic fab" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
     </div>
     <div class="panel" id="panel"></div>
@@ -360,7 +446,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 <!-- ลิ้นชัก แชท/ประวัติ/ห้อง -->
 <div class="drawer" id="drawer">
   <div class="sheet">
-    <div class="sheettitle" id="sheetTitle">🏠 ห้อง</div>
+    <div class="sheettitle" id="sheetTitle">👥 สมาชิกในห้อง</div>
     <div class="tabs" id="tabs">
       <button data-tab="chat" class="on">แชท</button>
       <button data-tab="log">ประวัติ</button>
@@ -415,6 +501,8 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 <div class="drawer" id="sndModal"><div class="mbox" id="sndBox"></div></div>
 <!-- ผลทัวร์นาเมนต์ / ประวัติ -->
 <div class="drawer" id="resModal"><div class="mbox" id="resBox"></div></div>
+<div class="drawer" id="rulesModal"><div class="mbox rules" id="rulesBox"></div></div>
+<div class="drawer" id="tstModal"><div class="mbox tst" id="tstBox"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -607,8 +695,8 @@ function onState(s) {
   if (lastChatId === null) lastChatId = maxId;
   for (const m of s.chat) {
     if (m.id > lastChatId) {
-      bubbles[m.from] = { text: m.text, until: Date.now() + 4500 };
-      setTimeout(render, 4600);
+      bubbles[m.from] = { text: m.text, until: Date.now() + (isSticker(m.text) ? 5500 : 4500) };
+      setTimeout(render, isSticker(m.text) ? 5600 : 4600);
       if (!$('#drawer').classList.contains('on') || drawerTab !== 'chat') unread = true;
     }
   }
@@ -631,6 +719,7 @@ function onState(s) {
   fxPlan = NO_FX;
   syncVoice();
   renderMic();
+  checkPreDeal();
 
   // พลุฉลองที่ที่นั่งผู้ชนะ (ครั้งเดียวต่อตา)
   if (s.phase === 'showdown' && s.result) {
@@ -667,7 +756,6 @@ function fxLoop() {
   fx.raf = fx.parts.length ? requestAnimationFrame(fxLoop) : 0;
 }
 function celebrate(winnerIds) {
-  try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) { /* ใช้ไม่ได้ก็ข้าม */ }
   const wrap = $('#tablewrap'), canvas = $('#fx');
   const r = wrap.getBoundingClientRect();
   if (!r.width) return;
@@ -692,16 +780,25 @@ const NO_FX = { newBets: new Set(), deal: false, prevBets: [], direct: [], payou
 let fxPlan = NO_FX;
 let fxHold = { key: '', until: 0 };   // ช่วงที่ยังโชว์กองพ็อตตอนจบตา (รอชิปไหลไปหาผู้ชนะ)
 const DENOMS = [[5000, '#2b2f3a'], [1000, '#e0a82e'], [500, '#8e44ad'], [100, '#2a2a2a'], [25, '#1f9d63'], [5, '#d33a3a'], [1, '#3b82f6']];
-function chipStackHTML(amount, cls = '') {
-  let rest = Math.max(0, Math.floor(amount)), cols = [];
-  for (const [v, c] of DENOMS) {
-    const k = Math.floor(rest / v); rest -= k * v;
-    if (k) cols.push(`<span class="pcol">${`<i class="pd" style="background:${c}"></i>`.repeat(Math.min(k, 8))}</span>`);
-  }
-  return `<span class="pstack ${cls}">${cols.slice(0, 4).join('')}</span>`;
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+// กองเหรียญมองจากด้านบน วางสุ่มซ้อนกันให้ดูเป็นธรรมชาติ (ตำแหน่งคงที่ตามลำดับ ไม่กระพริบเวลาวาดใหม่)
+function chipPileHTML(amount, o = {}) {
+  const size = o.size || 14, R = o.R || 7, max = o.max || 6, salt = o.salt || 1, min = o.min || 0;
+  let rest = Math.max(0, Math.floor(amount)), list = [];
+  for (const [v, c] of DENOMS) { const k = Math.floor(rest / v); rest -= k * v; for (let i = 0; i < Math.min(k, 4); i++) list.push(c); }
+  if (!list.length) return '';
+  for (let i = 0; list.length < min && list.length; i++) list.push(list[i % list.length]);
+  if (list.length > max) { const st = list.length / max; list = Array.from({ length: max }, (_, i) => list[Math.floor(i * st)]); }
+  const rnd = rng(salt * 1013 + 7);
+  for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
+  const W = 2 * R + size;
+  const coins = list.map((c) => {
+    const a = rnd() * Math.PI * 2, r = R * Math.sqrt(rnd());
+    return `<i class="coin" style="--c:${c};width:${size}px;height:${size}px;left:${(R + r * Math.cos(a)).toFixed(1)}px;top:${(R + r * Math.sin(a)).toFixed(1)}px;transform:rotate(${Math.floor(rnd() * 360)}deg)"></i>`;
+  }).join('');
+  return `<span class="pile" style="width:${W}px;height:${W}px">${coins}</span>`;
 }
 const CROWN = '<svg class="crown" viewBox="0 0 26 22" aria-hidden="true"><path d="M2 18 L1 6 L8 11 L13 2 L18 11 L25 6 L24 18 Z" fill="#ffd34d" stroke="#b9821a" stroke-width="1.3" stroke-linejoin="round"/><rect x="2" y="18" width="22" height="3" rx="1.2" fill="#f0a91f" stroke="#b9821a" stroke-width="1"/><circle cx="1.5" cy="5.5" r="1.8" fill="#ff5d73"/><circle cx="13" cy="2" r="1.8" fill="#59b7ff"/><circle cx="24.5" cy="5.5" r="1.8" fill="#5ad6a0"/></svg>';
-const reduceMotion = () => { try { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
 const chipCount = (amt) => Math.max(2, Math.min(9, Math.ceil(amt / Math.max(1, state ? state.settings.bb : 10))));
 function wrapPos(el) {
   const wr = $('#tablewrap').getBoundingClientRect(), r = el.getBoundingClientRect();
@@ -713,7 +810,7 @@ function fly(cls, from, to, n, delay, colors) {
     setTimeout(() => {
       const el = document.createElement('i');
       el.className = cls;
-      if (colors) el.style.background = colors[i % colors.length];
+      if (colors) el.style.setProperty('--c', colors[i % colors.length]);
       const j = () => (Math.random() - 0.5) * 12;
       el.style.opacity = '0';
       el.style.transform = `translate(${from.x + j()}px,${from.y + j()}px)`;
@@ -728,14 +825,14 @@ function fly(cls, from, to, n, delay, colors) {
 const CHIP_COLORS = ['#d33a3a', '#e0a82e', '#1f9d63', '#3b82f6', '#8e44ad'];
 // เทียบสถานะเก่า/ใหม่ แล้ววางแผนว่าจะให้ชิปหรือไพ่ไหลตรงไหน (เรียกก่อนวาดหน้าจอใหม่ เพื่อเก็บตำแหน่งชิปเดิมไว้)
 function planFx(prev, s) {
-  if (!prev || prev.code !== s.code || !prev.you || prev.you.id !== s.you.id || reduceMotion()) {
+  if (!prev || prev.code !== s.code || !prev.you || prev.you.id !== s.you.id) {
     if (s.phase === 'showdown') fxHold = { key: '', until: 0 };
     return NO_FX;
   }
   const plan = { newBets: new Set(), deal: false, prevBets: [], direct: [], payout: null, collect: false };
   const sameHand = prev.handNo === s.handNo;
   const pp = {}; prev.players.forEach((p) => { pp[p.id] = p; });
-  if (s.phase === 'hand' && !sameHand) plan.deal = true;
+  if (s.phase === 'hand' && !sameHand) plan.deal = preDeal.key !== prev.code + ':' + prev.handNo;
   if (s.phase === 'hand') {
     for (const p of s.players) {
       const o = sameHand && pp[p.id] ? pp[p.id].bet : 0;
@@ -826,6 +923,10 @@ function renderLobby() {
   $('#lbPlayers').innerHTML = s.players.map((p) =>
     `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('');
   $('#lbInfo').textContent = (s.tourney ? `🏆 ทัวร์นาเมนต์ · บายอิน ${fmt(s.tourney.buyIn)}฿ · ` : '') + `ชิปเริ่มต้น ${fmt(s.settings.startChips)} · บลายด์ ${s.settings.sb}/${s.settings.bb}` + (s.tourney ? ` (x2 ทุก ${s.tourney.every} ตา)` : '') + ' · ' + (s.settings.turnTime ? `${s.settings.turnTime} วินาที/ตา` : 'ไม่จำกัดเวลา');
+  { const c = $('#lbChat'), stick = c.scrollTop + c.clientHeight >= c.scrollHeight - 40;
+    c.innerHTML = s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ทักทายเพื่อนๆ ได้เลย</p>';
+    if (stick) c.scrollTop = c.scrollHeight; }
+  if (s.tourney && !rulesShown.has(s.code)) { rulesShown.add(s.code); showRules(s); }
   $('#btnStart').style.display = me.isHost ? '' : 'none';
   $('#btnStart').disabled = s.players.length < 2;
   $('#lbWait').textContent = spec ? '👁 คุณกำลังดูอยู่ (ดูได้อย่างเดียว)' : me.isHost ? (s.players.length < 2 ? 'รอเพื่อนเข้าห้องอย่างน้อย 1 คน' : '') : 'รอเจ้าของห้องกดเริ่มเกม…';
@@ -855,12 +956,16 @@ function renderGame() {
   if (res && res.showdown) for (const w of res.winners) (res.hands[w.id] ? res.hands[w.id].best : []).forEach((c) => hlCards.add(c));
   const showHL = hlCards.size > 0;
 
-  $('#gCode').textContent = s.code;
-  $('#gMid').textContent = (s.tourney ? '🏆 ' : '') + `ตาที่ ${s.handNo} · ${fmt(s.settings.sb)}/${fmt(s.settings.bb)}` + (s.tourney && !s.tourney.over ? ` · x2 ตาที่ ${s.tourney.nextLevelHand}` : '') + (s.spectators.length ? ` · 👁 ${s.spectators.length}` : '');
+  $('#gCodeTxt').textContent = s.code;
+  $('#gMid').textContent = (s.tourney ? '🏆 ' : '') + `ตาที่ ${s.handNo} · ${fmt(s.settings.sb)}/${fmt(s.settings.bb)}` + (s.tourney && !s.tourney.over ? ` · x2 ตาที่ ${s.tourney.nextLevelHand}` : '') ;
+  $('#tablewrap').classList.toggle('tour', !!s.tourney);
+  if (s.tourney) $('#tmark').textContent = 'TOURNAMENT #' + s.tourney.no;
+  if ($('#tstModal').classList.contains('on')) renderTourStatus();
+  $('#roomCnt').textContent = s.players.filter((q) => !q.left).length + (s.specList || []).length;
   const holdKey = s.code + ':' + s.handNo;
   const potShown = s.phase === 'showdown' && !(fxHold.key === holdKey && Date.now() < fxHold.until) ? 0 : s.pot;
   $('#gPot').textContent = fmt(potShown);
-  $('#potchips').innerHTML = chipStackHTML(potShown);
+  $('#potchips').innerHTML = chipPileHTML(potShown, { size: 15, R: 14, max: 16, salt: 1, min: Math.min(14, Math.max(3, Math.ceil(potShown / Math.max(1, s.settings.bb)))) });
   $('#btnMenu').classList.toggle('has', unread);
 
   // ไพ่กลาง — สร้างใหม่เฉพาะเมื่อไพ่เปลี่ยน (กันแอนิเมชันพลิกไพ่ถูกตัดกลางคัน) และเปิดทีละใบเว้นจังหวะให้ลุ้น
@@ -886,9 +991,11 @@ function renderGame() {
   // ข้อความผลตา
   let banner = '';
   if (s.phase === 'showdown' && res) {
-    banner = res.winners.map((w) => `<div><span class="w">🏆 ${esc(nameOf(w.id))}</span> +${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</div>`).join('');
+    banner = res.winners.map((w) => `<div class="wl"><div class="wn">🏆 ${esc(nameOf(w.id))}</div><div class="wd">+${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</div></div>`).join('');
     if (res.pots.length > 1) banner += `<div style="opacity:.75;font-size:12px">มีไซด์พ็อต ${res.pots.length - 1} ก้อน</div>`;
     banner += '<div class="cdbig"><span class="deckfx"><i></i><i></i><i></i></span>ตาถัดไปใน <b class="cdn">–</b> วินาที</div>';
+  } else if (s.phase === 'shuffle') {
+    banner = '';
   } else if (s.phase === 'over') {
     banner = '<div><span class="w">🏁 จบทัวร์นาเมนต์แล้ว</span></div>';
   } else if (s.phase === 'waiting') {
@@ -903,16 +1010,20 @@ function renderGame() {
   const dense = n >= 7;
   $('#tablewrap').classList.toggle('dense', dense);
   const rx = dense ? 43 : 41, ry = dense ? 39 : 37;
+  const pdSet = preDealActive(s) ? preDeal.ids : null;
+  const pdFresh = !!pdSet && Date.now() - preDeal.t < 1500;
+  const leadSet = new Set(s.phase === 'hand' && s.runout ? (s.lead || []) : []);
   let seats = '';
   seatList.forEach((p, i) => {
+    const pdSeat = !!pdSet && pdSet.has(p.id);
     const rel = (i - meIdx + n) % n;
     const th = ((90 + (rel * 360) / n) * Math.PI) / 180;
-    const x = 50 + rx * Math.cos(th), y = 50 + ry * Math.sin(th);
+    const x = Math.min(dense ? 90 : 89.5, Math.max(dense ? 10 : 10.5, 50 + rx * Math.cos(th))), y = 50 + ry * Math.sin(th);
     const isMe = !!me && p.id === me.id;
     const showCards = !isMe && p.hole.length > 0;
-    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
     const vm = (s.voice || []).find((m) => m.id === p.id);
-    const vb = vm ? `<span class="vb">${vm.mode === 'listen' ? '🎧' : vm.muted ? '🔇' : '🎤'}</span>` : '';
+    const vb = vm ? `<span class="vb">${micIcon(vm.mode, vm.muted)}</span>` : '';
     const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
     let label = p.lastAction;
     if (!label && s.phase !== 'lobby') {
@@ -920,25 +1031,32 @@ function renderGame() {
       else if (!p.inHand) label = 'รอตาหน้า';
     }
     if (res && res.showdown && res.hands[p.id] && !p.folded) label = res.hands[p.id].name;
+    if (pdSeat || s.phase === 'shuffle') label = '';
     const off = !p.connected ? '<div class="act off">ออฟไลน์</div>' : (label ? `<div class="act">${esc(label)}</div>` : '');
-    const b = bubbles[p.id] && bubbles[p.id].until > Date.now() ? `<div class="bubble">${esc(bubbles[p.id].text)}</div>` : '';
+    const bb = bubbles[p.id] && bubbles[p.id].until > Date.now() ? bubbles[p.id] : null;
+    const b = bb ? `<div class="bubble${isSticker(bb.text) ? ' stkb' : ''}">${msgHTML(bb.text)}</div>` : '';
     seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
-      ${b}<div class="mini${showCards && p.hole[0] != null ? ' rev' : ''}${fxPlan.deal ? ' dealin' : ''}"${fxPlan.deal ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${mini}</div>
+      ${b}<div class="mini${!pdSeat && showCards && p.hole[0] != null ? ' rev' : ''}${fxPlan.deal || pdFresh ? ' dealin' : ''}"${fxPlan.deal || pdFresh ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${pdSeat ? cardEl(null) + cardEl(null) : mini}</div>
       <div class="plate">${winIds.has(p.id) ? CROWN : ''}<div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div></div>
       ${p.isDealer ? '<span class="dbtn">D</span>' : ''}${p.isSB ? '<span class="pos sb">SB</span>' : ''}${p.isBB ? '<span class="pos bb">BB</span>' : ''}${vb}${off}</div>`;
     if (s.phase !== 'showdown' && (p.bet > 0 || (p.allIn && p.inHand && !p.folded))) {
       const k = dense ? 0.46 : 0.34;
       const bx = x + (50 - x) * k, by = y + (46 - y) * k;
-      seats += `<div class="bet${fxPlan.newBets.has(p.id) ? ' nb' : ''}" data-bpid="${p.id}" style="left:${bx.toFixed(1)}%;top:${by.toFixed(1)}%">${p.bet > 0 ? chipStackHTML(p.bet, 'sm') + fmt(p.bet) : ''}${p.allIn ? '<span class="aitag">ALL-IN</span>' : ''}</div>`;
+      seats += `<div class="bet${fxPlan.newBets.has(p.id) ? ' nb' : ''}" data-bpid="${p.id}" data-lx="${bx.toFixed(1)}" data-ly="${by.toFixed(1)}" style="left:${bx.toFixed(1)}%;top:${by.toFixed(1)}%"><div class="br">${p.bet > 0 ? chipPileHTML(p.bet, { size: 13, R: 6, max: 6, salt: i + 2 }) + '<span>' + fmt(p.bet) + '</span>' : ''}</div>${p.allIn ? '<span class="aitag">ALL-IN</span>' : ''}</div>`;
     }
   });
   $('#gSeats').innerHTML = seats;
+  renderShuffle(s);
+  layoutBets();
+  fixBubbles();
+  requestAnimationFrame(() => { layoutBets(); fixBubbles(); });
 
   renderPanel(me, hlCards);
 }
 
 function status(me) {
   const s = state;
+  if (s.phase === 'shuffle') return 'สับที่นั่งใหม่ — จั่วไพ่กลางโต๊ะ';
   if (s.phase === 'over') return 'ทัวร์นาเมนต์จบแล้ว';
   if (s.phase === 'showdown') return `ตาถัดไปใน <b class="cdn">–</b> วินาที`;
   if (s.phase === 'waiting') {
@@ -962,6 +1080,7 @@ function potRaise(frac) {
 
 // ---------- แผงล่างของผู้ชม ----------
 function specStatus(s) {
+  if (s.phase === 'shuffle') return 'กำลังจั่วไพ่สับที่นั่งใหม่…';
   if (s.phase === 'over') return 'ทัวร์นาเมนต์จบแล้ว';
   if (s.phase === 'showdown') return 'ตาถัดไปใน <b class="cdn">–</b> วินาที';
   if (s.phase === 'waiting') return s.nextHandAt ? 'ตาใหม่เริ่มใน <b class="cdn">–</b> วินาที' : `🏆 ${esc(s.soleId ? nameOf(s.soleId) : '')} ครองชิปทั้งโต๊ะ · รอผู้เล่นบายอิน`;
@@ -1004,7 +1123,7 @@ $('#btnLobbyJoin').onclick = specJoin;
 function renderPanel(me, hlCards) {
   if (!me) { renderSpecPanel(); return; }
   const s = state, o = s.options;
-  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen]);
+  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown]);
   if (sig === panelSig) return;
   panelSig = sig;
   // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
@@ -1034,6 +1153,10 @@ function renderPanel(me, hlCards) {
           <button class="b sm" data-add="${sb}">+${fmt(sb)}</button><button class="b sm" data-add="${bb}">+${fmt(bb)}</button></div>
         <div class="pre"><button class="b sm" data-add="${bb * 2}">+${fmt(bb * 2)}</button><button class="b sm" data-add="${bb * 3}">+${fmt(bb * 3)}</button><button class="b sm" data-f="clear">ล้าง</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
     }
+  } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
+    h += `<div class="acts"><button class="b pre2 ${s.you.pre ? 'gold' : 'ghost'}" id="aPre">${s.you.pre ? '✔ เช็ค/โฟลด์ล่วงหน้า เปิดอยู่ (แตะเพื่อยกเลิก)' : '☐ เช็ค/โฟลด์ล่วงหน้า · เช็คถ้าไม่มีใครเพิ่ม โฟลด์ถ้ามีคนเพิ่ม'}</button></div>`;
+  } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !me.shown && !(s.result && s.result.hands && s.result.hands[me.id])) {
+    h += '<div class="acts"><button class="b gold" id="aShow">👁 โชว์ไพ่ให้เพื่อนดู</button></div>';
   } else if (s.phase === 'waiting') {
     const w = s.soleId ? nameOf(s.soleId) : '';
     h += `<div class="msg">🏆 ${esc(w)} ครองชิปทั้งโต๊ะ<br><span style="color:var(--mute);font-size:13px">${s.nextHandAt ? 'มีคนบายอินแล้ว กำลังเริ่มตาใหม่…' : 'รอผู้เล่นบายอิน แล้วเล่นต่อได้เลย'}</span></div>`;
@@ -1085,6 +1208,8 @@ function renderPanel(me, hlCards) {
       });
     }
   }
+  if ($p('#aPre')) $p('#aPre').onclick = () => api('pre', { ...session, on: !s.you.pre }).catch(() => {});
+  if ($p('#aShow')) $p('#aShow').onclick = () => api('show', session).catch(() => {});
   const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});
 }
 
@@ -1100,11 +1225,195 @@ setInterval(() => {
       seat.classList.toggle('warn', left < 6000);
     }
   }
+  checkPreDeal();
+  if (state.phase === 'shuffle' && state.shuffle) {
+    const left = Math.max(0, Math.ceil(((state.shuffle.revealed ? state.shuffle.until : state.shuffle.deadline) - now) / 1000));
+    document.querySelectorAll('.cdn[data-sh]').forEach((e) => { if (e.textContent !== String(left)) e.textContent = left; });
+  }
   if (state.nextHandAt) {
     const left = Math.max(0, Math.ceil((state.nextHandAt - now) / 1000));
     document.querySelectorAll('.cdn').forEach((e) => { if (e.textContent !== String(left)) { e.textContent = left; e.classList.remove('tick'); void e.offsetWidth; e.classList.add('tick'); } });
   }
 }, 200);
+
+
+// ---------- ไอคอนไมค์ (SVG) ----------
+const SVGA = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+const IC_MIC = `<svg ${SVGA}><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>`;
+const IC_OFF = `<svg ${SVGA}><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path d="M4 4l16 16" stroke="#ff5d6b" stroke-width="3"/></svg>`;
+const IC_EAR = `<svg ${SVGA}><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5" fill="currentColor"/><rect x="17" y="14" width="4" height="7" rx="1.5" fill="currentColor"/></svg>`;
+function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_OFF : IC_MIC; }
+
+// ---------- สติกเกอร์อารมณ์ (ภาพวาดต้นฉบับ; ใส่ไฟล์ /stickers/1.png-8.png เพื่อใช้รูปของคุณเองแทน) ----------
+const STK = [{ cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' }, { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' }];
+const STK_PART = {
+  laugh: '<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M27 51Q40 70 53 51Z" fill="#7a1f1f"/><path d="M33 60Q40 55 47 60Q40 66 33 60Z" fill="#ff7b8a"/><path d="M63 40q4 6 0 9q-4-3 0-9" fill="#5ab4ff"/>',
+  cool: '<rect x="21" y="36" width="17" height="11" rx="4" fill="#111"/><rect x="42" y="36" width="17" height="11" rx="4" fill="#111"/><path d="M38 40h4" stroke="#111" stroke-width="2.5"/><path d="M29 55Q40 63 51 55" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  cry: '<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 60Q40 52 50 60" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 46q-4 12-1 16q4-2 3-16M52 46q4 12 1 16q-4-2-3-16" fill="#5ab4ff"/>',
+  angry: '<path d="M23 34L37 40M57 34L43 40" stroke="#b00020" stroke-width="3.5" stroke-linecap="round"/><circle cx="30" cy="45" r="3" fill="#222"/><circle cx="50" cy="45" r="3" fill="#222"/><path d="M30 61Q40 52 50 61" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60 16l4 5-5 2 4 5" stroke="#e53935" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+  wow: '<circle cx="30" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="50" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="30" cy="41" r="2.5" fill="#222"/><circle cx="50" cy="41" r="2.5" fill="#222"/><ellipse cx="40" cy="58" rx="6" ry="8" fill="#7a1f1f"/>',
+  sleep: '<path d="M24 43Q30 47 36 43M44 43Q50 47 56 43" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="57" rx="4" ry="3" fill="#7a1f1f"/><text x="56" y="22" font-size="14" font-weight="700" fill="#4a7bd6">Z</text><text x="64" y="12" font-size="10" font-weight="700" fill="#4a7bd6">z</text>',
+  love: '<path d="M30 46C20 40 23 33 30 36C37 33 40 40 30 46ZM50 46C40 40 43 33 50 36C57 33 60 40 50 46Z" fill="#e53950"/><path d="M28 55Q40 66 52 55" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  panic: '<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 33Q30 30 36 34M44 34Q50 30 56 33" stroke="#222" stroke-width="2.5" fill="none"/><path d="M29 60Q33 55 37 60Q41 55 45 60Q49 55 52 60" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M63 28q5 8 0 12q-5-4 0-12" fill="#5ab4ff"/>',
+};
+const STK_BASE = '<circle cx="40" cy="42" r="30" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/><path d="M11 38Q12 9 40 10Q68 9 69 38Q58 25 40 27Q22 25 11 38Z" fill="#3a2a1e"/><circle cx="25" cy="50" r="4" fill="#ff9d8a" opacity=".6"/><circle cx="55" cy="50" r="4" fill="#ff9d8a" opacity=".6"/>';
+const stkImg = {};
+for (let i = 1; i <= STK.length; i++) { const im = new Image(); im.onload = () => { stkImg[i] = true; if (state && state.phase !== 'lobby') render(); }; im.src = '/stickers/' + i + '.png'; }
+const isSticker = (t) => /^::st[1-8]$/.test(t);
+function stkHTML(i) {
+  const d = STK[i - 1];
+  const art = stkImg[i] ? `<img src="/stickers/${i}.png" alt="">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${STK_BASE}${STK_PART[d.k]}</svg>`;
+  return `<span class="stk">${art}<small>${d.cap}</small></span>`;
+}
+function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4))) : esc(t); }
+$('#stkPop').innerHTML = STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap}">${stkHTML(i + 1)}</button>`).join('');
+$('#btnStk').onclick = (e) => { e.stopPropagation(); $('#stkPop').classList.toggle('on'); };
+$('#stkPop').onclick = (e) => {
+  const b = e.target.closest('button[data-stk]'); if (!b || !session) return;
+  $('#stkPop').classList.remove('on');
+  api('chat', { ...session, text: '::st' + b.dataset.stk }).catch(() => {});
+};
+document.addEventListener('click', (e) => { if (!e.target.closest('#stkPop') && !e.target.closest('#btnStk')) $('#stkPop').classList.remove('on'); });
+
+// ---------- จั่วไพ่สับที่นั่ง ----------
+let shufSeen = { n: -1, rev: false };
+function renderShuffle(s) {
+  const el = $('#shuf'), sh = s.shuffle, on = s.phase === 'shuffle' && !!sh;
+  $('#tablewrap').classList.toggle('shufon', on);
+  if (!on) { el.style.display = 'none'; el.innerHTML = ''; shufSeen = { n: -1, rev: false }; return; }
+  el.style.display = 'flex';
+  const me = s.you.id, inIt = sh.ids.includes(me), took = Object.values(sh.taken).includes(me);
+  const lab = (v) => (v === 1 ? 'A' : String(v));
+  const cnt = Object.keys(sh.taken).length;
+  if (shufSeen.n >= 0 && cnt > shufSeen.n) sfx('card');
+  const fresh = sh.revealed && !shufSeen.rev;
+  shufSeen = { n: cnt, rev: sh.revealed };
+  const n = sh.n, ord = sh.order;
+  const roleOf = (id) => {
+    if (!ord) return '';
+    const d = ord[0], sb = ord[n === 2 ? 0 : 1], bb = ord[n === 2 ? 1 : 2];
+    return (id === d ? '<span class="role d">D</span>' : '') + (id === sb ? ' <span class="role sb">SB</span>' : '') + (id === bb ? ' <span class="role bb">BB</span>' : '');
+  };
+  let cards = '';
+  for (let i = 0; i < n; i++) {
+    const pid = sh.taken[i];
+    if (sh.revealed) cards += `<div class="shslot"><div class="shc up${fresh ? ' flipin' : ''}">${lab(sh.vals[i])}</div><div class="who">${pid ? esc(nameOf(pid)) : ''}</div>${pid ? roleOf(pid) : ''}</div>`;
+    else cards += `<div class="shslot"><button class="shc${pid ? ' tk' : ''}${pid === me ? ' mine' : ''}" data-slot="${i}" ${pid || !inIt || took ? 'disabled' : ''}>${pid ? '' : '?'}</button><div class="who">${pid ? esc(nameOf(pid)) : ''}</div></div>`;
+  }
+  const t = sh.revealed ? '🔀 ผลจั่วไพ่ — กำลังย้ายที่นั่ง… <b class="cdn" data-sh="1">–</b>'
+    : `🔀 สับที่นั่งใหม่ · จั่วไพ่ 1 ใบ ${inIt ? (took ? '(รอคนอื่น…)' : '— แตะเลือกเลย!') : '(ดูอย่างเดียว)'} <b class="cdn" data-sh="1">–</b>`;
+  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่สูงสุด = BB · สูงรองลงมา = SB · ใบ A = D (ปุ่ม)</div>`;
+  el.querySelectorAll('button[data-slot]').forEach((b) => { b.onclick = () => api('shuffle', { ...session, slot: Number(b.dataset.slot) }).catch(() => {}); });
+}
+
+// ---------- แจกไพ่ช่วงรอตาถัดไป ----------
+let preDeal = { key: '', ids: new Set(), t: 0 };
+const preDealActive = (s) => preDeal.key === s.code + ':' + s.handNo && (s.phase === 'showdown' || s.phase === 'waiting');
+function checkPreDeal() {
+  const s = state;
+  if (!s || !s.nextHandAt || (s.phase !== 'showdown' && s.phase !== 'waiting')) return;
+  const key = s.code + ':' + s.handNo;
+  if (preDeal.key === key || s.handNo % 15 === 0) return;
+  if (s.nextHandAt - (Date.now() + clockOffset) > 3600) return;
+  const ids = s.players.filter((p) => !p.out && !p.left && p.chips > 0).map((p) => p.id);
+  if (ids.length < 2) return;
+  preDeal = { key, ids: new Set(ids), t: Date.now() };
+  render();
+  const center = wrapPos($('#gBoard'));
+  for (let r = 0; r < 2; r++) ids.forEach((id, k) => {
+    const el = document.querySelector(`.seat[data-pid="${id}"] .plate`);
+    if (el) fly('fcard', center, wrapPos(el), 1, (r * ids.length + k) * 110, null);
+  });
+  for (let i = 0; i < Math.min(8, ids.length * 2); i++) setTimeout(() => sfx('card'), i * 110);
+}
+
+// ---------- จัดวางกองชิปไม่ให้ซ้อนทับสิ่งอื่น ----------
+function layoutBets() {
+  const wrap = $('#tablewrap'), wr = wrap.getBoundingClientRect();
+  if (!wr.width) return;
+  const rel = (el, pad) => { const r = el.getBoundingClientRect(); return { l: r.left - wr.left - pad, t: r.top - wr.top - pad, r: r.right - wr.left + pad, b: r.bottom - wr.top + pad }; };
+  const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+  const obs = [];
+  const add = (sel, pad) => wrap.querySelectorAll(sel).forEach((e) => { if (e.offsetWidth) obs.push(rel(e, pad)); });
+  add('#gBoard', 6); add('.potrow', 4); add('.seat .plate', 3); add('.seat .mini', 2); add('.seat .act', 1); add('.seat .pos', 1); add('.seat .dbtn', 1); add('.bubble', 8); add('.fab', 2);
+  const bn = $('#gBanner'); if (bn && bn.textContent.trim()) obs.push(rel(bn, 2));
+  const placed = [];
+  wrap.querySelectorAll('.bet[data-bpid]').forEach((b) => {
+    const w = b.offsetWidth, h = b.offsetHeight;
+    const px = (parseFloat(b.dataset.lx) / 100) * wr.width, py = (parseFloat(b.dataset.ly) / 100) * wr.height;
+    let best = null;
+    for (let rad = 0; rad <= 220 && !best; rad += 7) {
+      const steps = rad ? Math.max(8, Math.round(rad / 4)) : 1;
+      for (let k = 0; k < steps; k++) {
+        const a = (k / steps) * Math.PI * 2 + rad * 0.37, cx = px + Math.cos(a) * rad, cy = py + Math.sin(a) * rad;
+        const box = { l: cx - w / 2, t: cy - h / 2, r: cx + w / 2, b: cy + h / 2 };
+        if (box.l < 2 || box.t < 2 || box.r > wr.width - 2 || box.b > wr.height - 2) continue;
+        if (obs.some((o) => hit(box, o)) || placed.some((o) => hit(box, o))) continue;
+        best = { cx, cy, box }; break;
+      }
+    }
+    if (!best) best = { cx: px, cy: py, box: { l: px - w / 2, t: py - h / 2, r: px + w / 2, b: py + h / 2 } };
+    b.style.left = best.cx.toFixed(1) + 'px'; b.style.top = best.cy.toFixed(1) + 'px';
+    placed.push(best.box);
+  });
+}
+// ข้อความ/สติกเกอร์ของผู้เล่นต้องไม่บังไพ่กลาง: ถ้าชนให้ย้ายไปอยู่ใต้ที่นั่ง
+function fixBubbles() {
+  const bd = $('#gBoard'); if (!bd) return;
+  const br = bd.getBoundingClientRect();
+  document.querySelectorAll('.bubble').forEach((b) => {
+    const r = b.getBoundingClientRect();
+    if (r.left < br.right + 4 && r.right > br.left - 4 && r.top < br.bottom + 4 && r.bottom > br.top - 4) {
+      b.style.bottom = 'auto'; b.style.top = '100%'; b.style.margin = '6px 0 0';
+    }
+  });
+}
+let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { if (state && state.phase !== 'lobby') render(); }, 150); });
+
+
+// ---------- Tournament: กฎ / สถานะบายอินและเงินรางวัล ----------
+const rulesShown = new Set();
+function showRules(s) {
+  $('#rulesBox').innerHTML = `<h3>🏆 กฎ TOURNAMENT</h3>
+    <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
+    <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
+    <div class="ru r3"><i>🚫</i><span>เมื่อเหลือผู้เล่น <b>3 คนสุดท้าย</b> ไม่สามารถบายอินได้</span></div>
+    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>60% · 30% · 10%</b> ตามลำดับ</span></div>
+    <div class="gl">GOOD LUCK 🍀</div>
+    <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
+  $('#rulesModal').classList.add('on');
+  $('#rulesOk').onclick = () => $('#rulesModal').classList.remove('on');
+}
+function renderTourStatus() {
+  const s = state; if (!s || !s.tourney) return;
+  const T = s.tourney;
+  const rows = s.players.filter((p) => !p.left).map((p) => {
+    const used = 1 + (p.rebuys || 0), left = Math.max(0, T.maxRebuys - (p.rebuys || 0));
+    const st = p.out ? `💀 ตกรอบ อันดับ ${p.place}` : p.chips === 0 ? '⏳ รอบายอินเพิ่ม' : '🟢 ยังอยู่ในเกม';
+    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small></span><span style="text-align:right">บายอิน ${used} ครั้ง<small>${fmt(T.buyIn * used)} ฿ · เหลือสิทธิ์เพิ่ม ${p.out ? 0 : left}</small></span></div>`;
+  }).join('');
+  const medals = ['🥇', '🥈', '🥉'];
+  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[60, 30, 10][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
+  $('#tstBox').innerHTML = `<h3>💰 สถานะ Tournament #${T.no}</h3>
+    <h4>สถานะบายอินของผู้เล่น</h4>${rows}
+    <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>${prz}
+    <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">คำนวณจากยอดบายอินปัจจุบัน อาจเพิ่มขึ้นถ้ามีคนบายอินเพิ่ม</p>
+    <button class="b gold full" id="tstOk" style="margin-top:12px">ปิด</button>`;
+  $('#tstOk').onclick = () => $('#tstModal').classList.remove('on');
+}
+$('#btnTour').onclick = () => { renderTourStatus(); $('#tstModal').classList.add('on'); };
+$('#tstModal').onclick = (e) => { if (e.target.id === 'tstModal') $('#tstModal').classList.remove('on'); };
+$('#rulesModal').onclick = (e) => { if (e.target.id === 'rulesModal') $('#rulesModal').classList.remove('on'); };
+
+// ---------- แชทในล็อบบี้ ----------
+$('#lbEmo').innerHTML = EMOJI.map((e) => `<button>${e}</button>`).join('') + STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap}" style="padding:0 4px">${stkHTML(i + 1)}</button>`).join('');
+$('#lbEmo').onclick = (e) => {
+  const b = e.target.closest('button'); if (!b || !session) return;
+  api('chat', { ...session, text: b.dataset.stk ? '::st' + b.dataset.stk : b.textContent }).catch(() => {});
+};
+function sendLobbyChat() { const t = $('#lbChatText').value.trim(); if (!t) return; $('#lbChatText').value = ''; api('chat', { ...session, text: t }).catch(() => {}); }
+$('#lbChatSend').onclick = sendLobbyChat;
+$('#lbChatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLobbyChat(); });
 
 // ---------- ผลทัวร์นาเมนต์ / ประวัติ ----------
 const MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' };
@@ -1220,6 +1529,7 @@ function closeDrawer() { $('#drawer').classList.remove('on'); }
 $('#btnMenu').onclick = () => openDrawer(drawerTab === 'log' ? 'log' : 'chat');
 $('#btnCoin').onclick = () => openDrawer('coin');
 $('#btnRoom').onclick = () => openDrawer('room');
+$('#btnLeave').onclick = leaveRoom;
 $('#drawer').onclick = (e) => { if (e.target.id === 'drawer') closeDrawer(); };
 document.querySelectorAll('.tabs button').forEach((b) => {
   b.onclick = () => { drawerTab = b.dataset.tab; renderDrawer(); };
@@ -1237,17 +1547,17 @@ $('#chatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendC
 function renderDrawer() {
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
   const isSpec = !!(state && state.you && state.you.spectator);
-  $('#chatbar').style.display = drawerTab === 'chat' && !isSpec ? '' : 'none';
+  $('#chatbar').style.display = drawerTab === 'chat' ? '' : 'none';
   const solo = drawerTab === 'room' || drawerTab === 'coin';
   $('#tabs').style.display = solo ? 'none' : '';
   $('#sheetTitle').style.display = solo ? 'block' : 'none';
-  $('#sheetTitle').textContent = drawerTab === 'coin' ? 'ยอดบายอินและสถิติ' : '🏠 ห้อง';
+  $('#sheetTitle').textContent = drawerTab === 'coin' ? 'ยอดบายอินและสถิติ' : '👥 สมาชิกในห้อง';
   const body = $('#tabbody');
   const s = state; if (!s) return;
   const me = s.players.find((p) => p.id === s.you.id) || {};
   const stick =body.scrollTop + body.clientHeight >= body.scrollHeight - 40;
   if (drawerTab === 'chat') {
-    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`).join('') : `<p class="hint">${isSpec ? 'ยังไม่มีข้อความ' : 'ยังไม่มีข้อความ ลองส่งอิโมจิดูสิ'}</p>`) + (isSpec ? '<p class="hint">👁 ผู้ชมอ่านแชทได้อย่างเดียว</p>' : '') + '</div>';
+    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ลองส่งอิโมจิหรือสติกเกอร์ดูสิ</p>') + '</div>';
   } else if (drawerTab === 'log') {
     body.innerHTML = '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
   } else if (drawerTab === 'coin') {
@@ -1272,12 +1582,11 @@ function renderDrawer() {
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
       <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
-      ${s.spectators.length ? `<p class="hint">👁 ผู้ชม (${s.spectators.length}): ${esc(s.spectators.join(', '))}</p>` : ''}
+      ${(s.specList || []).length ? `<div class="vbox"><h4>👁 ผู้ชมที่กำลังดูอยู่ (${s.specList.length})</h4>${s.specList.map((x) => `<div class="vr"><span class="dot ${x.online ? '' : 'off'}"></span><span class="grow">${esc(x.name)}${x.id === s.you.id ? ' (คุณ)' : ''}</span>${x.voice ? `<span>${micIcon(x.voice, x.muted)}</span>` : ''}</div>`).join('')}</div>` : ''}
       ${voiceBoxHTML(s)}
-      <button class="b red full" id="dLeave" style="margin-top:14px">ออกจากห้อง</button>`;
+`;
     bindVoiceBox(body);
     $('#dShare').onclick = share;
-    $('#dLeave').onclick = leaveRoom;
     body.querySelectorAll('[data-kick]').forEach((b) => { b.onclick = () => { if (confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: b.dataset.kick }).catch(() => {}); }; });
   }
   if (drawerTab === 'chat') body.scrollTop = body.scrollHeight;
@@ -1358,7 +1667,7 @@ async function joinVoice(want) {
   if (!session || voice.busy) return;
   voice.busy = true;
   try {
-    let mode = isSpecNow() ? 'listen' : want;
+    let mode = want;
     closeAllPeers();
     if (voice.stream) { voice.stream.getTracks().forEach((t) => t.stop()); voice.stream = null; unwatch(myId()); }
     if (mode === 'talk') {
@@ -1584,17 +1893,15 @@ async function rejoinVoice() {
 // ----- หน้าตา -----
 function renderMic() {
   const b = $('#btnMic'); if (!b) return;
-  const spec = isSpecNow();
   b.classList.remove('mic-on', 'mic-muted', 'mic-listen');
-  if (voice.mode === 'talk') { b.classList.add(voice.muted ? 'mic-muted' : 'mic-on'); b.textContent = voice.muted ? '🔇' : '🎤'; }
-  else if (voice.mode === 'listen') { b.classList.add('mic-listen'); b.textContent = '🎧'; }
-  else b.textContent = spec ? '🎧' : '🎤';
+  if (voice.mode === 'talk') { b.classList.add(voice.muted ? 'mic-muted' : 'mic-on'); b.innerHTML = micIcon('talk', voice.muted); }
+  else if (voice.mode === 'listen') { b.classList.add('mic-listen'); b.innerHTML = micIcon('listen'); }
+  else b.innerHTML = micIcon('talk', false);
 }
 $('#btnMic').onclick = () => {
   if (!session) return;
-  if (voice.mode === 'off') joinVoice(isSpecNow() ? 'listen' : 'talk');
+  if (voice.mode === 'off') joinVoice('talk');
   else if (voice.mode === 'talk') toggleMute();
-  else if (isSpecNow()) leaveVoice();
   else joinVoice('talk');
 };
 
@@ -1617,18 +1924,17 @@ function voiceBoxHTML(s) {
       else if (p && p.status === 'bad') st = '<small class="bad">ต่อไม่ได้</small>';
       else st = '<small>กำลังเชื่อมต่อ…</small>';
     }
-    const icon = m.mode === 'listen' ? '🎧' : m.muted ? '🔇' : '🎤';
+    const icon = micIcon(m.mode, m.muted);
     const mute = !self && on ? `<button class="b sm ghost" data-vmute="${m.id}">${voice.localMute.has(m.id) ? '🔈 เปิดเสียงเขา' : '🔇 ปิดเสียงเขา'}</button>` : '';
     return `<div class="vr"><span>${icon}</span><span class="grow">${esc(m.name)}${self ? ' (คุณ)' : ''} ${st}</span>${mute}</div>`;
   }).join('');
   const btns = !on
-    ? (spec ? '<button class="b green full" data-vjoin="listen">🎧 เข้าไปฟัง</button>'
-      : '<button class="b green full" data-vjoin="talk">🎤 เข้าห้องเสียง (พูดได้)</button><button class="b ghost full" style="margin-top:8px" data-vjoin="listen">🎧 ฟังอย่างเดียว</button>')
-    : `<button class="b ghost full" data-vleave="1">ออกจากห้องเสียง</button>${voice.mode === 'listen' && !spec ? '<button class="b green full" style="margin-top:8px" data-vjoin="talk">🎤 เปิดไมค์พูด</button>' : ''}`;
+    ? '<button class="b green full" data-vjoin="talk">🎤 เข้าห้องเสียง (พูดได้)</button><button class="b ghost full" style="margin-top:8px" data-vjoin="listen">🎧 ฟังอย่างเดียว</button>'
+    : `<button class="b ghost full" data-vleave="1">ออกจากห้องเสียง</button>${voice.mode === 'listen' ? '<button class="b green full" style="margin-top:8px" data-vjoin="talk">🎤 เปิดไมค์พูด</button>' : ''}`;
   return `<div class="vbox"><h4>🎤 ห้องเสียง</h4>${rows || '<p class="hint" style="margin:4px 0">ยังไม่มีใครในห้องเสียง</p>'}
     <div style="margin-top:8px">${btns}</div>
     ${voice.needTap ? '<p class="tip">แตะหน้าจอหนึ่งครั้งเพื่อเปิดเสียง</p>' : ''}
-    <p class="tip">${spec ? 'ผู้ชมฟังได้อย่างเดียว' : 'ไมค์ปิดไว้จนกว่าจะกดเข้า · กดปุ่ม 🎤 ด้านบนเพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
+    <p class="tip">${'ไมค์ปิดไว้จนกว่าจะกดเข้า · กดปุ่ม 🎤 ด้านบนเพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
 }
 function bindVoiceBox(root) {
   root.querySelectorAll('[data-vjoin]').forEach((b) => { b.onclick = () => joinVoice(b.dataset.vjoin); });
@@ -1645,7 +1951,7 @@ function bindVoiceBox(root) {
 }
 
 // ---------- เสียง: เพลงพื้นหลัง / เอฟเฟกต์ / เสียงเพื่อน (สร้างเสียงเองด้วย WebAudio ไม่ต้องมีไฟล์เสียง) ----------
-const snd = { on: { bgm: true, sfx: true, voice: true }, vol: { bgm: 0.5, sfx: 0.7, voice: 1 }, master: null, bgmGain: null, sfxGain: null, timer: 0, nextT: 0, step: 0, noiseBuf: null };
+const snd = { on: { bgm: true, sfx: true, voice: true, turn: true }, vol: { bgm: 0.5, sfx: 0.7, voice: 1, turn: 0.9 }, master: null, bgmGain: null, sfxGain: null, turnGain: null, mi: 3, timer: 0, nextT: 0, step: 0, noiseBuf: null };
 try { const sv = JSON.parse(ls('pp_snd') || 'null'); if (sv) { Object.assign(snd.on, sv.on); Object.assign(snd.vol, sv.vol); } } catch (e) { /* ใช้ค่าเริ่มต้น */ }
 function saveSnd() { ls('pp_snd', JSON.stringify({ on: snd.on, vol: snd.vol })); }
 function sndInit() {
@@ -1653,8 +1959,8 @@ function sndInit() {
   if (!ctx) return null;
   if (!snd.master) {
     snd.master = ctx.createGain(); snd.master.connect(ctx.destination);
-    snd.bgmGain = ctx.createGain(); snd.sfxGain = ctx.createGain();
-    snd.sfxGain.connect(snd.master);
+    snd.bgmGain = ctx.createGain(); snd.sfxGain = ctx.createGain(); snd.turnGain = ctx.createGain();
+    snd.sfxGain.connect(snd.master); snd.turnGain.connect(snd.master);
     // เสียงก้องเบาๆ ให้เพลงนุ่ม
     const dl = ctx.createDelay(1); dl.delayTime.value = 0.34;
     const fb = ctx.createGain(); fb.gain.value = 0.32;
@@ -1670,6 +1976,7 @@ function applySnd() {
   const t = ctx.currentTime;
   snd.bgmGain.gain.setTargetAtTime(snd.on.bgm ? snd.vol.bgm * 0.45 : 0, t, 0.08);
   snd.sfxGain.gain.setTargetAtTime(snd.on.sfx ? snd.vol.sfx : 0, t, 0.03);
+  snd.turnGain.gain.setTargetAtTime(snd.on.turn ? snd.vol.turn : 0, t, 0.03);
   applyVoiceVol();
   if (snd.on.bgm && snd.vol.bgm > 0) startBgm(); else stopBgm();
 }
@@ -1682,13 +1989,12 @@ function applyVoiceVol() {
   });
 }
 const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
-const CHORDS = [
-  { bass: 45, tones: [57, 60, 64, 67] },   // Am7
-  { bass: 41, tones: [57, 60, 64, 65] },   // Fmaj7
-  { bass: 36, tones: [60, 64, 67, 71] },   // Cmaj7
-  { bass: 43, tones: [59, 62, 67, 69] },   // G6
+// เพลงพื้นหลังใหม่: จังหวะบอสซ่าสบายๆ คอร์ดเมเจอร์สดใส มีเมโลดี้เล่นสุ่มบนสเกลเพนทาโทนิก
+const BCH = [
+  { r: 48, t: [60, 64, 67, 71] }, { r: 45, t: [57, 60, 64, 67] }, { r: 50, t: [57, 60, 62, 65] }, { r: 43, t: [59, 62, 65, 67] },
+  { r: 41, t: [57, 60, 64, 67] }, { r: 52, t: [55, 59, 62, 67] }, { r: 50, t: [57, 60, 62, 65] }, { r: 43, t: [59, 62, 65, 67] },
 ];
-const ARP = [0, 1, 2, 3, 2, 1, 2, 1];
+const BSCALE = [69, 72, 74, 76, 79, 81, 84, 86];
 function bgmNote(f, t, dur, type, vol, att, lpf) {
   const ctx = voice.ctx;
   const o = ctx.createOscillator(), g = ctx.createGain(), fl = ctx.createBiquadFilter();
@@ -1697,20 +2003,38 @@ function bgmNote(f, t, dur, type, vol, att, lpf) {
   o.connect(fl); fl.connect(g); g.connect(snd.bgmGain);
   o.start(t); o.stop(t + dur + 0.05);
 }
+function bgmHat(t, vol) {
+  const ctx = voice.ctx; if (!ctx || !snd.noiseBuf) return;
+  const src = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+  src.buffer = snd.noiseBuf; fl.type = 'highpass'; fl.frequency.value = 7000;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+  src.connect(fl); fl.connect(g); g.connect(snd.bgmGain); src.start(t); src.stop(t + 0.09);
+}
+function bgmKick(t) {
+  const ctx = voice.ctx; if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.frequency.setValueAtTime(125, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.12);
+  g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+  o.connect(g); g.connect(snd.bgmGain); o.start(t); o.stop(t + 0.22);
+}
 function bgmStep(step, t) {
-  const c = CHORDS[Math.floor(step / 8) % CHORDS.length], k = step % 8;
-  if (k === 0) {
-    c.tones.forEach((m, i) => bgmNote(mtof(m - 12 + (i % 2 ? 0 : 0)), t, 3.7, 'sine', 0.09, 0.9, 1200));
-    bgmNote(mtof(c.bass), t, 3.4, 'sine', 0.22, 0.05, 500);
+  const c = BCH[Math.floor(step / 8) % BCH.length], k = step % 8;
+  if (k === 0) { bgmNote(mtof(c.r), t, 0.7, 'sine', 0.26, 0.01, 600); bgmKick(t); }
+  if (k === 3) bgmNote(mtof(c.r + 7), t, 0.45, 'sine', 0.18, 0.01, 600);
+  if (k === 4) bgmKick(t);
+  if (k === 6) bgmNote(mtof(c.r + 12), t, 0.4, 'sine', 0.12, 0.01, 700);
+  if (k === 2 || k === 5 || k === 7) c.t.forEach((m) => bgmNote(mtof(m), t + (k === 5 ? 0.03 : 0), 0.3, 'triangle', 0.05, 0.005, 2400));
+  bgmHat(t, k % 2 ? 0.05 : 0.03);
+  if (Math.random() < (k % 2 ? 0.35 : 0.6)) {
+    snd.mi = Math.max(0, Math.min(BSCALE.length - 1, snd.mi + [-2, -1, -1, 0, 1, 1, 2][Math.floor(Math.random() * 7)]));
+    bgmNote(mtof(BSCALE[snd.mi]), t, 0.5, 'triangle', 0.085, 0.005, 3400);
+    if (Math.random() < 0.25) bgmNote(mtof(BSCALE[snd.mi] + 12), t + 0.02, 0.35, 'sine', 0.03, 0.005, 4000);
   }
-  if (k === 4) bgmNote(mtof(c.bass), t, 1.6, 'sine', 0.16, 0.05, 500);
-  if (Math.random() < 0.78) bgmNote(mtof(c.tones[ARP[k]] + 12), t, 1.1, 'triangle', 0.07 + Math.random() * 0.03, 0.01, 2600);
-  if (k === 6 && Math.random() < 0.35) bgmNote(mtof(c.tones[3] + 24), t + 0.05, 1.4, 'sine', 0.035, 0.01, 3000);
 }
 function startBgm() {
   if (snd.timer) return;
   const ctx = voice.ctx; if (!ctx) return;
-  const eighth = 60 / 72 / 2;
+  const eighth = 60 / 104 / 2;
   snd.nextT = ctx.currentTime + 0.15;
   snd.timer = setInterval(() => {
     const c = voice.ctx; if (!c || c.state !== 'running') return;
@@ -1721,7 +2045,7 @@ function startBgm() {
 function stopBgm() { clearInterval(snd.timer); snd.timer = 0; }
 
 function tone(f, dur, o = {}) {
-  if (!snd.on.sfx) return;
+  if (!snd.on[o.bus || 'sfx']) return;
   const ctx = sndInit(); if (!ctx) return;
   const t = ctx.currentTime + (o.delay || 0);
   const osc = ctx.createOscillator(), g = ctx.createGain();
@@ -1729,7 +2053,7 @@ function tone(f, dur, o = {}) {
   osc.frequency.setValueAtTime(f, t);
   if (o.slide) osc.frequency.exponentialRampToValueAtTime(Math.max(40, f + o.slide), t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(o.vol || 0.3, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  osc.connect(g); g.connect(snd.sfxGain); osc.start(t); osc.stop(t + dur + 0.03);
+  osc.connect(g); g.connect(o.bus === 'turn' ? snd.turnGain : snd.sfxGain); osc.start(t); osc.stop(t + dur + 0.03);
 }
 function noiseHit(dur, o = {}) {
   if (!snd.on.sfx) return;
@@ -1748,7 +2072,7 @@ const SFX = {
   check: () => { tone(190, 0.1, { vol: 0.42, slide: -70 }); tone(190, 0.1, { vol: 0.42, slide: -70, delay: 0.13 }); },
   raise: () => { SFX.chip(); tone(520, 0.16, { type: 'triangle', vol: 0.2, delay: 0.09, slide: 220 }); },
   allin: () => { [392, 523, 659, 784].forEach((f, i) => tone(f, 0.3, { type: 'triangle', vol: 0.2, delay: i * 0.07 })); SFX.chip(); },
-  turn: () => [659, 784, 1047].forEach((f, i) => tone(f, 0.38, { vol: 0.32, delay: i * 0.13 })),
+  turn: () => [659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, 0.34, { vol: 0.34, delay: i * 0.12, bus: 'turn', type: i > 2 ? 'triangle' : 'sine' })),
   win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.45, { type: 'triangle', vol: 0.24, delay: i * 0.1 })),
   elim: () => [392, 330, 262].forEach((f, i) => tone(f, 0.4, { vol: 0.3, delay: i * 0.18 })),
 };
@@ -1767,15 +2091,15 @@ function sndRowHTML(key, icon, label) {
     <input type="range" min="0" max="100" value="${Math.round(snd.vol[key] * 100)}" data-vol="${key}" aria-label="ระดับเสียง${label}"></div>`;
 }
 function openSnd() {
-  $('#sndBox').innerHTML = `<h3>🔊 ตั้งค่าเสียง</h3>${sndRowHTML('bgm', '🎵', 'เพลงพื้นหลัง')}${sndRowHTML('sfx', '🔔', 'เสียงเอฟเฟกต์')}${sndRowHTML('voice', '🎙️', 'เสียงไมค์เพื่อน')}
+  $('#sndBox').innerHTML = `<h3>🔊 ตั้งค่าเสียง</h3>${sndRowHTML('bgm', '🎵', 'เพลงพื้นหลัง')}${sndRowHTML('sfx', '🔔', 'เสียงเอฟเฟกต์')}${sndRowHTML('turn', '⏰', 'เสียงเตือนถึงตา')}${sndRowHTML('voice', '🎙️', 'เสียงไมค์เพื่อน')}
     <p class="tip" style="font-size:12px;color:var(--mute);margin:8px 0 0">iPhone: ถ้าไม่มีเสียง ลองปิดโหมดเงียบ (สวิตช์ข้างเครื่อง) และเพิ่มระดับเสียงเครื่อง</p>
     <button class="b gold full" id="sndClose" style="margin-top:12px">ตกลง</button>`;
   $('#sndModal').classList.add('on');
   $('#sndClose').onclick = () => $('#sndModal').classList.remove('on');
-  $('#sndBox').querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; snd.on[k] = !snd.on[k]; b.classList.toggle('on', snd.on[k]); saveSnd(); applySnd(); if (k === 'sfx' && snd.on.sfx) sfx('chip'); }; });
+  $('#sndBox').querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; snd.on[k] = !snd.on[k]; b.classList.toggle('on', snd.on[k]); saveSnd(); applySnd(); if (k === 'sfx' && snd.on.sfx) sfx('chip'); if (k === 'turn' && snd.on.turn) sfx('turn'); }; });
   $('#sndBox').querySelectorAll('[data-vol]').forEach((r) => {
     r.oninput = () => { snd.vol[r.dataset.vol] = Number(r.value) / 100; saveSnd(); applySnd(); };
-    r.onchange = () => { if (r.dataset.vol === 'sfx') sfx('chip'); };
+    r.onchange = () => { if (r.dataset.vol === 'sfx') sfx('chip'); if (r.dataset.vol === 'turn') sfx('turn'); };
   });
 }
 $('#btnSnd').onclick = openSnd;

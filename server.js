@@ -190,12 +190,21 @@ async function handleApi(req, res, url) {
     return json(res, 200, { ok: true });
   }
 
+  // แชท: ผู้ชมพิมพ์/ส่งสติกเกอร์ได้ด้วย
+  if (route === '/api/chat') {
+    ctx.room.say(needMember(ctx), body.text);
+    return json(res, 200, { ok: true });
+  }
+
   const p = needPlayer(ctx);
   switch (route) {
     case '/api/action': ctx.room.act(p, { type: body.type, amount: body.amount }); break;
     case '/api/start': ctx.room.start(p); break;
     case '/api/leave': ctx.room.leave(p); break;
     case '/api/rebuy': ctx.room.rebuy(p); break;
+    case '/api/show': ctx.room.showCards(p); break;
+    case '/api/pre': ctx.room.setPre(p, !!body.on); break;
+    case '/api/shuffle': ctx.room.pickShuffle(p, body.slot); break;
     case '/api/chat': ctx.room.say(p, body.text); break;
     case '/api/kick': ctx.room.kick(p, body.target); break;
     default: throw new UserError('ไม่พบหน้านี้', 404);
