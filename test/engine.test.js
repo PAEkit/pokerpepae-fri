@@ -396,6 +396,28 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   console.log('✓ runout leader');
 })();
 
+// 4.4) โชว์ไพ่อัตโนมัติหลังจบตา + ทัวร์นาเมนต์เหลือ 2 คนไม่สับที่นั่ง
+(async () => {
+  const room = new Room('T', { startChips: 1000, sb: 5, bb: 10 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  const f = room.players[room.toActIdx];
+  room.setAutoShow(f, true);
+  room.act(f, { type: 'fold' });
+  for (let i = 0; i < 6 && room.phase === 'hand'; i++) { const q = room.players[room.toActIdx]; room.act(q, { type: 'fold' }); }
+  assert.strictEqual(room.phase, 'showdown');
+  assert(f.shown, 'ต้องโชว์ไพ่อัตโนมัติ');
+  room.destroy();
+  const tr = new Room('TH', { tournament: true, buyIn: 100, sb: 10, bb: 20, turnTime: 0 }, { shuffleEvery: 2, shufRevealDelay: 0, shufPickTimeout: 1e9, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+  const tp = ['A', 'B', 'C'].map((n) => tr.addPlayer(n));
+  tr.start(tp[0]);
+  tp[2].out = true; tp[2].place = 3; tr.handNo = 2; tr.phase = 'showdown';
+  tr.startHand();
+  assert.strictEqual(tr.phase, 'hand', 'เหลือ 2 คนต้องไม่สับที่นั่ง');
+  tr.destroy();
+  console.log('✓ auto-show + heads-up no shuffle');
+})();
+
 // 4.5) เช็ค/โฟลด์ล่วงหน้า
 (async () => {
   const room = new Room('T', { startChips: 1000, sb: 5, bb: 10 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0, preDelay: 0 });

@@ -60,9 +60,6 @@
   };
 
   window.BGM_TRACKS = [
-    { id: 'bossa', name: 'บอสซ่าสดใส', bpm: 104, step: bossa },
-    { id: 'chill', name: 'ชิลล์ ๆ นุ่มๆ', bpm: 76, step: chill },
-    { id: 'happy', name: 'สนุกสนาน', bpm: 124, step: happy },
     { id: 'music', name: 'กล่องดนตรี', bpm: 92, step: music },
   ];
 })();

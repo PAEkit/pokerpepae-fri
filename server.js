@@ -13,7 +13,7 @@ const rooms = new Map(); // code -> { room, clients: Set<{res, token}> }
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.mp3': 'audio/mpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
   '.webmanifest': 'application/manifest+json',
 };
 
@@ -203,6 +203,7 @@ async function handleApi(req, res, url) {
     case '/api/leave': ctx.room.leave(p); break;
     case '/api/rebuy': ctx.room.rebuy(p); break;
     case '/api/show': ctx.room.showCards(p); break;
+    case '/api/autoshow': ctx.room.setAutoShow(p, !!body.on); break;
     case '/api/pre': ctx.room.setPre(p, !!body.on); break;
     case '/api/shuffle': ctx.room.pickShuffle(p, body.slot); break;
     case '/api/chat': ctx.room.say(p, body.text); break;
