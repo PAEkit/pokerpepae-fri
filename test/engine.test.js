@@ -285,10 +285,25 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   let ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
   assert.strictEqual(room.settings.startChips, 1000);
   room.start(ps[0]);
-  assert.throws(() => room.addPlayer('Z'), /เริ่มไปแล้ว/);
   const seen = [];
   for (let h = 0; h < 4; h++) { seen.push(room.settings.bb); foldHand(room); room.startHand(); }
   assert.deepStrictEqual(seen, [20, 20, 40, 40], 'บลายด์ต้องเพิ่ม 2 เท่าทุก 2 ตา ได้ ' + seen);
+  assert.throws(() => room.addPlayer('Z'), /เริ่มไปแล้ว/, 'บลายด์ขึ้นแล้ว เข้าไม่ได้');
+  room.destroy();
+
+  // สมัครเข้าร่วมกลางเกมได้ จนกว่าบลายด์จะขึ้นครั้งแรก
+  room = new Room('TL', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 3, turnTime: 0 }, T);
+  ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  room.start(ps[0]);
+  assert.ok(room.lateOpen());
+  const late = room.addPlayer('Late');
+  assert.strictEqual(late.chips, 1000);
+  assert.ok(room.viewFor(ps[0].token).tourney.lateOpen);
+  foldHand(room); room.startHand();
+  assert.ok(room.players.find((q) => q.name === 'Late').inHand, 'คนใหม่ได้เล่นตาถัดไป');
+  foldHand(room); room.startHand(); // ตาที่ 3 = ระดับบลายด์แรกสุดท้าย
+  assert.ok(!room.lateOpen(), 'ตาที่ 3 แล้วปิดรับ');
+  assert.throws(() => room.addPlayer('Z2'), /เริ่มไปแล้ว/);
   room.destroy();
 
   // 3 คน: ชิปหมด = ตกรอบทันที (ปิดบายอิน) และกลายเป็นผู้ชม จนเหลือผู้ชนะ
