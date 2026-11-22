@@ -443,7 +443,7 @@ html,body,*{touch-action:manipulation}
 .mine{position:relative;flex-direction:row;justify-content:center;align-items:center;height:56px;--cw:38px;gap:0}
 .panel{height:240px}
 .mine .hc{position:relative;z-index:1}
-.mine .mi{position:absolute;left:calc(50% + 52px);right:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;text-align:left;margin:0;min-width:0;overflow:hidden}
+.mine .mi{position:absolute;left:calc(50% + 52px);right:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;text-align:left;margin:0;min-width:0;overflow:hidden;transform:none}
 .mine .hn{font-size:13px;line-height:1.2;min-height:15px;color:var(--gold);font-weight:600}
 .mine .hn:empty{display:block}
 .mine .pn{font-size:12px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -453,6 +453,18 @@ html,body,*{touch-action:manipulation}
 .acts:has(>.cf){justify-content:flex-start}
 .iab{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top));z-index:120;background:#fff;color:#111;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.35;box-shadow:0 6px 20px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center}
 .iab b{display:block;font-size:14px}.iab button{flex:none;border:0;border-radius:10px;background:#1d9a68;color:#fff;font-weight:700;padding:8px 10px;font-size:13px}.iab .x{background:#e5e5e5;color:#333;width:30px;height:30px;padding:0;border-radius:50%}
+/* รอบแก้ไข 7: ไพ่ตัวเองใหญ่เท่าไพ่กลางโต๊ะ / บีบแถวสไลเดอร์ / สถานะกึ่งกลาง */
+.mine{--cw:min(11.2vw,50px);height:calc(var(--cw)*1.4 + 2px)}
+.mine .mi{left:calc(50% + var(--cw) + 14px);text-align:center;align-items:center}
+.mine .hn:empty{display:none}
+.mine .hn{min-height:0;font-size:14px}
+.mine .st{font-size:12px;max-height:none}
+.panel{padding-bottom:2px}
+.raisebar{margin-top:3px}
+.raisebar .sl{height:26px;gap:6px}
+.raisebar input[type=range]{height:24px}
+.stepbtn{height:26px;width:38px;font-size:18px;line-height:1}
+.raisebar .r2,.raisebar .pre{margin-top:4px}
 </style>
 </head>
 <body>
@@ -1299,7 +1311,7 @@ function renderPanel(me, hlCards) {
   let hole = (me.hole || []).slice();
   if (swapHand === s.handNo && hole.length === 2) hole.reverse();
   let h = `<div class="mine"><div class="hc">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}</div>
-    <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="pn">${esc(me.name)}</div><div class="st">${status(me)}</div></div></div>`;
+    <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="st">${status(me)}</div></div></div>`;
 
   if (o) {
     const callAll = !o.canCheck && o.toCall >= me.chips;
