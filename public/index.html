@@ -410,7 +410,7 @@ html,body,*{touch-action:manipulation}
 .mbox h3{padding-right:6px}
 .stk img.cust{width:auto;height:56px;max-width:84px;object-fit:contain;border-radius:8px}
 .stkpop .stk img.cust{height:50px;max-width:62px}
-.bubble.stkb .stk img.cust{height:84px;max-width:120px}
+
 .chatl .m .stk img.cust{height:48px;max-width:70px}
 /* รอบแก้ไข 5: จัดแถบบน */
 .top{position:relative;align-items:flex-start}
@@ -465,6 +465,8 @@ html,body,*{touch-action:manipulation}
 .raisebar input[type=range]{height:24px}
 .stepbtn{height:26px;width:38px;font-size:18px;line-height:1}
 .raisebar .r2,.raisebar .pre{margin-top:4px}
+@keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.bubble.stkb .stk img.cust{height:62px;max-width:90px}
 </style>
 </head>
 <body>
@@ -1583,13 +1585,41 @@ function layoutBets() {
 }
 // ข้อความ/สติกเกอร์ของผู้เล่นต้องไม่บังไพ่กลาง: ถ้าชนให้ย้ายไปอยู่ใต้ที่นั่ง
 function fixBubbles() {
-  const bd = $('#gBoard'); if (!bd) return;
-  const br = bd.getBoundingClientRect();
-  document.querySelectorAll('.bubble').forEach((b) => {
-    const r = b.getBoundingClientRect();
-    if (r.left < br.right + 4 && r.right > br.left - 4 && r.top < br.bottom + 4 && r.bottom > br.top - 4) {
-      b.style.bottom = 'auto'; b.style.top = '100%'; b.style.margin = '6px 0 0';
+  const wrap = $('#tablewrap'); if (!wrap) return;
+  const W = wrap.getBoundingClientRect(), M = 4;
+  const bound = { l: Math.max(W.left, 0) + M, t: W.top + M, r: Math.min(W.right, innerWidth) - M, b: W.bottom - M };
+  const R = (e, pad = 0) => { const r = e.getBoundingClientRect(); return { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad }; };
+  const ov = (a, c) => Math.max(0, Math.min(a.r, c.r) - Math.max(a.l, c.l)) * Math.max(0, Math.min(a.b, c.b) - Math.max(a.t, c.t));
+  const obs = [];
+  wrap.querySelectorAll('.seat .plate, .seat .mini, .seat .act, .seat .pos, #gBoard, .potrow, .fab, #gBanner').forEach((e) => { if (e.offsetWidth && !(e.id === 'gBanner' && !e.textContent.trim())) obs.push({ e, r: R(e, 2) }); });
+  const placed = [];
+  document.querySelectorAll('.seat .bubble').forEach((bb) => {
+    const seat = bb.closest('.seat'), plate = seat.querySelector('.plate');
+    bb.style.cssText = 'transform:none;margin:0;animation:bfade .2s ease-out;visibility:hidden;left:0;top:0;bottom:auto';
+    const w = bb.offsetWidth, h = bb.offsetHeight, P = R(plate), S = seat.getBoundingClientRect();
+    const mini = seat.querySelector('.mini'), mh = mini && mini.offsetHeight > 0 ? mini.offsetHeight : 0;
+    const cx = (P.l + P.r) / 2, cy = (P.t + P.b) / 2;
+    const cand = [
+      [cx - w / 2, P.t - mh - h - 2],   // เหนือโปรไฟล์ (พ้นไพ่)
+      [P.r + 4, cy - h / 2],            // ขวา
+      [P.l - w - 4, cy - h / 2],        // ซ้าย
+      [cx - w / 2, P.b + 18],           // ใต้ (พ้นป้ายสถานะ)
+      [P.r + 4, P.t - h + 10], [P.l - w - 4, P.t - h + 10],
+      [P.r + 4, P.b - 10], [P.l - w - 4, P.b - 10],
+    ];
+    let best = null;
+    for (const [x0, y0] of cand) {
+      const x = Math.min(bound.r - w, Math.max(bound.l, x0)), y = Math.min(bound.b - h, Math.max(bound.t, y0));
+      const box = { l: x, t: y, r: x + w, b: y + h };
+      let sc = Math.abs(x - x0) + Math.abs(y - y0); // ยิ่งถูกดันมาก ยิ่งแย่
+      for (const o of obs) { if (o.e.closest('.seat') === seat && (o.e === plate || o.e.classList.contains('pos'))) { sc += ov(box, o.r) * 50; continue; } sc += ov(box, o.r) * 20; }
+      for (const o of placed) sc += ov(box, o) * 20;
+      if (!best || sc < best.sc) best = { sc, x, y, box };
+      if (sc === 0) break;
     }
+    bb.style.left = (best.x - S.left).toFixed(1) + 'px'; bb.style.top = (best.y - S.top).toFixed(1) + 'px';
+    bb.style.visibility = '';
+    placed.push(best.box);
   });
 }
 let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { if (state && state.phase !== 'lobby') render(); }, 150); });
