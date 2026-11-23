@@ -467,7 +467,7 @@ html,body,*{touch-action:manipulation}
 .raisebar .r2,.raisebar .pre{margin-top:4px}
 @keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 .bubble.stkb .stk img.cust{height:62px;max-width:90px}
-.banner .cdbig{position:relative;top:0;z-index:43;background:rgba(6,24,17,.72);border-radius:16px;padding:3px 14px;width:max-content;margin:0 auto}
+.banner .cdbig{position:relative;top:0}
 .revbar{position:absolute;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;pointer-events:none}
 .revbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px;transform-origin:left;animation:revfill linear forwards}
 @keyframes revfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
@@ -1206,7 +1206,6 @@ function renderGame() {
     banner = `<span style="opacity:.75">${banner}</span>`;
   }
   $('#gBanner').innerHTML = banner;
-  placeCd();
 
   // ที่นั่ง
   const dense = n >= 7;
