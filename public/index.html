@@ -467,7 +467,13 @@ html,body,*{touch-action:manipulation}
 .raisebar .r2,.raisebar .pre{margin-top:4px}
 @keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 .bubble.stkb .stk img.cust{height:62px;max-width:90px}
-.banner .cdbig{position:relative;top:20px}
+.banner .cdbig{position:relative;top:0;z-index:43;background:rgba(6,24,17,.72);border-radius:16px;padding:3px 14px;width:max-content;margin:0 auto}
+.revbar{position:absolute;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;pointer-events:none}
+.revbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px;transform-origin:left;animation:revfill linear forwards}
+@keyframes revfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#bellFx{position:fixed;left:calc(50% - 92px);bottom:268px;z-index:60;font-size:46px;line-height:1;opacity:0;pointer-events:none;transform-origin:50% 8%;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+#bellFx.ring{animation:bellring 1.5s ease-out}
+@keyframes bellring{0%{opacity:0;transform:translateX(-50%) scale(.6) rotate(0)}8%{opacity:1;transform:translateX(-50%) scale(1.1) rotate(0)}16%{transform:translateX(-50%) rotate(26deg)}28%{transform:translateX(-50%) rotate(-24deg)}40%{transform:translateX(-50%) rotate(20deg)}52%{transform:translateX(-50%) rotate(-16deg)}64%{transform:translateX(-50%) rotate(11deg)}76%{opacity:1;transform:translateX(-50%) rotate(-6deg)}100%{opacity:0;transform:translateX(-50%) rotate(0)}}
 </style>
 </head>
 <body>
@@ -885,6 +891,7 @@ function onState(s) {
     if (document.hidden) document.title = '🔔 ถึงตาคุณ! PokerPEPAE&Fri';
   }
   lastToAct = s.toAct;
+  nagSync(s, me);
 
   if (s.turnDeadline) turnTotal = Math.max(1, s.turnDeadline - s.serverNow);
   fxPlan = planFx(prev, s);
@@ -1037,7 +1044,7 @@ function planFx(prev, s) {
 function runFx(plan, s) {
   if (plan === NO_FX) return;
   if (plan.newBets.size) sfx('chip');
-  if (plan.collect) setTimeout(() => sfx('chip'), 150);
+  if (plan.collect && (plan.prevBets.length || plan.direct.length)) setTimeout(() => sfx('chip'), 150); // ชิปไม่ขยับ (เช่น เทิร์น/ริเวอร์ตอนออลอิน) ไม่ต้องมีเสียงชิป
   if (plan.payout) setTimeout(() => sfx(plan.payout.some((w) => w.pid === s.you.id) ? 'win' : 'chip'), plan.collect ? 900 : 100);
   if (plan.deal) for (let i = 0; i < Math.min(8, s.players.filter((p) => p.inHand).length * 2); i++) setTimeout(() => sfx('card'), i * 110);
   const pot = $('#potchips');
@@ -1166,6 +1173,22 @@ function renderGame() {
     lastBoardLen = s.community.length; lastHandNo = s.handNo;
   }
 
+  // หลอดโหลดบางๆ ใต้ไพ่ที่กำลังจะเปิด (ตอนออลอิน เปิดไพ่กลางทีละช่วง)
+  { const bd = $('#gBoard'), old = bd.querySelector('.revbar');
+    const key = s.reveal ? s.handNo + ':' + s.reveal.next : '';
+    if (!s.reveal) { if (old) old.remove(); }
+    else if (!old || old.dataset.k !== key) {
+      if (old) old.remove();
+      const kids = [...bd.children], a = s.reveal.next === 'flop' ? 0 : s.reveal.next === 'turn' ? 3 : 4, z = s.reveal.next === 'flop' ? 2 : a;
+      if (kids[a] && kids[z]) {
+        const L = kids[a].offsetLeft, Rr = kids[z].offsetLeft + kids[z].offsetWidth, bar = document.createElement('div');
+        bar.className = 'revbar'; bar.dataset.k = key;
+        bar.style.cssText = `left:${L}px;width:${Rr - L}px;top:${kids[a].offsetTop + kids[a].offsetHeight + 4}px`;
+        bar.innerHTML = `<i style="animation-duration:${s.reveal.ms}ms;animation-delay:-${Math.max(0, s.reveal.ms - s.reveal.left)}ms"></i>`;
+        bd.appendChild(bar);
+      }
+    } }
+
   // ข้อความผลตา
   let banner = '';
   if (s.phase === 'showdown' && res) {
@@ -1183,6 +1206,7 @@ function renderGame() {
     banner = `<span style="opacity:.75">${banner}</span>`;
   }
   $('#gBanner').innerHTML = banner;
+  placeCd();
 
   // ที่นั่ง
   const dense = n >= 7;
@@ -1555,6 +1579,13 @@ function checkPreDeal() {
 }
 
 // ---------- จัดวางกองชิปไม่ให้ซ้อนทับสิ่งอื่น ----------
+// "ตาถัดไปใน x วินาที" ให้ลอยอยู่กึ่งกลางแถวไพ่กลางโต๊ะ
+function placeCd() {
+  const cd = document.querySelector('#gBanner .cdbig'), bd = $('#gBoard'); if (!cd || !bd) return;
+  cd.style.transform = '';
+  const a = cd.getBoundingClientRect(), b = bd.getBoundingClientRect();
+  cd.style.transform = `translateY(${((b.top + b.bottom) / 2 - (a.top + a.bottom) / 2).toFixed(1)}px)`;
+}
 function layoutBets() {
   const wrap = $('#tablewrap'), wr = wrap.getBoundingClientRect();
   if (!wr.width) return;
@@ -2324,6 +2355,22 @@ function startBgm() {
 }
 function stopBgm() { clearInterval(snd.timer); snd.timer = 0; }
 
+// เตือนด้วยกระดิ่งทุก 5 วินาที ถ้าถึงตาเราแล้วยังไม่ตัดสินใจ
+let nagT = null, nagKey = '';
+function nagSync(s, me) {
+  const on = !!(me && s.phase === 'hand' && s.toAct === me.id && s.options);
+  const key = on ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
+  if (key === nagKey) return;
+  clearInterval(nagT); nagT = null; nagKey = key;
+  if (on) nagT = setInterval(ringBell, 5000);
+}
+function ringBell() {
+  sfx('bell');
+  try { navigator.vibrate && navigator.vibrate([90, 60, 90]); } catch (_) {}
+  let b = document.getElementById('bellFx');
+  if (!b) { b = document.createElement('div'); b.id = 'bellFx'; b.textContent = '🔔'; b.setAttribute('aria-hidden', 'true'); document.body.appendChild(b); }
+  b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring');
+}
 function tone(f, dur, o = {}) {
   if (!snd.on[o.bus || 'sfx']) return;
   const ctx = sndInit(); if (!ctx) return;
@@ -2351,6 +2398,7 @@ function loadChip() {
 }
 function chipSynth() { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); }
 const SFX = {
+  bell: () => { [0, 0.22].forEach((d) => [1175, 1760, 2349, 3136].forEach((f, i) => tone(f, 1.1 - i * 0.18, { bus: 'turn', vol: [0.34, 0.2, 0.12, 0.07][i], delay: d }))); },
   click: () => tone(1250, 0.06, { type: 'triangle', vol: 0.16, slide: -450 }),
   card: () => { const o = (window.CARD_SOUNDS || []).find((x) => x.id === snd.card) || (window.CARD_SOUNDS || [])[0]; if (o) o.play({ tone, noiseHit }); },
   chip: () => {
