@@ -467,13 +467,20 @@ html,body,*{touch-action:manipulation}
 .raisebar .r2,.raisebar .pre{margin-top:4px}
 @keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 .bubble.stkb .stk img.cust{height:62px;max-width:90px}
-.banner .cdbig{position:relative;top:0}
+.banner .cdbig{position:relative;top:5px}
 .revbar{position:absolute;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;pointer-events:none}
 .revbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px;transform-origin:left;animation:revfill linear forwards}
 @keyframes revfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 #bellFx{position:fixed;left:calc(50% - 92px);bottom:268px;z-index:60;font-size:46px;line-height:1;opacity:0;pointer-events:none;transform-origin:50% 8%;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
 #bellFx.ring{animation:bellring 1.5s ease-out}
 @keyframes bellring{0%{opacity:0;transform:translateX(-50%) scale(.6) rotate(0)}8%{opacity:1;transform:translateX(-50%) scale(1.1) rotate(0)}16%{transform:translateX(-50%) rotate(26deg)}28%{transform:translateX(-50%) rotate(-24deg)}40%{transform:translateX(-50%) rotate(20deg)}52%{transform:translateX(-50%) rotate(-16deg)}64%{transform:translateX(-50%) rotate(11deg)}76%{opacity:1;transform:translateX(-50%) rotate(-6deg)}100%{opacity:0;transform:translateX(-50%) rotate(0)}}
+.bet{background:transparent;text-shadow:0 1px 3px #000,0 0 4px #000,0 0 2px #000}
+/* กล่อง Check/Fold: จัตุรัสชิดขวาล่าง */
+.acts:has(>.cf){justify-content:flex-end}
+.cf{flex-direction:column;justify-content:center;align-items:center;width:112px;min-width:0;height:112px;gap:8px;padding:6px;text-align:center}
+.cf .cft{flex:none;align-items:center}
+.cf .cft b{font-size:16px;white-space:nowrap}
+.cf .cfs{width:auto;text-align:center;font-size:14px}
 </style>
 </head>
 <body>
@@ -1224,7 +1231,7 @@ function renderGame() {
     const showCards = (!isMe || p.shown) && p.hole.length > 0;
     const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
     const bl = []; if (p.isDealer) bl.push(['d', 'D']); if (p.isSB) bl.push(['sb', 'SB']); if (p.isBB) bl.push(['bb', 'BB']);
-    const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${(dense ? 16 : 20) + k * (dense ? 17 : 20)}px">${x[1]}</span>`).join('');
+    const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${bl.length > 1 ? (dense ? 2 : 4) + k * (dense ? 17 : 21) : (dense ? 16 : 20)}px">${x[1]}</span>`).join('');
     const vm = (s.voice || []).find((m) => m.id === p.id);
     const vb = vm ? `<span class="vb">${micIcon(vm.mode, vm.muted)}</span>` : '';
     const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && p.shown ? 'shownc' : c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
@@ -1404,7 +1411,8 @@ function renderPanel(me, hlCards) {
         raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, v)); // ปรับเข้าช่วงที่เรสได้
         upd(true);
       };
-      nm.onblur = () => { nm.value = raiseTo; };
+      nm.onfocus = () => { nm.placeholder = raiseTo; nm.value = ''; }; // แตะแล้วล้างเลข พร้อมพิมพ์ใหม่ทันที
+      nm.onblur = () => { nm.value = raiseTo; nm.placeholder = ''; };
       nm.onkeydown = (e) => { if (e.key === 'Enter') nm.blur(); };
       $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - sb); upd(); };
       $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + sb); upd(); };
@@ -1663,8 +1671,8 @@ function showRules(s) {
     <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
     <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
     <div class="ru r3"><i>🚫</i><span>เมื่อเหลือผู้เล่น <b>3 คนสุดท้าย</b> ไม่สามารถบายอินได้</span></div>
-    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>50% · 30% · 20%</b> ตามลำดับ</span></div>
-    <div class="ru r5"><i>🎯</i><span>เงินรางวัล <b>Bounty Hunter 10%</b><br>หรือ <b>ขั้นต่ำ 100 บาท</b></span></div>
+    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>55% · 30% · 15%</b> ตามลำดับ</span></div>
+    <div class="ru r5"><i>🎯</i><span>ค่าหัว <b>Bounty</b> หัวละ <b>20%</b> ของบายอิน (<b>${fmt(s.tourney.bountyEach)} ฿</b> ต่อคนที่กำจัดได้)<br>หักออกก่อน แล้วที่เหลือแบ่งตามอันดับ</span></div>
     <div class="gl">GOOD LUCK 🍀</div>
     <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
   $('#rulesModal').classList.add('on');
@@ -1680,7 +1688,8 @@ function renderTourStatus() {
     return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span><span class="rbx${lf ? '' : ' zero'}"><b>${lf}</b><i>${'●'.repeat(lf)}${'○'.repeat(Math.max(0, T.maxRebuys - lf))}</i><small>บายอินเหลือ</small></span></div>`;
   }).join('');
   const medals = ['🥇', '🥈', '🥉'];
-  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[50, 30, 20][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
+  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[55, 30, 15][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
+  const bty = (T.bounties || []).map((b) => `<div class="r"><span style="font-size:20px;width:30px;text-align:center">${b.kills ? '🎯' : '·'}</span><span class="nm">${esc(b.name)}<small>กำจัดได้ ${b.kills} คน</small></span><span class="pz">${fmt(b.amount)} ฿</span></div>`).join('');
   $('#tstBox').innerHTML = `<h3>💰 สถานะ Tournament #${T.no}</h3>
     ${T.startedAt ? `<div class="sub" style="margin:-2px 0 0">🕐 เริ่มเกมเมื่อ ${dt(T.startedAt)}</div>` : ''}
     ${T.lateOpen ? `<div class="sub" style="margin:2px 0 0;color:#8fe3b5">🟢 ยังเปิดรับผู้เล่นใหม่ จนกว่าบลายด์จะขึ้น</div>` : ''}
@@ -1688,8 +1697,8 @@ function renderTourStatus() {
     <div class="sub" style="margin:8px 0 0">📈 บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</div>
     <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>
     ${prz}
-    <div class="r"><span style="font-size:22px;width:30px;text-align:center">🎯</span><span class="nm">Bounty Hunter · 10%<small>${T.hunters && T.hunters.length ? T.hunters.map((h) => esc(h.name) + ' 💀×' + h.kills).join(', ') + (T.hunters.length > 1 ? ' · แบ่งเท่ากัน' : '') : 'ยังไม่มีใครกำจัดผู้เล่น'}</small></span><span class="pz">${T.hunters && T.hunters.length ? fmt(T.bountyEach * T.hunters.length) : fmt(T.bounty)} ฿</span></div>
-    <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">คำนวณจากยอดบายอินปัจจุบัน อาจเพิ่มขึ้นถ้ามีคนบายอินเพิ่ม</p>
+    <h4>🎯 Bounty ค่าหัว (หัวละ ${fmt(T.bountyEach)} ฿)</h4>${bty}
+    <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">เงินรางวัลอันดับ 1-3 = เงินรวม − Bounty ที่เกิดขึ้นแล้ว (${fmt(T.bountyTotal)} ฿) แล้วแบ่ง 55/30/15% จึงเปลี่ยนไปเรื่อยๆ เมื่อมีคนถูกกำจัดหรือมีคนบายอินเพิ่ม</p>
     <button class="b gold full" id="tstOk" style="margin-top:12px">ปิด</button>`;
   $('#tstOk').onclick = () => $('#tstModal').classList.remove('on');
 }
