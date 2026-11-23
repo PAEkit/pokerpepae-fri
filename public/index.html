@@ -343,7 +343,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .rules .ru{display:flex;gap:10px;align-items:flex-start;font-size:20px;line-height:1.3;font-weight:600;padding:8px 10px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.07)}
 .rules .ru i{font-style:normal;font-size:26px;flex:none}
 .rules .ru b{color:#ffd54a}
-.rules .ru.r1{border-left:5px solid #ffd54a}.rules .ru.r2{border-left:5px solid #5ad6a0}.rules .ru.r3{border-left:5px solid #ff7b86}.rules .ru.r4{border-left:5px solid #59b7ff}
+.rules .ru.r1{border-left:5px solid #ffd54a}.rules .ru.r2{border-left:5px solid #5ad6a0}.rules .ru.r3{border-left:5px solid #ff7b86}.rules .ru.r4{border-left:5px solid #59b7ff}.rules .ru.r5{border-left:5px solid #ff9a4d}
 .rules .gl{text-align:center;font-size:34px;font-weight:700;margin:12px 0 4px;background:linear-gradient(#fff3c4,#f0a91f);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tst h4{margin:12px 0 6px;color:var(--gold);font-size:16px}
 .tst .r{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
@@ -467,6 +467,7 @@ html,body,*{touch-action:manipulation}
 .raisebar .r2,.raisebar .pre{margin-top:4px}
 @keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 .bubble.stkb .stk img.cust{height:62px;max-width:90px}
+.banner .cdbig{position:relative;top:20px}
 </style>
 </head>
 <body>
@@ -1632,7 +1633,8 @@ function showRules(s) {
     <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
     <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
     <div class="ru r3"><i>🚫</i><span>เมื่อเหลือผู้เล่น <b>3 คนสุดท้าย</b> ไม่สามารถบายอินได้</span></div>
-    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>60% · 30% · 10%</b> ตามลำดับ</span></div>
+    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>50% · 30% · 20%</b> ตามลำดับ</span></div>
+    <div class="ru r5"><i>🎯</i><span>เงินรางวัล <b>Bounty Hunter 10%</b><br>หรือ <b>ขั้นต่ำ 100 บาท</b></span></div>
     <div class="gl">GOOD LUCK 🍀</div>
     <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
   $('#rulesModal').classList.add('on');
@@ -1648,13 +1650,15 @@ function renderTourStatus() {
     return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span><span class="rbx${lf ? '' : ' zero'}"><b>${lf}</b><i>${'●'.repeat(lf)}${'○'.repeat(Math.max(0, T.maxRebuys - lf))}</i><small>บายอินเหลือ</small></span></div>`;
   }).join('');
   const medals = ['🥇', '🥈', '🥉'];
-  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[60, 30, 10][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
+  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[50, 30, 20][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
   $('#tstBox').innerHTML = `<h3>💰 สถานะ Tournament #${T.no}</h3>
     ${T.startedAt ? `<div class="sub" style="margin:-2px 0 0">🕐 เริ่มเกมเมื่อ ${dt(T.startedAt)}</div>` : ''}
     ${T.lateOpen ? `<div class="sub" style="margin:2px 0 0;color:#8fe3b5">🟢 ยังเปิดรับผู้เล่นใหม่ จนกว่าบลายด์จะขึ้น</div>` : ''}
     <h4>สถานะบายอินของผู้เล่น</h4>${rows}
     <div class="sub" style="margin:8px 0 0">📈 บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</div>
-    <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>${prz}
+    <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>
+    ${prz}
+    <div class="r"><span style="font-size:22px;width:30px;text-align:center">🎯</span><span class="nm">Bounty Hunter · 10%<small>${T.hunters && T.hunters.length ? T.hunters.map((h) => esc(h.name) + ' 💀×' + h.kills).join(', ') + (T.hunters.length > 1 ? ' · แบ่งเท่ากัน' : '') : 'ยังไม่มีใครกำจัดผู้เล่น'}</small></span><span class="pz">${T.hunters && T.hunters.length ? fmt(T.bountyEach * T.hunters.length) : fmt(T.bounty)} ฿</span></div>
     <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">คำนวณจากยอดบายอินปัจจุบัน อาจเพิ่มขึ้นถ้ามีคนบายอินเพิ่ม</p>
     <button class="b gold full" id="tstOk" style="margin-top:12px">ปิด</button>`;
   $('#tstOk').onclick = () => $('#tstModal').classList.remove('on');
@@ -1708,12 +1712,13 @@ const MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' };
 const dt = (ms) => { try { return new Date(ms).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return String(ms); } };
 function resultHTML(r, meName) {
   const mins = r.startedAt && r.endedAt ? Math.max(1, Math.round((r.endedAt - r.startedAt) / 60000)) : null;
-  const netOf = (x) => (x.prize || 0) - x.buyIns * r.buyInAmount;
+  const tot = (x) => (x.prize || 0) + (x.bounty || 0);
+  const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
   const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">รางวัล ${x.prize ? fmt(x.prize) + '฿' : '0฿'}${netTxt(netOf(x))}</span></div>`).join('');
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">รางวัล ${fmt(tot(x))}฿${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}${netTxt(netOf(x))}</span></div>`).join('');
   const mine = r.rows.find((x) => meName && x.name === meName);
-  const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(mine.prize || 0)}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
-  const sum = r.rows.reduce((a, x) => a + x.prize, 0);
+  const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
+  const sum = r.rows.reduce((a, x) => a + tot(x), 0);
   return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${mineBox}${rows}
     <div class="sub" style="margin:10px 0 0">ส่วนต่าง = เงินรางวัล − ยอดบายอินของแต่ละคน<br>เงินรางวัลรวม <b>${fmt(r.pool)}฿</b> (บายอินทั้งหมด ${r.buyIns} ครั้ง × ${fmt(r.buyInAmount)}฿) · แจกจริง ${fmt(sum)}฿<br>
     ชิปเริ่มต้น ${fmt(r.chips)} · บลายด์ ${fmt(r.blinds.sb)}/${fmt(r.blinds.bb)} เพิ่ม 2 เท่าทุก ${r.blinds.every} ตา (ตอนจบ ${fmt(r.blinds.lastSB)}/${fmt(r.blinds.lastBB)})<br>
@@ -2339,10 +2344,25 @@ function noiseHit(dur, o = {}) {
   g.gain.setValueAtTime(o.vol || 0.3, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   src.connect(fl); fl.connect(g); g.connect(snd.sfxGain); src.start(t); src.stop(t + dur + 0.02);
 }
+let chipBuf = null, chipLoading = false;
+function loadChip() {
+  const ctx = sndInit(); if (!ctx || chipBuf || chipLoading) return; chipLoading = true;
+  fetch('/sounds/chip.mp3').then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { chipBuf = b; }).catch(() => { chipLoading = false; });
+}
+function chipSynth() { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); }
 const SFX = {
   click: () => tone(1250, 0.06, { type: 'triangle', vol: 0.16, slide: -450 }),
   card: () => { const o = (window.CARD_SOUNDS || []).find((x) => x.id === snd.card) || (window.CARD_SOUNDS || [])[0]; if (o) o.play({ tone, noiseHit }); },
-  chip: () => { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); },
+  chip: () => {
+    const ctx = sndInit();
+    if (ctx && chipBuf) { // เสียงชิปจริงจากไฟล์ sounds/chip.mp3
+      const src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = chipBuf; g.gain.value = 0.9; src.connect(g); g.connect(snd.sfxGain); src.start(); return;
+    }
+    loadChip(); chipSynth();
+  },
+  chipSynth: () => chipSynth(),
+  _old: () => { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); },
   fold: () => tone(340, 0.24, { vol: 0.24, slide: -170 }),
   check: () => { tone(190, 0.1, { vol: 0.42, slide: -70 }); tone(190, 0.1, { vol: 0.42, slide: -70, delay: 0.13 }); },
   raise: () => { SFX.chip(); tone(520, 0.16, { type: 'triangle', vol: 0.2, delay: 0.09, slide: 220 }); },
@@ -2356,7 +2376,7 @@ function sfx(name) { try { if (SFX[name]) SFX[name](); } catch (e) { /* เส�
 // เริ่มเสียงเมื่อแตะหน้าจอครั้งแรก (ข้อกำหนดของ iOS/เบราว์เซอร์) และมีเสียงคลิกทุกปุ่ม
 let sndArmed = false;
 document.addEventListener('pointerdown', () => {
-  if (!sndArmed) { sndArmed = true; applySnd(); setTimeout(preloadStk, 600); }
+  if (!sndArmed) { sndArmed = true; applySnd(); setTimeout(() => { preloadStk(); loadChip(); }, 600); }
   else { const c = ensureCtx(); if (c && c.state === 'suspended') c.resume().catch(() => {}); }
 }, true);
 document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('button, select, label.chk')) sfx('click'); }, true);

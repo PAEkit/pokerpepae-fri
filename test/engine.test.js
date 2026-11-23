@@ -319,10 +319,23 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   const res = room.tour.result;
   assert.deepStrictEqual(res.rows.map((r) => r.place), [1, 2, 3]);
   assert.strictEqual(res.pool, 300);
-  assert.strictEqual(res.rows.reduce((a, r) => a + r.prize, 0), 300, 'รางวัลรวมต้องเท่ายอดบายอิน');
-  assert.deepStrictEqual(res.rows.map((r) => r.prize), [200, 100, 0]);
+  assert.strictEqual(res.rows.reduce((a, r) => a + r.prize + r.bounty, 0), 300, 'รางวัลรวมต้องเท่ายอดบายอิน');
+  assert.ok(res.rows.every((r) => r.prize % 10 === 0 && r.bounty % 10 === 0));
+  assert.ok(res.bountyTotal === 0 || res.bountyTotal === 100, 'Bounty ขั้นต่ำ 100 และถูกแจกเฉพาะเมื่อมีคนกำจัดผู้เล่น');
   const loser = room.players.find((p) => p.place === 3);
   assert(loser.out && room.viewFor(loser.token).you.spectator, 'ผู้ตกรอบต้องเป็นผู้ชม');
+  room.destroy();
+
+  // สูตรเงินรางวัล: Bounty 10% (ขั้นต่ำ 100) แล้วที่เหลือ 50/30/20 ปัดหลัก 10
+  room = new Room('TP', { tournament: true, buyIn: 100, sb: 10, bb: 20, turnTime: 0 }, T);
+  ps = ['A', 'B', 'C'].map((n) => room.addPlayer(n));
+  assert.deepStrictEqual(room.payouts(1000).prizes, [500, 300, 200], 'ไม่มีใครกำจัดใคร → Bounty คืนกองกลาง');
+  ps[1].kills = 2;
+  let po = room.payouts(1000);
+  assert.strictEqual(po.each, 100); assert.deepStrictEqual(po.prizes, [450, 270, 180]);
+  po = room.payouts(300); assert.strictEqual(po.each, 100); assert.deepStrictEqual(po.prizes, [100, 60, 40]);
+  ps[0].kills = 2; po = room.payouts(1000); assert.strictEqual(po.each, 50, 'เสมอกันแบ่งเท่ากัน'); assert.deepStrictEqual(po.prizes, [450, 270, 180]);
+  assert.strictEqual(room.bountyAmount(5000), 500);
   room.destroy();
 
   // 6 คน: ชิปหมดแล้วบายอินเพิ่มได้ 2 ครั้ง, ครั้งที่ 3 ไม่ได้ → ตกรอบ
