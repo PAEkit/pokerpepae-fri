@@ -495,6 +495,13 @@ html,body,*{touch-action:manipulation}
 .rrow .pz b{display:block;font-size:15px}
 .bet{background:none!important;padding:0!important}
 .bet .br>span:not(.pile){background:rgba(0,0,0,.6);border-radius:10px;padding:1px 8px}
+.drawer.chatmode{background:rgba(0,0,0,.12)}
+.drawer.chatmode .sheet{background:rgba(12,42,32,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.rrow .pz{font-size:13px}
+.rrow .nm{flex:1 1 90px}
+.rrow .nm small{white-space:normal}
+.rrow .pz{text-align:left}
+.rrow .pz small{text-align:left}
 </style>
 </head>
 <body>
@@ -1637,7 +1644,8 @@ function layoutBets() {
         if (box.l < 2 || box.t < 2 || box.r > wr.width - 2 || box.b > wr.height - 2) continue;
         if (obs.some((o) => hit(box, o)) || placed.some((o) => hit(box, o))) continue;
         const gx = Math.max(pr.l - box.r, box.l - pr.r, 0), gy = Math.max(pr.t - box.b, box.t - pr.b, 0);
-        const sc = Math.hypot(gx, gy) * 2 + Math.hypot(cx - tcx, cy - tcy) * 0.05 + (cy < pr.t ? 6 : 0);
+        const gp = Math.hypot(gx, gy); if (gp > 70) continue;
+        const sc = gp * 0.8 + Math.hypot(cx - tcx, cy - tcy) * 0.7;
         if (!best || sc < best.sc) best = { sc, cx, cy, box };
       }
     }
@@ -1778,11 +1786,16 @@ function resultHTML(r, meName) {
   const tot = (x) => (x.prize || 0) + (x.bounty || 0);
   const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
   const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}<br>สุทธิ ${netTxt(netOf(x))}</small></span><span class="pz"><small>${x.place <= 3 ? 'อันดับ ' + x.place : 'รางวัล'} ${fmt(x.prize || 0)}฿</small><small style="color:var(--gold)">🎯 Bounty ${fmt(x.bounty || 0)}฿</small><b>รวม ${fmt(tot(x))}฿</b></span></div>`).join('');
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${MEDAL[x.place] && x.place <= 3 ? MEDAL[x.place] + ' เงินรางวัลอันดับที่ ' + x.place : 'รางวัล'} ${fmt(x.prize || 0)}฿${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}${netTxt(netOf(x))}</span></div>`).join('');
   const mine = r.rows.find((x) => meName && x.name === meName);
   const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
   const sum = r.rows.reduce((a, x) => a + tot(x), 0);
-  return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${mineBox}${rows}
+  let chartBox = '';
+  if (r.chart && r.chart.pts && r.chart.pts.length > 1) {
+    const cs = chartColors({ chart: r.chart });
+    chartBox = `<div class="coinbox" style="margin-top:10px"><h4>📈 กราฟชิป</h4>${chartSVG({ chart: r.chart }, cs)}<div style="display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;margin-top:4px">${r.chart.ids.map((id, i) => `<span><i class="sw" style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;background:${cs[id]}"></i>${esc((r.chart.names || [])[i] || '')}</span>`).join('')}</div></div>`;
+  }
+  return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${mineBox}${rows}${chartBox}
     <div class="sub" style="margin:10px 0 0">ส่วนต่าง = เงินรางวัล − ยอดบายอินของแต่ละคน<br>เงินรางวัลรวม <b>${fmt(r.pool)}฿</b> (บายอินทั้งหมด ${r.buyIns} ครั้ง × ${fmt(r.buyInAmount)}฿) · แจกจริง ${fmt(sum)}฿<br>
     ชิปเริ่มต้น ${fmt(r.chips)} · บลายด์ ${fmt(r.blinds.sb)}/${fmt(r.blinds.bb)} เพิ่ม 2 เท่าทุก ${r.blinds.every} ตา (ตอนจบ ${fmt(r.blinds.lastSB)}/${fmt(r.blinds.lastBB)})<br>
     ${r.startedAt ? `🕐 เริ่มเกม ${dt(r.startedAt)}<br>` : ''}🏁 จบเกม ${dt(r.endedAt)}<br>
@@ -1790,6 +1803,7 @@ function resultHTML(r, meName) {
 }
 function showResult(r, canClose) {
   r = { code: state && state.code, ...r };
+  if (!r.chart && state && state.chart) { const nm = {}; state.players.forEach((p) => { nm[p.id] = p.name; }); r.chart = { ...state.chart, names: state.chart.ids.map((id) => nm[id] || '?') }; }
   const me = state && state.players.find((p) => p.id === (state.you && state.you.id));
   $('#resBox').innerHTML = resultHTML(r, me ? me.name : (ls('pp_name') || '')) + `<div class="row" style="margin-top:14px"><button class="b ghost" id="resClose">ปิด</button><button class="b gold" id="resLeave">ออกจากห้อง</button></div>`;
   $('#resModal').classList.add('on');
@@ -1831,8 +1845,10 @@ function checkTourResult(s) {
   if (resShown === key) return;
   resShown = key;
   const me = s.players.find((p) => p.id === s.you.id);
-  const full = { ...r, code: s.code };
-  saveHist(r, s.code, me ? me.name : (ls('pp_name') || ''));
+  const nm = {}; s.players.forEach((p) => { nm[p.id] = p.name; });
+  const chart = s.chart ? { ...s.chart, names: s.chart.ids.map((id) => nm[id] || '?') } : null;
+  const full = { ...r, code: s.code, chart };
+  saveHist({ ...r, chart }, s.code, me ? me.name : (ls('pp_name') || ''));
   sfx('win');
   showResult(full, true);
 }
@@ -1909,6 +1925,7 @@ function renderDrawer() {
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
   const isSpec = !!(state && state.you && state.you.spectator);
   $('#chatbar').style.display = drawerTab === 'chat' ? '' : 'none';
+  $('#drawer').classList.toggle('chatmode', drawerTab === 'chat');
   const solo = drawerTab === 'room' || drawerTab === 'coin';
   $('#tabs').style.display = solo ? 'none' : '';
   $('#sheetTitle').style.display = solo ? 'block' : 'none';
