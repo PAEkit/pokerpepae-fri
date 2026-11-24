@@ -491,6 +491,10 @@ html,body,*{touch-action:manipulation}
 .cf.on .cfk{background:linear-gradient(#2fc888,#1d9a68);box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 10px rgba(47,200,136,.5)}
 .cf.on .cfk::after{left:31px}
 .cf.on .cft b{color:#ffe9a8}
+.seat.mine-shown{z-index:60}
+.rrow .pz b{display:block;font-size:15px}
+.bet{background:none!important;padding:0!important}
+.bet .br>span:not(.pile){background:rgba(0,0,0,.6);border-radius:10px;padding:1px 8px}
 </style>
 </head>
 <body>
@@ -1239,7 +1243,7 @@ function renderGame() {
     const x = Math.min(dense ? 90 : 89.5, Math.max(dense ? 10 : 10.5, 50 + rx * Math.cos(th))), y = 50 + ry * Math.sin(th);
     const isMe = !!me && p.id === me.id;
     const showCards = (!isMe || p.shown) && p.hole.length > 0;
-    const cls = ['seat', isMe ? 'me' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const cls = ['seat', isMe ? 'me' : '', isMe && p.shown ? 'mine-shown' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
     const bl = []; if (p.isDealer) bl.push(['d', 'D']); if (p.isSB) bl.push(['sb', 'SB']); if (p.isBB) bl.push(['bb', 'BB']);
     const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${bl.length > 1 ? (dense ? 2 : 4) + k * (dense ? 17 : 21) : (dense ? 16 : 20)}px">${x[1]}</span>`).join('');
     const vm = (s.voice || []).find((m) => m.id === p.id);
@@ -1377,11 +1381,9 @@ function renderPanel(me, hlCards) {
   } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
     const on = !!s.you.pre;
     h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
-  } else if (s.phase === 'hand' && me.inHand && me.folded) {
-    const on = !!s.you.autoShow;
-    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aAuto" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่หลังจบตา</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
-  } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !me.shown && !(s.result && s.result.hands && s.result.hands[me.id])) {
-    h += '<div class="acts"><button class="b gold" id="aShow">👁 โชว์ไพ่ให้เพื่อนดู</button></div>';
+  } else if (((s.phase === 'hand' && me.inHand && me.folded) || s.phase === 'showdown') && me.hole && me.hole[0] != null && !(s.result && s.result.hands && s.result.hands[me.id])) {
+    const on = !!me.shown;
+    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aShowT" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
   } else if (s.phase === 'waiting') {
     const w = s.soleId ? nameOf(s.soleId) : '';
     h += `<div class="msg">🏆 ${esc(w)} ครองชิปทั้งโต๊ะ<br><span style="color:var(--mute);font-size:13px">${s.nextHandAt ? 'มีคนบายอินแล้ว กำลังเริ่มตาใหม่…' : 'รอผู้เล่นบายอิน แล้วเล่นต่อได้เลย'}</span></div>`;
@@ -1435,8 +1437,7 @@ function renderPanel(me, hlCards) {
     }
   }
   if ($p('#aPre')) $p('#aPre').onclick = () => api('pre', { ...session, on: !s.you.pre }).catch(() => {});
-  if ($p('#aAuto')) $p('#aAuto').onclick = () => api('autoshow', { ...session, on: !s.you.autoShow }).catch(() => {});
-  if ($p('#aShow')) $p('#aShow').onclick = () => api('show', session).catch(() => {});
+  if ($p('#aShowT')) $p('#aShowT').onclick = () => api('showtoggle', { ...session, on: !me.shown }).catch(() => {});
   const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});
 }
 
@@ -1626,14 +1627,18 @@ function layoutBets() {
       }
     }
     let best = null;
-    for (let rad = 0; rad <= 220 && !best; rad += 4) {
-      const steps = rad ? Math.max(8, Math.round(rad / 4)) : 1;
-      for (let k = 0; k < steps; k++) {
-        const a = (k / steps) * Math.PI * 2 + rad * 0.37, cx = px + Math.cos(a) * rad, cy = py + Math.sin(a) * rad;
+    { // สแกนรอบโปรไฟล์ เลือกจุดว่างที่ใกล้ขอบโปรไฟล์ที่สุด (เอียงเข้าหาโต๊ะนิดหน่อย)
+      const pl = wrap.querySelector(`.seat[data-pid="${b.dataset.bpid}"] .plate`);
+      const pr = pl ? rel(pl, 0) : { l: px - 20, t: py - 20, r: px + 20, b: py + 20 };
+      const tcx = wr.width / 2, tcy = wr.height * 0.46;
+      for (let oy = -110; oy <= 110; oy += 4) for (let ox = -130; ox <= 130; ox += 4) {
+        const cx = px + ox, cy = py + oy;
         const box = { l: cx - w / 2, t: cy - h / 2, r: cx + w / 2, b: cy + h / 2 };
         if (box.l < 2 || box.t < 2 || box.r > wr.width - 2 || box.b > wr.height - 2) continue;
         if (obs.some((o) => hit(box, o)) || placed.some((o) => hit(box, o))) continue;
-        best = { cx, cy, box }; break;
+        const gx = Math.max(pr.l - box.r, box.l - pr.r, 0), gy = Math.max(pr.t - box.b, box.t - pr.b, 0);
+        const sc = Math.hypot(gx, gy) * 2 + Math.hypot(cx - tcx, cy - tcy) * 0.05 + (cy < pr.t ? 6 : 0);
+        if (!best || sc < best.sc) best = { sc, cx, cy, box };
       }
     }
     if (!best) best = { cx: px, cy: py, box: { l: px - w / 2, t: py - h / 2, r: px + w / 2, b: py + h / 2 } };
@@ -1773,7 +1778,7 @@ function resultHTML(r, meName) {
   const tot = (x) => (x.prize || 0) + (x.bounty || 0);
   const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
   const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">รางวัล ${fmt(tot(x))}฿${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}${netTxt(netOf(x))}</span></div>`).join('');
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}<br>สุทธิ ${netTxt(netOf(x))}</small></span><span class="pz"><small>${x.place <= 3 ? 'อันดับ ' + x.place : 'รางวัล'} ${fmt(x.prize || 0)}฿</small><small style="color:var(--gold)">🎯 Bounty ${fmt(x.bounty || 0)}฿</small><b>รวม ${fmt(tot(x))}฿</b></span></div>`).join('');
   const mine = r.rows.find((x) => meName && x.name === meName);
   const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
   const sum = r.rows.reduce((a, x) => a + tot(x), 0);

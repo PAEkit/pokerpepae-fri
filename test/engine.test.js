@@ -388,10 +388,12 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   foldHand();
   // โชว์ไพ่หลังจบตา
   const folded = room.players.find((p) => p.folded);
-  room.showCards(folded);
-  const v = room.viewFor(ps[0].token);
+  room.setShow(folded, true);
+  const v = room.viewFor(ps.find((x) => x.id !== folded.id).token);
   assert(v.players.find((p) => p.id === folded.id).hole.every((c) => Number.isInteger(c)), 'ไพ่ที่โชว์ต้องเห็นทุกคน');
-  assert.throws(() => room.showCards(folded), /ไม่มีไพ่/);
+  room.setShow(folded, false);
+  assert(!room.viewFor(ps.find((x) => x.id !== folded.id).token).players.find((p) => p.id === folded.id).hole.some((c) => Number.isInteger(c)), 'ซ่อนไพ่ได้');
+  room.setShow(folded, true);
   room.startHand(); foldHand();
   room.startHand();                               // ตาที่ 2 จบแล้ว → ต้องเข้า phase สับที่นั่ง
   assert.strictEqual(room.phase, 'shuffle');
