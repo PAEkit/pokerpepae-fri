@@ -509,6 +509,19 @@ html,body,*{touch-action:manipulation}
 .rbw{display:inline-flex;align-items:center;gap:8px}
 .rbar{display:inline-block;width:64px;height:10px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid var(--line);overflow:hidden;vertical-align:middle}
 .rbar i{display:block;height:100%;background:linear-gradient(90deg,#3fd08a,#9be7a8);border-radius:6px}
+.hcard{border:2px solid hsl(var(--hc),70%,55%);background:hsla(var(--hc),60%,40%,.18);border-radius:14px;padding:8px 10px;margin:0 0 10px}
+.hcard .hh{font-weight:700;color:hsl(var(--hc),85%,75%);margin-bottom:4px}
+.hrow{display:flex;align-items:center;gap:8px;margin:3px 0}
+.hrow .hl{flex:none;width:62px;font-size:12px;color:var(--mute)}
+.hcs{display:flex;gap:3px;flex-wrap:wrap}
+.hw{border-top:1px dashed rgba(255,255,255,.2);margin-top:6px;padding-top:5px}
+.hwt{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+.hwt .pf{font-weight:700}.hwt .pf.up{color:#5ad6a0}.hwt .pf.dn{color:#ff7b86}
+.hwd{font-size:13px;color:var(--gold)}
+.hrow .op{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,.25)}
+.hrow .op small{font-size:11px;color:var(--mute)}
+.hrow.ops{flex-wrap:wrap;gap:6px 4px}
+.stk img.cust+small{margin-top:3px}
 </style>
 </head>
 <body>
@@ -1488,7 +1501,7 @@ function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_O
 
 // ---------- สติกเกอร์อารมณ์ (2 อันแรกเป็นรูป+เสียงของคุณ ในโฟลเดอร์ public/stickers · ที่เหลือเป็นภาพวาดต้นฉบับ) ----------
 const STK = [
-  { cap: '', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: '', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' },
+  { cap: 'หอมฉุย', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: 'มีอีกไหม!', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' },
   { cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' },
   { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' },
   { cap: 'แอบกระซิบ', k: 'wink' }, { cap: 'งง?', k: 'think' }, { cap: 'อาย', k: 'shy' }, { cap: 'หึๆ', k: 'smug' },
@@ -1944,7 +1957,17 @@ function renderDrawer() {
   if (drawerTab === 'chat') {
     body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ลองส่งอิโมจิหรือสติกเกอร์ดูสิ</p>') + '</div>';
   } else if (drawerTab === 'log') {
-    body.innerHTML = '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+    const hc = (c) => cardEl(c, '', '--cw:26px');
+    const opp = (o) => `<span class="op"><span class="hcs">${o.hole.map(hc).join('')}</span><small>${esc(o.name)} · ${esc(o.handName || '')}</small></span>`;
+    const cards = (s.hands || []).slice().reverse().map((x) => {
+      const hue = (x.h * 53) % 360;
+      const ws = x.winners.map((w) => `<div class="hw"><div class="hwt"><b>🏆 ${esc(w.name)}</b><span class="pf ${w.profit >= 0 ? 'up' : 'dn'}">กำไร ${w.profit > 0 ? '+' : ''}${fmt(w.profit)}฿</span></div>
+        <div class="hwd">${w.handName ? esc(w.handName) : (x.showdown ? '' : 'ทุกคนโฟลด์')}${w.won !== w.profit ? ` · ได้พ็อต ${fmt(w.won)}฿` : ''}</div>
+        ${w.hole ? `<div class="hrow"><span class="hl">ไพ่ในมือ</span><span class="hcs">${w.hole.map(hc).join('')}</span>${(x.others || []).length === 1 && x.winners.length === 1 ? opp(x.others[0]) : ''}</div>` : ''}</div>`).join('') + ((x.others || []).length && !(x.others.length === 1 && x.winners.length === 1) ? `<div class="hrow ops"><span class="hl">คู่แข่งที่เปิดสู้</span>${x.others.map(opp).join('')}</div>` : '');
+      return `<div class="hcard" style="--hc:${hue}"><div class="hh">ตาที่ ${x.h}</div>
+        <div class="hrow"><span class="hl">ไพ่กลาง</span><span class="hcs">${x.board.length ? x.board.map(hc).join('') : '<i class="hint">ไม่ได้เปิดไพ่กลาง</i>'}</span></div>${ws}</div>`;
+    }).join('');
+    body.innerHTML = (cards ? '<div class="hcards">' + cards + '</div>' : '') + '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
   } else if (drawerTab === 'coin') {
     const buyIn = s.settings.startChips;
     const colors = chartColors(s);
