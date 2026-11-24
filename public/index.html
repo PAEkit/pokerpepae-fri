@@ -1539,10 +1539,10 @@ const STK_PART = {
 };
 const stkBase = (k) => `<circle cx="40" cy="42" r="30" fill="${STK_SKIN[k] || '#ffd9a0'}" stroke="#c98a3b" stroke-width="2"/><path d="M11 38Q12 9 40 10Q68 9 69 38Q58 25 40 27Q22 25 11 38Z" fill="#3a2a1e"/><circle cx="25" cy="50" r="4" fill="#ff9d8a" opacity=".6"/><circle cx="55" cy="50" r="4" fill="#ff9d8a" opacity=".6"/>`;
 const isSticker = (t) => /^::st\d{1,2}$/.test(t) && Number(t.slice(4)) >= 1 && Number(t.slice(4)) <= STK.length;
-function stkHTML(i) {
+function stkHTML(i, noCap) {
   const d = STK[i - 1];
   const art = d.img ? `<img class="cust" src="${d.img}" alt="${d.alt || ''}">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${stkBase(d.k)}${STK_PART[d.k]}</svg>`;
-  return `<span class="stk">${art}${d.cap ? `<small>${d.cap}</small>` : ''}</span>`;
+  return `<span class="stk">${art}${d.cap && !noCap ? `<small>${d.cap}</small>` : ''}</span>`;
 }
 const stkBuf = {}, stkLast = {};
 async function playStkSound(n) {
@@ -1560,7 +1560,7 @@ function preloadStk() {
   const ctx = sndInit(); if (!ctx) return;
   STK.forEach((d, i) => { if (d.snd && !stkBuf[i + 1]) fetch(d.snd).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { stkBuf[i + 1] = b; }).catch(() => {}); });
 }
-function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4))) : esc(t); }
+function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4)), true) : esc(t); }
 $('#stkPop').innerHTML = STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap || d.alt}">${stkHTML(i + 1)}</button>`).join('');
 $('#btnStk').onclick = (e) => { e.stopPropagation(); $('#stkPop').classList.toggle('on'); };
 $('#stkPop').onclick = (e) => {
