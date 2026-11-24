@@ -1793,7 +1793,7 @@ function resultHTML(r, meName) {
   const tot = (x) => (x.prize || 0) + (x.bounty || 0);
   const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
   const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">เงินรางวัล ${fmt(x.prize || 0)}฿${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}</span><span class="pnet">${netTxt(netOf(x))}</span></span></div>`).join('');
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${x.prize ? 'เงินรางวัล ' + fmt(x.prize) + '฿' : ''}${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}</span><span class="pnet">${netTxt(netOf(x))}</span></span></div>`).join('');
   const mine = r.rows.find((x) => meName && x.name === meName);
   const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
   const sum = r.rows.reduce((a, x) => a + tot(x), 0);
