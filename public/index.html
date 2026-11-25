@@ -528,6 +528,10 @@ html,body,*{touch-action:manipulation}
 .rbx .rbbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#f4c95d,#ffe39a);letter-spacing:0}
 .rbx small{font-size:12px!important;color:#e9f3ee!important}
 .rbx.zero small{color:var(--mute)!important}
+.acts.waitrow{align-items:flex-end;justify-content:space-between}
+.preamt{display:flex;flex-direction:column;gap:4px;flex:1;max-width:170px;margin-bottom:4px}
+.preamt span{font-size:12px;color:var(--mute)}
+.preamt .in{height:44px;font-size:18px;text-align:center}
 </style>
 </head>
 <body>
@@ -572,6 +576,7 @@ html,body,*{touch-action:manipulation}
         <h3>ผู้เล่นในห้อง (<span id="lbCount">0</span>/9)</h3>
         <ul class="plist" id="lbPlayers"></ul>
       </div>
+      <div class="card-box" id="lbVoice"></div>
       <div class="card-box">
         <h3>💬 แชท</h3>
         <div class="chatl lbchat" id="lbChat"></div>
@@ -868,6 +873,7 @@ function startSession(d) {
   history.replaceState(null, '', location.pathname);
   state = null; lastChatId = null; bubbles = {}; lastHandNo = -1; lastBoardKey = ''; lastBoardLen = 0; fxKey = '';
   connect();
+  joinVoice('talk'); // เข้าห้องปุ๊บ เปิดไมค์พูดคุยอัตโนมัติ
 }
 function dropSession(msg) {
   leaveVoice(true);
@@ -1164,6 +1170,10 @@ function renderLobby() {
   { const c = $('#lbChat'), stick = c.scrollTop + c.clientHeight >= c.scrollHeight - 40;
     c.innerHTML = s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ทักทายเพื่อนๆ ได้เลย</p>';
     if (stick) c.scrollTop = c.scrollHeight; }
+  { const lv = $('#lbVoice');
+    lv.innerHTML = (voice.mode === 'talk' ? `<button class="b ${voice.muted ? 'ghost' : 'green'} full" id="lbMute" style="margin-bottom:8px">${voice.muted ? '🔇 ไมค์ปิดอยู่ (กดเพื่อเปิด)' : '🎤 ไมค์เปิดอยู่ (กดเพื่อปิด)'}</button>` : '') + voiceBoxHTML(s);
+    bindVoiceBox(lv);
+    const lm = $('#lbMute'); if (lm) lm.onclick = toggleMute; }
   if (s.tourney && !rulesShown.has(s.code)) { rulesShown.add(s.code); showRules(s); }
   $('#btnStart').style.display = me.isHost ? '' : 'none';
   $('#btnStart').disabled = s.players.length < 2;
@@ -1378,6 +1388,7 @@ function renderSpecPanel() {
 }
 $('#btnLobbyJoin').onclick = specJoin;
 
+let preRaise = 0;
 function renderPanel(me, hlCards) {
   if (!me) { renderSpecPanel(); return; }
   const s = state, o = s.options;
@@ -1387,6 +1398,7 @@ function renderPanel(me, hlCards) {
   // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
   const rkey = o ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
   if (o && (rkey !== raiseKey || raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
+  if (o && rkey !== raiseKey && preRaise > 0) { raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, preRaise)); preRaise = 0; }
   raiseKey = rkey;
 
   let hole = (me.hole || []).slice();
@@ -1414,7 +1426,10 @@ function renderPanel(me, hlCards) {
     }
   } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
     const on = !!s.you.pre;
-    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+    h += `<div class="acts waitrow"><label class="preamt"><span>ใส่จำนวนเรสรอไว้</span><input id="aPreAmt" class="in" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="เรสเป็น…" value="${preRaise || ''}"></label><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+  } else if (s.phase === 'hand' && me.inHand && me.folded) {
+    const on = !!s.you.autoShow;
+    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aAuto" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
   } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !(s.result && s.result.hands && s.result.hands[me.id])) {
     const on = !!me.shown;
     h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aShowT" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
@@ -1471,6 +1486,8 @@ function renderPanel(me, hlCards) {
     }
   }
   if ($p('#aPre')) $p('#aPre').onclick = () => api('pre', { ...session, on: !s.you.pre }).catch(() => {});
+  if ($p('#aPreAmt')) { const pa = $p('#aPreAmt'); pa.onfocus = () => { pa.select(); }; pa.oninput = () => { preRaise = Math.max(0, parseInt(pa.value, 10) || 0); }; }
+  if ($p('#aAuto')) $p('#aAuto').onclick = () => api('autoshow', { ...session, on: !s.you.autoShow }).catch(() => {});
   if ($p('#aShowT')) $p('#aShowT').onclick = () => api('showtoggle', { ...session, on: !me.shown }).catch(() => {});
   const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});
 }
@@ -1643,7 +1660,7 @@ function fixShown() {
   const wrap = $('#tablewrap'), board = $('#gBoard'); if (!wrap || !board || !board.offsetWidth) return;
   const B = board.getBoundingClientRect(), W = wrap.getBoundingClientRect();
   const lim = { l: Math.max(W.left, 0) + 3, r: Math.min(W.right, innerWidth) - 3 };
-  wrap.querySelectorAll('.seat .mini.shown').forEach((m) => {
+  wrap.querySelectorAll('.seat .mini.rev').forEach((m) => {
     m.style.transform = ''; m.style.removeProperty('--cw'); m.style.height = '';
     const cards = [...m.querySelectorAll('.card')]; if (cards.length < 2) return;
     const box = () => { const r1 = cards[0].getBoundingClientRect(), r2 = cards[cards.length - 1].getBoundingClientRect(); return { l: Math.min(r1.left, r2.left), r: Math.max(r1.right, r2.right), t: Math.min(r1.top, r2.top), b: Math.max(r1.bottom, r2.bottom) }; };
@@ -2150,7 +2167,7 @@ function toggleMute() {
   voice.stream.getAudioTracks().forEach((t) => { t.enabled = !voice.muted; });
   if (voice.muted) { voice.speaking.delete(myId()); paintTalking(); }
   api('voice', { ...session, mode: 'talk', muted: voice.muted }).catch(() => {});
-  renderMic();
+  refreshVoiceUI();
 }
 
 // ----- เชื่อมต่อกับแต่ละคน -----
@@ -2352,6 +2369,7 @@ $('#btnMic').onclick = () => {
 
 function refreshVoiceUI() {
   renderMic();
+  if (state && state.phase === 'lobby' && $('#lobby').classList.contains('on')) renderLobby();
   if ($('#drawer').classList.contains('on') && (drawerTab === 'room' || drawerTab === 'coin') && state) renderDrawer();
 }
 
@@ -2379,7 +2397,7 @@ function voiceBoxHTML(s) {
   return `<div class="vbox"><h4>🎤 ห้องเสียง</h4>${rows || '<p class="hint" style="margin:4px 0">ยังไม่มีใครในห้องเสียง</p>'}
     <div style="margin-top:8px">${btns}</div>
     ${voice.needTap ? '<p class="tip">แตะหน้าจอหนึ่งครั้งเพื่อเปิดเสียง</p>' : ''}
-    <p class="tip">${'ไมค์ปิดไว้จนกว่าจะกดเข้า · กดปุ่ม 🎤 ด้านบนเพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
+    <p class="tip">${'ไมค์เปิดให้อัตโนมัติเมื่อเข้าห้อง · กดปุ่ม 🎤 เพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
 }
 function bindVoiceBox(root) {
   root.querySelectorAll('[data-vjoin]').forEach((b) => { b.onclick = () => joinVoice(b.dataset.vjoin); });
