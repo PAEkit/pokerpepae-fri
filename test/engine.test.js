@@ -389,6 +389,9 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   // โชว์ไพ่หลังจบตา
   const folded = room.players.find((p) => p.folded);
   room.setShow(folded, true);
+  room.startHand();
+  assert.throws(() => room.setShow(room.players.find((p) => p.inHand), true), /หลังจบตา/);
+  foldHand();
   const v = room.viewFor(ps.find((x) => x.id !== folded.id).token);
   assert(v.players.find((p) => p.id === folded.id).hole.every((c) => Number.isInteger(c)), 'ไพ่ที่โชว์ต้องเห็นทุกคน');
   room.setShow(folded, false);

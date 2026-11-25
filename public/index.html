@@ -491,7 +491,8 @@ html,body,*{touch-action:manipulation}
 .cf.on .cfk{background:linear-gradient(#2fc888,#1d9a68);box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 10px rgba(47,200,136,.5)}
 .cf.on .cfk::after{left:31px}
 .cf.on .cft b{color:#ffe9a8}
-.seat.mine-shown{z-index:60}
+.seat.mine-shown{z-index:90}
+.seat.mine-shown .mini{z-index:90}
 .rrow .pz b{display:block;font-size:15px}
 .bet{background:none!important;padding:0!important}
 .bet .br>span:not(.pile){background:rgba(0,0,0,.6);border-radius:10px;padding:1px 8px}
@@ -522,6 +523,11 @@ html,body,*{touch-action:manipulation}
 .hrow .op small{font-size:11px;color:var(--mute)}
 .hrow.ops{flex-wrap:wrap;gap:6px 4px}
 .stk img.cust+small{margin-top:3px}
+.rbx{width:168px!important;padding:6px 8px!important}
+.rbx .rbbar{display:block;height:12px;border-radius:7px;background:rgba(255,255,255,.14);border:1px solid var(--line);overflow:hidden;margin-bottom:5px}
+.rbx .rbbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#f4c95d,#ffe39a);letter-spacing:0}
+.rbx small{font-size:12px!important;color:#e9f3ee!important}
+.rbx.zero small{color:var(--mute)!important}
 </style>
 </head>
 <body>
@@ -1298,9 +1304,10 @@ function renderGame() {
   });
   $('#gSeats').innerHTML = seats;
   renderShuffle(s);
+  fixShown();
   layoutBets();
   fixBubbles();
-  requestAnimationFrame(() => { layoutBets(); fixBubbles(); });
+  requestAnimationFrame(() => { fixShown(); layoutBets(); fixBubbles(); });
 
   renderPanel(me, hlCards);
 }
@@ -1408,7 +1415,7 @@ function renderPanel(me, hlCards) {
   } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
     const on = !!s.you.pre;
     h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
-  } else if (((s.phase === 'hand' && me.inHand && me.folded) || s.phase === 'showdown') && me.hole && me.hole[0] != null && !(s.result && s.result.hands && s.result.hands[me.id])) {
+  } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !(s.result && s.result.hands && s.result.hands[me.id])) {
     const on = !!me.shown;
     h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aShowT" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
   } else if (s.phase === 'waiting') {
@@ -1631,6 +1638,35 @@ function placeCd() {
   const a = cd.getBoundingClientRect(), b = bd.getBoundingClientRect();
   cd.style.transform = `translateY(${((b.top + b.bottom) / 2 - (a.top + a.bottom) / 2).toFixed(1)}px)`;
 }
+// ไพ่ที่ผู้เล่นโชว์ ห้ามซ้อนกับไพ่กลาง: ขยับออกด้านข้าง (ไม่ตกขอบจอ) ถ้าไม่พอให้ย่อไพ่ลง
+function fixShown() {
+  const wrap = $('#tablewrap'), board = $('#gBoard'); if (!wrap || !board || !board.offsetWidth) return;
+  const B = board.getBoundingClientRect(), W = wrap.getBoundingClientRect();
+  const lim = { l: Math.max(W.left, 0) + 3, r: Math.min(W.right, innerWidth) - 3 };
+  wrap.querySelectorAll('.seat .mini.shown').forEach((m) => {
+    m.style.transform = ''; m.style.removeProperty('--cw'); m.style.height = '';
+    const cards = [...m.querySelectorAll('.card')]; if (cards.length < 2) return;
+    const box = () => { const r1 = cards[0].getBoundingClientRect(), r2 = cards[cards.length - 1].getBoundingClientRect(); return { l: Math.min(r1.left, r2.left), r: Math.max(r1.right, r2.right), t: Math.min(r1.top, r2.top), b: Math.max(r1.bottom, r2.bottom) }; };
+    let c = box();
+    if (c.r <= B.left - 4 || c.l >= B.right + 4 || c.b <= B.top - 2 || c.t >= B.bottom + 2) return; // ไม่ชนกับไพ่กลาง
+    const goLeft = (c.l + c.r) / 2 < (B.left + B.right) / 2;
+    const fit = () => {
+      c = box();
+      let dx = goLeft ? (B.left - 4) - c.r : (B.right + 4) - c.l;
+      const nl = c.l + dx, nr = c.r + dx;
+      if (nl < lim.l) dx += lim.l - nl; if (nr > lim.r) dx -= nr - lim.r;
+      return { dx, ok: goLeft ? c.r + dx <= B.left - 3 && c.l + dx >= lim.l - 0.5 : c.l + dx >= B.right + 3 && c.r + dx <= lim.r + 0.5 };
+    };
+    let f = fit();
+    if (!f.ok) { // พื้นที่ไม่พอ → ย่อไพ่ลงให้พอดี
+      const avail = goLeft ? (B.left - 4) - lim.l : lim.r - (B.right + 4);
+      const cw = Math.max(16, Math.floor((avail - 2) / 2));
+      m.style.setProperty('--cw', cw + 'px'); m.style.height = Math.round(cw * 1.4) + 'px';
+      f = fit();
+    }
+    m.style.transform = `translateX(${f.dx.toFixed(1)}px)`;
+  });
+}
 function layoutBets() {
   const wrap = $('#tablewrap'), wr = wrap.getBoundingClientRect();
   if (!wr.width) return;
@@ -1737,7 +1773,8 @@ function renderTourStatus() {
     const used = 1 + (p.rebuys || 0), left = Math.max(0, T.maxRebuys - (p.rebuys || 0));
     const st = p.out ? `💀 ตกรอบ อันดับ ${p.place}` : p.chips === 0 ? '⏳ รอบายอินเพิ่ม' : '🟢 ยังอยู่ในเกม';
     const lf = p.out ? 0 : left;
-    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span><span class="rbx${lf ? '' : ' zero'}"><b>${lf}</b><i>${'●'.repeat(lf)}${'○'.repeat(Math.max(0, T.maxRebuys - lf))}</i><small>บายอินเหลือ</small></span></div>`;
+    const pct = T.maxRebuys ? Math.round((lf / T.maxRebuys) * 100) : 0;
+    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small></span><span class="rbx${lf ? '' : ' zero'}" title="บายอินเหลือ ${lf}/${T.maxRebuys}"><span class="rbbar"><i style="width:${pct}%"></i></span><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span></div>`;
   }).join('');
   const medals = ['🥇', '🥈', '🥉'];
   const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[55, 30, 15][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
