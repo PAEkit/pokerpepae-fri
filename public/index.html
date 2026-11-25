@@ -532,6 +532,18 @@ html,body,*{touch-action:manipulation}
 .preamt{display:flex;flex-direction:column;gap:4px;flex:1;max-width:170px;margin-bottom:4px}
 .preamt span{font-size:12px;color:var(--mute)}
 .preamt .in{height:44px;font-size:18px;text-align:center}
+
+.eqbig{position:absolute;left:0;top:0;bottom:0;width:calc(50% - 50px);display:flex;flex-direction:column;justify-content:center;gap:2px;padding-left:4px}
+.eqn{font-size:24px;font-weight:800;line-height:1;color:#7be08a}.eqn small{font-size:13px;margin-left:1px}
+.eqbig.lose .eqn{color:#ff9b6b}
+.eql{font-size:10px;color:var(--mute);line-height:1}
+.eqbar{height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden;width:90%}
+.eqbar i{display:block;height:100%;background:#7be08a;border-radius:3px}
+.eqbig.lose .eqbar i{background:#ff9b6b}
+.outsbox{margin:6px auto 0;padding:5px 8px 6px;border:1px solid rgba(255,155,107,.5);border-radius:10px;background:rgba(255,155,107,.07);text-align:center}
+.outsbox .oh{font-size:12px;color:#ffb48f;margin-bottom:4px}
+.outsbox .ofan{position:relative;height:calc(28px * 1.4);margin:0 auto}
+.outsbox .ofan .oc{position:absolute;top:0;--cw:28px}
 </style>
 </head>
 <body>
@@ -1389,10 +1401,20 @@ function renderSpecPanel() {
 $('#btnLobbyJoin').onclick = specJoin;
 
 let preRaise = 0;
+function eqHTML(e) {
+  if (!e) return '';
+  return `<div class="eqbig${e.trailing ? ' lose' : ''}"><div class="eqn">${e.pct}<small>%</small></div><div class="eql">โอกาสชนะ</div><div class="eqbar"><i style="width:${e.pct}%"></i></div></div>`;
+}
+function outsHTML(e) {
+  if (!e || !e.trailing || !e.outs || !e.outs.length) return '';
+  const step = Math.min(26, Math.floor(300 / Math.max(1, e.outs.length)));
+  const w = step * (e.outs.length - 1) + 28;
+  return `<div class="outsbox"><div class="oh">ตามอยู่ · มี <b>${e.outs.length}</b> outs</div><div class="ofan" style="width:${w}px;max-width:100%">${e.outs.map((c, i) => cardEl(c, 'oc', `--cw:28px;left:${i * step}px`)).join('')}</div></div>`;
+}
 function renderPanel(me, hlCards) {
   if (!me) { renderSpecPanel(); return; }
   const s = state, o = s.options;
-  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown, s.you.autoShow]);
+  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown, s.you.autoShow, s.eq]);
   if (sig === panelSig) return;
   panelSig = sig;
   // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
@@ -1404,7 +1426,7 @@ function renderPanel(me, hlCards) {
   let hole = (me.hole || []).slice();
   if (swapHand === s.handNo && hole.length === 2) hole.reverse();
   let h = `<div class="mine"><div class="hc">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}</div>
-    <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="st">${status(me)}</div></div></div>`;
+    <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="st">${status(me)}</div></div>${eqHTML(s.eq)}</div>${outsHTML(s.eq)}`;
 
   if (o) {
     const callAll = !o.canCheck && o.toCall >= me.chips;
@@ -1860,7 +1882,7 @@ function resultHTML(r, meName) {
   const tot = (x) => (x.prize || 0) + (x.bounty || 0);
   const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
   const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
-  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${x.prize ? 'เงินรางวัล ' + fmt(x.prize) + '฿' : ''}${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}</span><span class="pnet">${netTxt(netOf(x))}</span></span></div>`).join('');
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}${x.tied ? '<small style="display:block;font-size:10px">ร่วม</small>' : ''}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${x.prize ? 'เงินรางวัล ' + fmt(x.prize) + '฿' : ''}${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}</span><span class="pnet">${netTxt(netOf(x))}</span></span></div>`).join('');
   const mine = r.rows.find((x) => meName && x.name === meName);
   const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
   const sum = r.rows.reduce((a, x) => a + tot(x), 0);

@@ -317,12 +317,12 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   }
   assert.strictEqual(room.phase, 'over', 'ต้องจบทัวร์นาเมนต์');
   const res = room.tour.result;
-  assert.deepStrictEqual(res.rows.map((r) => r.place), [1, 2, 3]);
+  assert.ok(['1,2,3', '1,2,2'].includes(res.rows.map((r) => r.place).join()), 'ชิปเท่ากันตกพร้อมกัน = อันดับร่วม');
   assert.strictEqual(res.pool, 300);
   assert.strictEqual(res.rows.reduce((a, r) => a + r.prize + r.bounty, 0), 300, 'รางวัลรวมต้องเท่ายอดบายอิน');
-  assert.ok(res.rows.every((r) => r.prize % 10 === 0 && r.bounty % 10 === 0));
+  assert.ok(res.rows.every((r) => r.bounty % 10 === 0 && (res.rows.some((x) => x.tied) || r.prize % 10 === 0)));
   assert.strictEqual(res.bountyTotal, res.rows.reduce((a, r) => a + r.kills * 20, 0), 'Bounty = จำนวนหัว × 20');
-  const loser = room.players.find((p) => p.place === 3);
+  const loser = room.players.find((p) => p.place >= 2 && p.out);
   assert(loser.out && room.viewFor(loser.token).you.spectator, 'ผู้ตกรอบต้องเป็นผู้ชม');
   room.destroy();
 
@@ -479,6 +479,40 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   console.log('✓ turn timer');
   await global.__offline;
   console.log('✓ offline auto-fold');
+  // อันดับ 3/4 ตกพร้อมกัน: ชิปมากกว่าได้ที่ 3 / ชิปเท่ากัน = ที่ 3 ร่วม แบ่งรางวัลที่ 3
+  for (const [c3, c4, expect] of [[300, 100, [3, 4]], [200, 200, [3, 3]]]) {
+    const r = new Room('TT', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 50, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, tourEndDelay: 0, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+    const q = ['A', 'B', 'C', 'D'].map((n) => r.addPlayer(n));
+    r.tour.started = true; r.handNo = 5;
+    q[2].handStartChips = c3; q[3].handStartChips = c4;
+    q[2].chips = 0; q[3].chips = 0; q[2].bustHand = 5; q[3].bustHand = 5;
+    r.tourEliminate([q[3], q[2]], 'test');
+    assert.deepStrictEqual([q[2].place, q[3].place], expect);
+    q[1].chips = 0; q[1].bustHand = 5; q[1].handStartChips = 50; r.tourEliminate([q[1]], 'test');
+    r.tourCheckWinner(); r.endTournament();
+    const rows = r.tour.result.rows, pr = r.prizeTable(400, 4, 0);
+    const byName = Object.fromEntries(rows.map((x) => [x.name, x]));
+    if (expect[0] === expect[1]) { assert.strictEqual(byName.C.prize, pr[2] / 2); assert.strictEqual(byName.D.prize, pr[2] / 2); assert(byName.C.tied && byName.D.tied); }
+    else { assert.strictEqual(byName.C.prize, pr[2]); assert.strictEqual(byName.D.prize, 0); }
+  }
+  console.log('✓ tie for 3rd');
+  // % ชนะ + outs: เห็นเฉพาะของตัวเอง และเฉพาะตอนลุ้นไพ่ออลอิน
+  {
+    const r = new Room('EQ', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 });
+    const a = r.addPlayer('A'), b = r.addPlayer('B');
+    r.phase = 'hand'; r.runout = true;
+    for (const q of r.players) { q.inHand = true; q.folded = false; }
+    const Cc = (x) => 'shdc'.indexOf(x[1]) * 13 + '23456789TJQKA'.indexOf(x[0]);
+    a.hole = [Cc('Ks'), Cc('Kd')]; b.hole = [Cc('Ah'), Cc('Qh')];
+    r.community = [Cc('9h'), Cc('5h'), Cc('2c')];
+    const ea = r.viewFor(a.token).eq, eb = r.viewFor(b.token).eq;
+    assert.strictEqual(ea.pct + eb.pct, 100); assert(!ea.trailing && ea.outs.length === 0);
+    assert(eb.trailing && eb.outs.length === 12, 'KK vs AQ♥ บนบอร์ด 9♥5♥2♣ มี 12 outs: ' + eb.outs.length);
+    assert.strictEqual(ea.pct, 54);
+    assert.strictEqual(r.viewFor(a.token).eq.hasOwnProperty('other'), false);
+    r.runout = false; assert.strictEqual(r.viewFor(a.token).eq, null, 'ไม่แสดงระหว่างเดิมพัน');
+  }
+  console.log('✓ equity/outs');
   console.log('ALL PASSED');
   process.exit(0);
 })();
