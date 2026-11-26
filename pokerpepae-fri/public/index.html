@@ -1,0 +1,2632 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PokerPEPAE&amp;Fri">
+<meta name="theme-color" content="#07241b">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-192.png">
+<title>PokerPEPAE&amp;Fri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07241b; --bg2:#0b2f23; --felt1:#17805a; --felt2:#0c4b34; --rail:#4a2e1b;
+  --gold:#f4c95d; --gold2:#d79a1e; --red:#ef4a55; --ink:#eaf6ef; --mute:#8db5a2; --line:rgba(255,255,255,.1);
+  --card:#fbfaf5;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:'Kanit',system-ui,-apple-system,'Sukhumvit Set',sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{background:radial-gradient(120% 80% at 50% 0%,#0f3a2b 0%,var(--bg) 60%)}
+button,input,select{font:inherit;color:inherit}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);max-width:560px;margin:0 auto;position:relative}
+.screen{display:none;flex:1;min-height:0;flex-direction:column}
+.screen.on{display:flex}
+
+/* ---------- ปุ่ม ---------- */
+.b{height:48px;border:0;border-radius:12px;padding:0 14px;font-weight:600;font-size:16px;background:#1b4a39;color:var(--ink);cursor:pointer;transition:transform .08s,filter .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.b:active{transform:scale(.97)}
+.b[disabled]{opacity:.4;pointer-events:none}
+.b.gold{background:linear-gradient(#f8d675,var(--gold2));color:#2a1b00}
+.b.red{background:linear-gradient(#f2606a,#c9303b);color:#fff}
+.b.green{background:linear-gradient(#25a974,#14764f);color:#fff}
+.b.ghost{background:transparent;border:1px solid var(--line)}
+.b.sm{height:36px;font-size:14px;padding:0 10px;border-radius:10px}
+.b.full{width:100%}
+
+/* ---------- หน้าแรก / ล็อบบี้ ---------- */
+.pad{padding:20px 18px;overflow:auto;flex:1}
+.logo{text-align:center;margin:18px 0 22px}
+.logo .suits{font-size:26px;letter-spacing:10px;color:var(--gold)}
+.logo h1{margin:2px 0 0;font-size:34px;line-height:1.1;font-weight:700;background:linear-gradient(#fff3c4,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo p{margin:6px 0 0;color:var(--mute);font-size:14px}
+.card-box{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
+.card-box h3{margin:0 0 10px;font-size:16px;font-weight:600}
+label.f{display:block;font-size:13px;color:var(--mute);margin:8px 0 4px}
+.in{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.28);padding:0 12px;font-size:17px;outline:none}
+.in:focus{border-color:var(--gold)}
+.in.code{text-transform:uppercase;letter-spacing:8px;text-align:center;font-size:24px;font-weight:600}
+.row{display:flex;gap:10px}
+.row>*{flex:1;min-width:0}
+details summary{cursor:pointer;color:var(--mute);font-size:14px;padding:8px 0;list-style:none}
+details summary::before{content:'⚙️ '}
+.sep{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;margin:14px 0}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--line)}
+.bigcode{font-size:56px;font-weight:700;letter-spacing:12px;text-align:center;color:var(--gold);padding-left:12px;line-height:1.1}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:17px}
+.plist li:last-child{border:0}
+.dot{width:9px;height:9px;border-radius:50%;background:#3ddc84;flex:none}
+.dot.off{background:#777}
+.plist .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:12px;color:var(--gold);border:1px solid var(--gold);border-radius:8px;padding:1px 6px}
+.hint{color:var(--mute);font-size:13px;text-align:center;margin:8px 0}
+
+/* ---------- เกม ---------- */
+.top{display:flex;align-items:center;gap:8px;padding:8px 10px 4px;font-size:13px;color:var(--mute)}
+.top .code{background:rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-weight:600;color:var(--gold);letter-spacing:3px;border:0;font-size:14px;cursor:pointer}
+.top .mid{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ic{display:inline-flex;align-items:center;justify-content:center;width:38px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.08);font-size:18px;position:relative;cursor:pointer}
+.ic .badge{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
+.ic.has .badge{display:block}
+.conn{display:none;background:#8a5a00;color:#fff;text-align:center;font-size:13px;padding:3px}
+.conn.on{display:block}
+
+.tablewrap{flex:1;min-height:300px;position:relative;margin:0 4px}
+.felt{position:absolute;top:6%;bottom:6%;left:2.5%;right:2.5%;border-radius:50%;background:radial-gradient(ellipse at 50% 38%,var(--felt1),var(--felt2) 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,0,0,.5)}
+.center{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:78%;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:40;pointer-events:none}
+.potline{background:rgba(0,0,0,.35);border-radius:20px;padding:2px 12px;font-size:14px;color:#dff5e8}
+.potline b{color:var(--gold);font-weight:600}
+.board{display:flex;gap:4px;--cw:min(11.2vw,50px)}
+.slot{width:var(--cw);height:calc(var(--cw)*1.4);border:1.5px dashed rgba(255,255,255,.18);border-radius:calc(var(--cw)*.14)}
+.banner{position:absolute;left:0;right:0;top:100%;margin-top:4px;min-height:20px;text-align:center;font-size:14px;line-height:1.25;color:#fff;max-width:100%}
+.banner .w{color:var(--gold);font-weight:600}
+
+.card{width:var(--cw);height:calc(var(--cw)*1.4);background:var(--card);border-radius:calc(var(--cw)*.14);color:#15171c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;line-height:1;box-shadow:0 2px 5px rgba(0,0,0,.45);font-size:calc(var(--cw)*.5);flex:none;transition:opacity .2s}
+.card i{font-style:normal;font-size:calc(var(--cw)*.5);margin-top:1px}
+.card.red{color:#d62839}
+.card.back{background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);border:calc(var(--cw)*.08) solid #fff}
+.card.dim{opacity:.35}
+.card.hl{box-shadow:0 0 0 2px var(--gold),0 0 12px rgba(244,201,93,.8);transform:translateY(-3px)}
+.card.deal{animation:flip .8s cubic-bezier(.2,.8,.3,1) backwards}
+@keyframes flip{0%{transform:perspective(500px) rotateY(100deg) translateY(-18px) scale(.8);opacity:0}45%{opacity:1}100%{transform:none;opacity:1}}
+#fx{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:30}
+@keyframes deal{from{transform:translateY(-14px) scale(.8);opacity:0}to{transform:none;opacity:1}}
+
+.seat{position:absolute;transform:translate(-50%,-50%);width:76px;z-index:3;text-align:center}
+.seat .mini{display:flex;justify-content:center;gap:2px;--cw:24px;height:22px;position:relative;z-index:0;margin-bottom:-8px}
+.seat .mini.rev{--cw:30px;height:42px;margin-bottom:3px}
+.seat .mini.rev .card{transform:none!important}
+.seat .mini .card{box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.seat .mini .card:first-child{transform:rotate(-7deg)}
+.seat .mini .card:last-child{transform:rotate(7deg)}
+.plate{position:relative;z-index:1;background:linear-gradient(#17352a,#0c241b);border:1.5px solid rgba(255,255,255,.18);border-radius:12px;padding:3px 4px 4px;box-shadow:0 3px 8px rgba(0,0,0,.45);overflow:hidden}
+.plate .nm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.plate .ch{font-size:13px;font-weight:600;color:var(--gold);line-height:1.2}
+.plate .tm{height:3px;background:rgba(255,255,255,.12);border-radius:3px;margin-top:2px;visibility:hidden}
+.plate .tm i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px}
+.seat.turn .plate{border-color:var(--gold);box-shadow:0 0 0 2px rgba(244,201,93,.45),0 0 16px rgba(244,201,93,.55)}
+.seat.turn .plate .tm{visibility:visible}
+.seat.turn.warn .plate .tm i{background:var(--red)}
+.seat.me .plate{border-color:#5ad6a0}
+.seat.folded .plate,.seat.folded .mini{opacity:.45}
+.seat.win .plate{border-color:var(--gold);background:linear-gradient(#5b4310,#2c2007);box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(244,201,93,.9)}
+.seat .act{margin:3px auto 0;display:inline-block;max-width:92px;font-size:11px;line-height:1.2;background:rgba(0,0,0,.55);border-radius:9px;padding:1px 7px;color:#fff;white-space:nowrap}
+.seat .act.off{color:#ffb4b4}
+.dbtn{position:absolute;right:-4px;top:12px;z-index:4;width:20px;height:20px;border-radius:50%;background:#fff;color:#111;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.bubble{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:6px;background:#fff;color:#111;border-radius:12px;padding:4px 9px;font-size:13px;max-width:150px;width:max-content;z-index:9;box-shadow:0 2px 8px rgba(0,0,0,.4);animation:bpop .2s ease-out;line-height:1.25;word-break:break-word}
+@keyframes bpop{from{transform:translateX(-50%) scale(.85);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bet{position:absolute;transform:translate(-50%,-50%);z-index:4;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;background:rgba(0,0,0,.45);border-radius:14px;padding:1px 8px 1px 3px;color:#fff}
+.chip{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0 20%,#d33 21% 55%,#fff 56% 62%,#d33 63%);border:1px solid #fff;flex:none}
+
+.dense .seat{width:62px}
+.dense .plate{border-radius:10px;padding:2px 3px 3px}
+.dense .plate .nm{font-size:11px}
+.dense .plate .ch{font-size:12px}
+.dense .seat .mini{--cw:19px;height:17px}
+.dense .seat .mini.rev{--cw:25px;height:35px}
+.dense .seat .act{font-size:10px;max-width:68px;padding:0 5px}
+.dense .board{--cw:min(9.4vw,42px);gap:3px}
+.dense .bet{font-size:12px}
+.dense .dbtn{width:17px;height:17px;font-size:10px;top:10px;right:-3px}
+
+.panel{background:linear-gradient(#0d3123,#082018);border-top:1px solid var(--line);padding:6px 10px 8px;height:240px;flex:none;overflow:hidden;border-radius:18px 18px 0 0}
+.mine{display:flex;align-items:center;gap:8px;--cw:38px;height:56px}
+.mine .mi{margin-left:6px;min-width:0}
+.mine .hn{font-weight:600;color:var(--gold);font-size:16px;line-height:1.2}
+.mine .st{font-size:13px;color:var(--mute);line-height:1.3}
+.acts{display:flex;gap:8px;margin-top:6px}
+.acts .b{height:44px}
+.acts .b{flex:1;padding:0 6px}
+.acts .b.call{flex:1.2}
+.raisebar{margin-top:5px}
+.raisebar .sl{display:flex;align-items:center;gap:8px;height:34px}
+.raisebar input[type=range]{flex:1;accent-color:var(--gold);height:30px}
+.raisebar .pre{display:flex;gap:6px;margin-top:5px}
+.raisebar .r2{display:flex;gap:6px;margin-top:5px}
+.raisebar .r2 .in{flex:0 0 50%;width:50%;height:34px;font-size:16px;text-align:center;font-weight:600;color:var(--gold);padding:0 6px}
+.raisebar .r2 .b{flex:1;height:34px;font-size:13px;padding:0}
+.raisebar .pre .b{flex:1;height:32px;font-size:13px;padding:0}
+.stepbtn{width:38px;height:32px;border-radius:10px;border:0;background:#1b4a39;font-size:20px;font-weight:600;cursor:pointer}
+.msg{margin-top:6px;text-align:center;font-size:15px;color:var(--ink)}
+.msg .b{margin-top:6px}
+
+/* ---------- ลิ้นชัก ---------- */
+.drawer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;display:none;background:rgba(0,0,0,.55)}
+.drawer.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;height:72dvh;background:#0c2a20;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.tabs{display:flex;gap:6px;padding:10px 10px 0}
+.tabs button{flex:1;height:38px;border:0;border-radius:10px;background:rgba(255,255,255,.06);font-weight:500;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#2a1b00;font-weight:600}
+.tabbody{flex:1;min-height:0;overflow:auto;padding:10px 14px}
+.logl p{margin:0;padding:4px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.chatl .m{margin:6px 0;font-size:15px}
+.chatl .m b{color:var(--gold);font-weight:500}
+.emo{display:flex;gap:6px;padding:6px 10px;overflow:auto}
+.emo button{border:0;background:rgba(255,255,255,.08);border-radius:12px;font-size:22px;padding:2px 10px;cursor:pointer;flex:none}
+.chatin{display:flex;gap:8px;padding:6px 10px 10px}
+.chatin .in{height:42px}
+
+.sub{font-size:13px;color:var(--mute);margin:-4px 0 8px}
+label.chk{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:12px;color:var(--ink)}
+label.chk input{width:20px;height:20px;accent-color:var(--gold)}
+.rm{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.rm .rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rm .rh b{color:var(--gold);letter-spacing:3px;font-size:19px;font-weight:600}
+.rm .rh span{font-size:12px;color:var(--mute);text-align:right}
+.rm .rn{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 8px}
+.rm .rn i{font-style:normal;font-size:12px;background:rgba(255,255,255,.1);border-radius:10px;padding:1px 8px 1px 6px;display:inline-flex;align-items:center;gap:5px;max-width:100%}
+.rm .rn i::before{content:'';width:6px;height:6px;border-radius:50%;background:#3ddc84;flex:none}
+.rm .rn i.off{opacity:.5}
+.rm .rn i.off::before{background:#777}
+.rm .ra{display:flex;gap:8px}
+.rm .ra .b{flex:1}
+.ic.mic-on{background:#1d7a52}
+.ic.mic-muted{background:#8a2b34}
+.ic.mic-listen{background:#2b5a8a}
+.seat.talking .plate{border-color:#3ddc84;box-shadow:0 0 0 2px rgba(61,220,132,.55),0 0 16px rgba(61,220,132,.85)}
+.vb{position:absolute;left:-5px;top:12px;z-index:4;min-width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,.72);font-size:11px;display:flex;align-items:center;justify-content:center}
+.vbox{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:12px 0}
+.vbox h4{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--gold)}
+.vbox .vr{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:15px}
+.vbox .vr .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbox small{color:var(--mute);font-size:12px}
+.vbox small.ok{color:#3ddc84}
+.vbox small.bad{color:#ff8a8a}
+.vbox .tip{font-size:12px;color:var(--mute);margin:8px 0 0}
+.sheettitle{display:none;padding:14px 16px 0;font-weight:600;font-size:18px}
+.raisebar .amt{display:flex;align-items:center;gap:8px;margin-top:6px}
+.raisebar .amt span{font-size:13px;color:var(--mute);white-space:nowrap}
+.raisebar .amt .in{height:38px;font-size:17px;text-align:center;font-weight:600;color:var(--gold)}
+.raisebar .pre .b.allin{background:linear-gradient(#ff9a4d,#e0481f);color:#fff;font-weight:700;box-shadow:0 0 10px rgba(255,120,50,.6)}
+.bi{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
+.bi h4{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--gold)}
+.bi .r{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:15px}
+.bi .r i{font-style:normal;color:var(--mute);font-size:12px}
+.bi .r b{font-weight:600}
+.fab{position:absolute;right:6px;bottom:4px;z-index:20;width:44px;height:42px;border-radius:14px;background:rgba(0,0,0,.45);border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.ic{color:inherit}
+.mbox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,420px);background:#0c2a20;border:1px solid var(--line);border-radius:18px;padding:16px 18px 18px}
+.mbox h3{margin:0 0 6px;font-size:19px;color:var(--gold)}
+.mbox label.chk{margin-top:14px}
+.pos{position:absolute;right:-5px;z-index:4;min-width:21px;height:18px;padding:0 3px;border-radius:9px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.5);color:#fff}
+.pos.sb{background:#2f7fd1;top:34px}
+.pos.bb{background:#e0861f;top:34px}
+.pos.sb+.pos.bb{top:54px}
+.dense .pos{top:30px;height:16px;min-width:19px;font-size:9px}
+.dense .pos.sb+.pos.bb{top:48px}
+.coinbox{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
+.coinbox h4{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--gold)}
+.lg{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px}
+.lg .sw{width:12px;height:12px;border-radius:50%;flex:none}
+.lg .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg .sk{font-size:14px;letter-spacing:1px;white-space:nowrap}
+.lg .sk i{font-style:normal;font-size:12px;color:var(--mute);letter-spacing:0;margin-left:2px}
+.plate{overflow:visible}
+.potrow{display:flex;align-items:flex-end;justify-content:center;gap:8px;min-height:30px}
+.pstack{display:inline-flex;align-items:flex-end;gap:2px}
+.pcol{display:flex;flex-direction:column-reverse}
+.pd{display:block;width:22px;height:6px;margin-top:-2px;border-radius:50%/55%;border:1px solid rgba(0,0,0,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55),0 1px 1px rgba(0,0,0,.4)}
+.pstack.sm .pd{width:14px;height:4px;margin-top:-1.5px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+.bet{flex-wrap:nowrap;white-space:nowrap}
+.bet.nb{animation:betin .3s ease-out .55s backwards}
+@keyframes betin{from{opacity:0;transform:translate(-50%,-50%) scale(.6)}to{opacity:1;transform:translate(-50%,-50%)}}
+.aitag{background:linear-gradient(#ff9a4d,#e0481f);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:0 6px;line-height:15px;box-shadow:0 0 8px rgba(255,110,40,.8);letter-spacing:.5px}
+.fchip{position:absolute;left:0;top:0;width:15px;height:15px;margin:-7px 0 0 -7px;border-radius:50%;z-index:25;pointer-events:none;border:1.5px dashed rgba(255,255,255,.85);box-shadow:0 2px 4px rgba(0,0,0,.5);transition:transform .7s cubic-bezier(.25,.8,.3,1),opacity .25s}
+.fcard{position:absolute;left:0;top:0;width:20px;height:28px;margin:-14px 0 0 -10px;border-radius:3px;z-index:26;pointer-events:none;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.25,.8,.3,1),opacity .2s}
+.crown{position:absolute;left:-9px;top:-15px;width:26px;height:22px;z-index:6;transform:rotate(-18deg);filter:drop-shadow(0 0 5px rgba(255,208,70,.95)) drop-shadow(0 0 12px rgba(255,190,40,.7));animation:crownGlow 1.6s ease-in-out infinite}
+@keyframes crownGlow{0%,100%{filter:drop-shadow(0 0 4px rgba(255,208,70,.8)) drop-shadow(0 0 8px rgba(255,190,40,.5))}50%{filter:drop-shadow(0 0 7px rgba(255,225,100,1)) drop-shadow(0 0 16px rgba(255,190,40,.9))}}
+.mini.dealin{animation:dealin .01s both}
+@keyframes dealin{from{opacity:0}to{opacity:1}}
+.cdn{display:inline-block;min-width:1.4em;text-align:center;color:#1b1200;background:linear-gradient(#ffe38a,#f0b429);border-radius:8px;padding:0 6px;font-weight:700;box-shadow:0 0 10px rgba(255,200,60,.65)}
+.cdn.tick{animation:tick .45s ease-out}
+@keyframes tick{0%{transform:scale(1.5)}100%{transform:scale(1)}}
+.cdbig{display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;color:#fff}
+.cdbig .cdn{font-size:26px;border-radius:12px;padding:0 12px;line-height:1.3}
+.deckfx{position:relative;width:26px;height:34px}
+.deckfx i{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:4px;border:2px solid #fff;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.deckfx i:nth-child(1){transform:translate(-3px,3px)}
+.deckfx i:nth-child(2){transform:translate(-1px,1px)}
+.deckfx i:nth-child(3){animation:shuf 1.1s ease-in-out infinite}
+@keyframes shuf{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(9px,-3px) rotate(10deg)}60%{transform:translate(-8px,-2px) rotate(-9deg)}}
+.homebar{display:flex;justify-content:flex-end;gap:8px}
+.mbox{max-height:88dvh;overflow:auto}
+.snd-row{padding:8px 0;border-bottom:1px solid var(--line)}
+.snd-row:last-of-type{border:0}
+.snd-row .t{display:flex;align-items:center;gap:8px;font-size:16px;margin-bottom:4px}
+.snd-row .t span{flex:1}
+.snd-row input[type=range]{width:100%;accent-color:var(--gold);height:30px}
+.tg{width:56px;height:30px;border-radius:15px;border:0;background:#4a5a52;position:relative;cursor:pointer;flex:none}
+.tg::after{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.tg.on{background:#1d9a68}
+.tg.on::after{left:29px}
+.rrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.rrow:last-child{border:0}
+.rrow .pl{width:30px;text-align:center;font-size:20px;flex:none}
+.rrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrow .nm small{display:block;color:var(--mute);font-size:11px}
+.rrow .pz{font-weight:700;color:var(--gold);white-space:nowrap}
+.hrec{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;cursor:pointer}
+.hrec b{color:var(--gold)}
+.hrec small{display:block;color:var(--mute);font-size:12px}
+.tbadge{display:inline-block;background:linear-gradient(#f8d675,var(--gold2));color:#2a1b00;border-radius:8px;padding:0 6px;font-size:11px;font-weight:700;margin-left:6px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:9px 16px;font-size:15px;z-index:99;max-width:86vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+
+/* ---------- รอบแก้ไข: เลย์เอาต์ / เหรียญ / สติกเกอร์ ---------- */
+.top .codecol{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex:none}
+.wm{font-size:9px;font-weight:600;color:rgba(244,201,93,.6);letter-spacing:.3px;line-height:1;padding-left:3px;white-space:nowrap}
+.banner .wl{line-height:1.1;margin-bottom:2px}
+.banner .wn{font-size:28px;font-weight:700;color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.banner .wd{font-size:14px}
+.board{position:relative;z-index:41}
+.potrow{min-height:44px}
+.pile{position:relative;display:inline-block;vertical-align:middle;flex:none}
+.coin,.fchip{--c:#d33a3a;border-radius:50%;background:radial-gradient(circle,var(--c) 0 46%,rgba(0,0,0,.3) 47% 53%,transparent 54%),repeating-conic-gradient(#fff 0 16deg,var(--c) 16deg 36deg);box-shadow:0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(0,0,0,.4)}
+.pile .coin{position:absolute;display:block}
+.fchip{border:0}
+.bet{flex-direction:column;gap:1px;padding:2px 8px 2px 6px;border-radius:12px;align-items:center}
+.bet .br{display:flex;align-items:center;gap:4px}
+.seat.lead .plate{border-color:#ff5d73;animation:leadp .9s ease-in-out infinite}
+@keyframes leadp{0%,100%{box-shadow:0 0 0 2px rgba(255,93,115,.5),0 0 10px rgba(255,93,115,.7)}50%{box-shadow:0 0 0 3px rgba(255,93,115,.9),0 0 22px rgba(255,93,115,1)}}
+#btnMic{width:34px;height:32px;right:10px;bottom:52px;border-radius:11px}
+#btnMic svg,.vb svg{width:18px;height:18px}
+.vb svg{width:12px;height:12px}
+.vbox .vr svg{width:17px;height:17px;vertical-align:middle}
+#btnStk{left:6px;right:auto;bottom:4px;width:34px;height:32px;font-size:17px;border-radius:11px}
+.stkpop{position:absolute;left:6px;bottom:42px;z-index:60;background:#0c2a20;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.55);width:min(92%,300px)}
+.stkpop.on{display:grid}
+.stkpop button{border:0;background:rgba(255,255,255,.07);border-radius:10px;padding:3px 0 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.stkpop .stk svg,.stkpop .stk img{width:50px;height:50px}
+.stk{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05}
+.stk svg,.stk img{width:56px;height:56px}
+.stk small{font-size:11px;font-weight:600;color:#7a3b00}
+.stkpop .stk small{color:var(--ink)}
+.bubble.stkb{padding:3px 8px}
+.chatl .m .stk{vertical-align:middle}
+.chatl .m .stk svg,.chatl .m .stk img{width:44px;height:44px}
+.chatl .m .stk small{color:var(--mute)}
+.shuf{position:absolute;left:5%;right:5%;top:47%;transform:translateY(-50%);z-index:45;display:none;flex-direction:column;align-items:center;gap:8px;text-align:center;background:rgba(5,26,19,.92);border:1px solid rgba(244,201,93,.35);border-radius:18px;padding:10px 6px;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+.tablewrap.shufon .center{visibility:hidden}
+.shuf .st{padding:0 8px;font-size:14px}
+.shuf .st b{color:#1b1200}
+.shgrid{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 6px}
+.shslot{display:flex;flex-direction:column;align-items:center;width:17%;min-width:50px;font-size:11px;color:#fff}
+.shc{width:44px;height:62px;border-radius:7px;border:3px solid #fff;background:repeating-linear-gradient(45deg,#1d4ed8 0 3px,#1e3fae 3px 6px);box-shadow:0 2px 6px rgba(0,0,0,.55);padding:0;cursor:pointer;color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+.shc.mine{box-shadow:0 0 0 3px var(--gold),0 0 12px rgba(244,201,93,.9)}
+.shc.tk{opacity:.5}
+.shc[disabled]{cursor:default}
+.shc:not(.tk):not([disabled]):not(.up){animation:shpulse 1.4s ease-in-out infinite}
+@keyframes shpulse{50%{transform:translateY(-4px)}}
+.shc.up{background:var(--card);color:#15171c;font-size:26px}
+.shc.up.flipin{animation:flip .8s cubic-bezier(.2,.8,.3,1) backwards}
+.shslot .who{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.role{font-weight:700;border-radius:8px;padding:0 5px;font-size:10px;color:#fff;margin-top:1px;display:inline-block}
+.role.d{background:#fff;color:#111}.role.sb{background:#2f7fd1}.role.bb{background:#e0861f}
+.b.pre2{height:auto;min-height:42px;white-space:normal;line-height:1.2;font-size:14px;padding:6px 10px}
+
+.top .code{display:inline-flex;align-items:center}
+.top .code svg{width:14px;height:14px;margin-left:6px}
+.ic .cnt{position:absolute;right:1px;bottom:1px;font-size:10px;font-weight:700;background:var(--gold);color:#2a1b00;border-radius:7px;padding:0 4px;line-height:13px}
+.tablewrap.tour .felt{background:radial-gradient(ellipse at 50% 38%,#2d8fdc,#0f4c8a 75%);box-shadow:0 0 0 7px var(--rail),0 0 0 9px #70462a,0 10px 30px rgba(0,0,0,.5),inset 0 0 50px rgba(0,20,60,.55)}
+.tmark{position:absolute;left:0;right:0;top:27%;text-align:center;color:rgba(255,255,255,.16);font-weight:700;font-size:15px;letter-spacing:2px;pointer-events:none;z-index:1;display:none}
+.tablewrap.tour .tmark{display:block}
+#btnTour{left:6px;right:auto;bottom:44px;width:34px;height:32px;border-radius:11px;font-size:17px;display:none}
+.tablewrap.tour #btnTour{display:inline-flex}
+.rules h3{font-size:24px;text-align:center;margin:0 0 12px;color:var(--gold)}
+.rules .ru{display:flex;gap:10px;align-items:flex-start;font-size:20px;line-height:1.3;font-weight:600;padding:8px 10px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.07)}
+.rules .ru i{font-style:normal;font-size:26px;flex:none}
+.rules .ru b{color:#ffd54a}
+.rules .ru.r1{border-left:5px solid #ffd54a}.rules .ru.r2{border-left:5px solid #5ad6a0}.rules .ru.r3{border-left:5px solid #ff7b86}.rules .ru.r4{border-left:5px solid #59b7ff}.rules .ru.r5{border-left:5px solid #ff9a4d}
+.rules .gl{text-align:center;font-size:34px;font-weight:700;margin:12px 0 4px;background:linear-gradient(#fff3c4,#f0a91f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tst h4{margin:12px 0 6px;color:var(--gold);font-size:16px}
+.tst .r{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.tst .r .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tst .r small{display:block;color:var(--mute);font-size:11px}
+.tst .r.out{opacity:.55}
+.tst .pz{font-weight:700;color:var(--gold);white-space:nowrap}
+.lbchat{max-height:170px;overflow:auto;margin-bottom:6px}
+.pk{display:flex;flex-wrap:wrap;gap:6px}
+.pkb{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer}
+.pkb.on{background:var(--gold);color:#2a1b00;font-weight:600;border-color:var(--gold)}
+
+/* ---------- รอบแก้ไข 3 ---------- */
+.cf{width:100%;display:flex;align-items:center;gap:10px;height:56px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.05);padding:0 12px;cursor:pointer;text-align:left;color:var(--ink)}
+.cf .cft{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.cf .cft b{font-size:18px;font-weight:700;letter-spacing:.3px}
+.cf .cft small{font-size:12px;color:var(--mute)}
+.cf .cfs{font-size:13px;font-weight:700;color:var(--mute);width:28px;text-align:right}
+.cf .cfk{width:48px;height:27px;border-radius:14px;background:#4a5a52;position:relative;flex:none;transition:background .15s}
+.cf .cfk::after{content:'';position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s}
+.cf.on{border-color:var(--gold);background:rgba(244,201,93,.13);box-shadow:0 0 12px rgba(244,201,93,.3)}
+.cf.on .cft small{color:#ffe9a8}.cf.on .cfs{color:var(--gold)}
+.cf.on .cfk{background:#1d9a68}.cf.on .cfk::after{left:24px}
+.pos.d{background:#fff;color:#111}
+.card.shownc{box-shadow:0 0 0 2px #fff,0 0 14px rgba(255,255,255,.95);filter:brightness(1.1)}
+.seat .mini.rev.shown{--cw:34px;height:48px}
+.seat.folded .mini.shown{opacity:1}
+.banner .wn{font-size:21px;font-weight:700;color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.banner .wd{font-size:14px;color:#fff;font-weight:500}
+.banner .wl{margin-bottom:1px}
+.rrow .pz{text-align:right!important}
+.rrow .pz small,.netbox small{display:block;font-size:12px;font-weight:600}
+.net.up,.netbox.up b{color:#5ad6a0}.net.dn,.netbox.dn b{color:#ff7b86}
+.netbox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;margin:0 0 8px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.netbox span{font-size:15px;font-weight:600}.netbox small{color:var(--mute);font-weight:400}.netbox b{font-size:24px}
+.tst .r .nm small+small{margin-top:1px}
+.rbx{flex:none;width:76px;text-align:center;border-radius:12px;background:rgba(244,201,93,.14);border:1.5px solid var(--gold);padding:3px 4px;line-height:1.1}
+.rbx b{display:block;font-size:26px;color:var(--gold)}
+.rbx i{font-style:normal;display:block;font-size:11px;letter-spacing:2px;color:var(--gold)}
+.rbx small{display:block;font-size:10px;color:var(--mute)}
+.rbx.zero{background:rgba(255,255,255,.05);border-color:var(--line)}.rbx.zero b,.rbx.zero i{color:var(--mute)}
+.bubble.stkb{background:transparent;box-shadow:none;padding:0}
+.bubble.stkb .stk svg,.bubble.stkb .stk img{filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.bubble.stkb .stk small{color:#fff;font-size:12px;text-shadow:0 0 3px #000,0 0 3px #000,0 1px 2px #000}
+.stkpop{max-height:300px;overflow:auto}
+.top .ic{width:33px;height:31px;font-size:16px;border-radius:9px}
+.top .ic svg{width:19px;height:19px}
+#btnSnd{top:2px;right:6px;bottom:auto;width:32px;height:30px;font-size:16px;border-radius:10px}
+.blindbn{position:absolute;left:50%;top:30%;transform:translateX(-50%) scale(.85);z-index:42;background:linear-gradient(#ffd97a,#f0a91f);color:#2a1b00;border-radius:16px;padding:8px 16px;font-weight:700;font-size:17px;white-space:nowrap;opacity:0;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);transition:opacity .25s,transform .25s}
+.blindbn.on{opacity:1;transform:translateX(-50%) scale(1)}
+.blindbn.strong{background:linear-gradient(#ff9a4d,#e0481f);color:#fff;font-size:19px;box-shadow:0 0 18px rgba(255,120,50,.8)}
+
+/* ---------- รอบแก้ไข 4 ---------- */
+html,body,*{touch-action:manipulation}
+.wm{line-height:1}
+.bl{font-size:11px;font-weight:700;color:#ffd54a;letter-spacing:.5px;line-height:1;padding-left:3px;white-space:nowrap}
+.top .mid{font-weight:600;color:var(--mute);font-size:14px}
+.xbtn{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:16px;line-height:1;cursor:pointer;z-index:6;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.mbox>.xbtn{float:right;position:sticky;top:0;margin:-4px -6px 0 8px}
+.sheet>.xbtn,.stkpop>.xbtn{position:absolute;top:8px;right:10px}
+.sheet .tabs{padding-right:52px}
+.sheet .sheettitle{padding-right:52px}
+.stkpop>.xbtn{grid-column:1/-1;position:sticky;top:0;justify-self:end;margin:0 0 2px;width:26px;height:26px;font-size:13px}
+.mbox h3{padding-right:6px}
+.stk img.cust{width:auto;height:56px;max-width:84px;object-fit:contain;border-radius:8px}
+.stkpop .stk img.cust{height:50px;max-width:62px}
+
+.chatl .m .stk img.cust{height:48px;max-width:70px}
+/* รอบแก้ไข 5: จัดแถบบน */
+.top{position:relative;align-items:flex-start}
+.top .mid{position:absolute;left:50%;top:14px;transform:translateX(-50%);flex:none;max-width:40%;text-align:center}
+.top #btnCoin{margin-left:auto}
+.top .mid{top:12px}
+#btnSnd{top:-20px}
+.b[data-f=clear]{background:linear-gradient(#5db8ff,#2a7fd6);color:#fff;border-color:#8fd0ff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+/* ไพ่ของเราอยู่กึ่งกลาง ลากสลับซ้ายขวาได้ */
+.mine{position:relative;justify-content:center;height:56px;--cw:38px}
+.mine .hc{display:flex;gap:8px;justify-content:center;touch-action:none}
+.mine .hc .card{touch-action:none;cursor:grab;transition:transform .18s}
+.mine .hc .card.drag{transition:none;z-index:5;box-shadow:0 8px 18px rgba(0,0,0,.6)}
+.mine .mi{position:absolute;left:calc(50% + 52px);right:0;top:50%;transform:translateY(-50%);margin:0;text-align:left}
+.mine .st{font-size:12px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mine .hn{font-size:14px}
+.mine .hn:empty{display:none}
+/* รอบแก้ไข 6 */
+.seat{height:48px;margin:0}
+.seat .mini{position:absolute;left:0;right:0;bottom:calc(100% - 8px);margin:0}
+.seat .mini.rev{bottom:calc(100% + 3px)}
+.seat .mini.rev.shown{bottom:calc(100% + 3px)}
+.seat .act{position:absolute;left:50%;top:calc(100% + 1px);transform:translateX(-50%);margin:0;font-size:9.5px;padding:0 6px;line-height:1.25;max-width:80px;overflow:hidden;text-overflow:ellipsis}
+.dense .seat .act{font-size:9px;padding:0 4px;max-width:62px}
+.seat .bubble{margin-bottom:46px}
+.vb{left:3px;top:auto;bottom:3px;min-width:14px;height:14px;background:rgba(0,0,0,.35)}
+.vb svg{width:9px;height:9px}
+.dense .vb{left:2px;bottom:2px}
+.plate .ch{padding-left:0}
+.mine{position:relative;flex-direction:row;justify-content:center;align-items:center;height:56px;--cw:38px;gap:0}
+.panel{height:240px}
+.mine .hc{position:relative;z-index:1}
+.mine .mi{position:absolute;left:calc(50% + 52px);right:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;text-align:left;margin:0;min-width:0;overflow:hidden;transform:none}
+.mine .hn{font-size:13px;line-height:1.2;min-height:15px;color:var(--gold);font-weight:600}
+.mine .hn:empty{display:block}
+.mine .pn{font-size:12px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mine .st{font-size:11px;line-height:1.2;color:var(--mute);overflow:hidden;max-height:27px}
+.cf{width:auto;min-width:150px;height:46px;gap:8px;padding:0 12px 0 12px}
+.cf .cft b{font-size:16px}
+.acts:has(>.cf){justify-content:flex-start}
+.iab{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top));z-index:120;background:#fff;color:#111;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.35;box-shadow:0 6px 20px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center}
+.iab b{display:block;font-size:14px}.iab button{flex:none;border:0;border-radius:10px;background:#1d9a68;color:#fff;font-weight:700;padding:8px 10px;font-size:13px}.iab .x{background:#e5e5e5;color:#333;width:30px;height:30px;padding:0;border-radius:50%}
+/* รอบแก้ไข 7: ไพ่ตัวเองใหญ่เท่าไพ่กลางโต๊ะ / บีบแถวสไลเดอร์ / สถานะกึ่งกลาง */
+.mine{--cw:min(11.2vw,50px);height:calc(var(--cw)*1.4 + 2px)}
+.mine .mi{left:calc(50% + var(--cw) + 14px);text-align:center;align-items:center}
+.mine .hn:empty{display:none}
+.mine .hn{min-height:0;font-size:14px}
+.mine .st{font-size:12px;max-height:none}
+.panel{padding-bottom:2px}
+.raisebar{margin-top:3px}
+.raisebar .sl{height:26px;gap:6px}
+.raisebar input[type=range]{height:24px}
+.stepbtn{height:26px;width:38px;font-size:18px;line-height:1}
+.raisebar .r2,.raisebar .pre{margin-top:4px}
+@keyframes bfade{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.bubble.stkb .stk img.cust{height:62px;max-width:90px}
+.banner .cdbig{position:relative;top:5px}
+.revbar{position:absolute;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;pointer-events:none}
+.revbar i{display:block;height:100%;width:100%;background:var(--gold);border-radius:3px;transform-origin:left;animation:revfill linear forwards}
+@keyframes revfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#bellFx{position:fixed;left:calc(50% - 92px);bottom:268px;z-index:60;font-size:46px;line-height:1;opacity:0;pointer-events:none;transform-origin:50% 8%;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+#bellFx.ring{animation:bellring 1.5s ease-out}
+@keyframes bellring{0%{opacity:0;transform:translateX(-50%) scale(.6) rotate(0)}8%{opacity:1;transform:translateX(-50%) scale(1.1) rotate(0)}16%{transform:translateX(-50%) rotate(26deg)}28%{transform:translateX(-50%) rotate(-24deg)}40%{transform:translateX(-50%) rotate(20deg)}52%{transform:translateX(-50%) rotate(-16deg)}64%{transform:translateX(-50%) rotate(11deg)}76%{opacity:1;transform:translateX(-50%) rotate(-6deg)}100%{opacity:0;transform:translateX(-50%) rotate(0)}}
+/* กล่อง Check/Fold: จัตุรัสชิดขวาล่าง */
+.acts:has(>.cf){justify-content:flex-end}
+.cf{flex-direction:column;justify-content:center;align-items:center;width:112px;min-width:0;height:112px;gap:8px;padding:6px;text-align:center}
+.cf .cft{flex:none;align-items:center}
+.cf .cft b{font-size:16px;white-space:nowrap}
+.cf .cfs{width:auto;text-align:center;font-size:14px}
+/* Check/Fold: เนียนขึ้น */
+.cf{border-radius:22px;border:1.5px solid rgba(255,255,255,.14);background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02));box-shadow:0 6px 16px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);transition:background .35s ease,border-color .35s ease,box-shadow .35s ease,transform .15s ease;-webkit-tap-highlight-color:transparent}
+.cf:active{transform:scale(.96)}
+.cf .cft b{transition:color .3s ease}
+.cf .cfs{transition:color .3s ease;letter-spacing:1.5px}
+.cf .cfk{width:58px;height:30px;border-radius:15px;background:linear-gradient(#56665e,#3f4d46);box-shadow:inset 0 2px 4px rgba(0,0,0,.45);transition:background .35s ease,box-shadow .35s ease}
+.cf .cfk::after{top:3px;left:3px;width:24px;height:24px;background:linear-gradient(#fff,#e4e9e6);box-shadow:0 2px 5px rgba(0,0,0,.45);transition:left .3s cubic-bezier(.4,1.4,.5,1)}
+.cf.on{background:linear-gradient(160deg,rgba(244,201,93,.24),rgba(244,201,93,.07));border-color:var(--gold);box-shadow:0 6px 16px rgba(0,0,0,.35),0 0 16px rgba(244,201,93,.35),inset 0 1px 0 rgba(255,255,255,.18)}
+.cf.on .cfk{background:linear-gradient(#2fc888,#1d9a68);box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 10px rgba(47,200,136,.5)}
+.cf.on .cfk::after{left:31px}
+.cf.on .cft b{color:#ffe9a8}
+.seat.mine-shown{z-index:95}
+.seat.mine-shown .mini{z-index:95}
+.rrow .pz b{display:block;font-size:15px}
+.bet{background:none!important;padding:0!important}
+.bet .br>span:not(.pile){background:rgba(0,0,0,.6);border-radius:10px;padding:1px 8px}
+.drawer.chatmode{background:rgba(0,0,0,.12)}
+.drawer.chatmode .sheet{background:rgba(12,42,32,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.rrow .pz{font-size:13px}
+.rrow .nm{flex:1 1 90px}
+.rrow .nm small{white-space:normal}
+.rrow .pz{text-align:left}
+.rrow .pz small{text-align:left}
+.rrow .pz{text-align:right!important}
+.rrow .pz small{text-align:right!important}
+.rrow .pnet{flex:none;min-width:54px;text-align:right}
+.rrow .pnet small{display:block;font-size:13px;font-weight:700}
+.rbw{display:inline-flex;align-items:center;gap:8px}
+.rbar{display:inline-block;width:64px;height:10px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid var(--line);overflow:hidden;vertical-align:middle}
+.rbar i{display:block;height:100%;background:linear-gradient(90deg,#3fd08a,#9be7a8);border-radius:6px}
+.hcard{border:2px solid hsl(var(--hc),70%,55%);background:hsla(var(--hc),60%,40%,.18);border-radius:14px;padding:8px 10px;margin:0 0 10px}
+.hcard .hh{font-weight:700;color:hsl(var(--hc),85%,75%);margin-bottom:4px}
+.hrow{display:flex;align-items:center;gap:8px;margin:3px 0}
+.hrow .hl{flex:none;width:62px;font-size:12px;color:var(--mute)}
+.hcs{display:flex;gap:3px;flex-wrap:wrap}
+.hw{border-top:1px dashed rgba(255,255,255,.2);margin-top:6px;padding-top:5px}
+.hwt{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+.hwt .pf{font-weight:700}.hwt .pf.up{color:#5ad6a0}.hwt .pf.dn{color:#ff7b86}
+.hwd{font-size:13px;color:var(--gold)}
+.hrow .op{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,.25)}
+.hrow .op small{font-size:11px;color:var(--mute)}
+.hrow.ops{flex-wrap:wrap;gap:6px 4px}
+.stk img.cust+small{margin-top:3px}
+.rbx{width:168px!important;padding:6px 8px!important}
+.rbx .rbbar{display:block;height:12px;border-radius:7px;background:rgba(255,255,255,.14);border:1px solid var(--line);overflow:hidden;margin-bottom:5px}
+.rbx .rbbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#f4c95d,#ffe39a);letter-spacing:0}
+.rbx small{font-size:12px!important;color:#e9f3ee!important}
+.rbx.zero small{color:var(--mute)!important}
+.acts.waitrow{align-items:flex-end;justify-content:space-between}
+.preamt{display:flex;flex-direction:column;gap:4px;flex:1;max-width:170px;margin-bottom:4px}
+.preamt span{font-size:12px;color:var(--mute)}
+.preamt .in{height:44px;font-size:18px;text-align:center}
+
+.eqbig{position:absolute;left:0;top:0;bottom:0;width:calc(50% - 50px);display:flex;flex-direction:column;justify-content:center;gap:2px;padding-left:4px}
+.eqn{font-size:24px;font-weight:800;line-height:1;color:#7be08a}.eqn small{font-size:13px;margin-left:1px}
+.eqbig.lose .eqn{color:#ff9b6b}
+.eql{font-size:10px;color:var(--mute);line-height:1}
+.eqbar{height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden;width:90%}
+.eqbar i{display:block;height:100%;background:#7be08a;border-radius:3px}
+.eqbig.lose .eqbar i{background:#ff9b6b}
+.eqp{position:absolute;bottom:calc(100% + 3px);height:48px;display:flex;align-items:center;font-weight:800;font-size:15px;color:#ff9b6b;text-shadow:0 1px 3px #000;white-space:nowrap;z-index:4}
+.eqp.hi{color:#7be08a}
+.eqp.r{left:calc(100% - 2px)}.eqp.l{right:calc(100% - 2px)}
+.outsbox{margin:6px auto 0;padding:5px 8px 6px;border:1px solid rgba(255,155,107,.5);border-radius:10px;background:rgba(255,155,107,.07);text-align:center}
+.outsbox .oh{font-size:12px;color:#ffb48f;margin-bottom:4px}
+.outsbox .ofan{position:relative;height:calc(28px * 1.4);margin:0 auto}
+.outsbox .ofan .oc{position:absolute;top:0;--cw:28px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- หน้าแรก -->
+  <section id="home" class="screen">
+    <div class="pad">
+      <div class="homebar"><button class="ic" id="btnHist" aria-label="ประวัติทัวร์นาเมนต์">🏆</button><button class="ic" id="btnSnd2" aria-label="เสียง">🔊</button></div>
+      <div class="logo">
+        <div class="suits">♠ ♥ ♦ ♣</div>
+        <h1>PokerPEPAE&amp;Fri</h1>
+        <p>Texas Hold'em เปเป้และผองเพื่อน</p>
+      </div>
+      <div class="card-box">
+        <label class="f" for="name">ชื่อของคุณ</label>
+        <input id="name" class="in" maxlength="14" placeholder="เช่น PEPAE" autocomplete="off">
+      </div>
+      <button id="btnCreate" class="b gold full" style="margin-bottom:14px">➕ สร้างห้อง</button>
+      <div class="card-box">
+        <h3>เข้าห้องของเพื่อน</h3>
+        <div class="sub">ห้องที่ออนไลน์อยู่ตอนนี้</div>
+        <div id="roomList"><p class="hint">กำลังโหลดรายการห้อง…</p></div>
+        <div class="sep">หรือใส่รหัสห้อง</div>
+        <input id="joinCode" class="in code" maxlength="4" placeholder="รหัสห้อง" autocomplete="off" autocapitalize="characters">
+        <div class="row" style="margin-top:10px">
+          <button id="btnJoin" class="b green">เข้าร่วมเล่น</button>
+          <button id="btnWatch" class="b ghost">👁 ดูอย่างเดียว</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ล็อบบี้ -->
+  <section id="lobby" class="screen">
+    <div class="pad">
+      <div class="logo" style="margin-bottom:8px"><h1 style="font-size:24px">PokerPEPAE&amp;Fri</h1></div>
+      <div class="hint">รหัสห้อง</div>
+      <div class="bigcode" id="lbCode"></div>
+      <button id="btnShare" class="b ghost full" style="margin:12px 0">🔗 ส่งลิงก์ให้เพื่อน</button>
+      <div class="card-box">
+        <h3>ผู้เล่นในห้อง (<span id="lbCount">0</span>/9)</h3>
+        <ul class="plist" id="lbPlayers"></ul>
+      </div>
+      <div class="card-box" id="lbVoice"></div>
+      <div class="card-box">
+        <h3>💬 แชท</h3>
+        <div class="chatl lbchat" id="lbChat"></div>
+        <div class="emo" id="lbEmo"></div>
+        <div class="chatin" style="padding:6px 0 0"><input id="lbChatText" class="in" maxlength="80" placeholder="พิมพ์ข้อความ…" autocomplete="off"><button id="lbChatSend" class="b gold">ส่ง</button></div>
+      </div>
+      <p class="hint" id="lbInfo"></p>
+      <p class="hint" id="lbSpec"></p>
+      <button id="btnStart" class="b gold full">เริ่มเกม</button>
+      <button id="btnLobbyJoin" class="b green full" style="display:none">เข้าร่วมเล่น</button>
+      <p class="hint" id="lbWait"></p>
+      <button id="btnLeaveLobby" class="b ghost full" style="margin-top:8px">ออกจากห้อง</button>
+    </div>
+  </section>
+
+  <!-- เกม -->
+  <section id="game" class="screen">
+    <div class="conn" id="conn">กำลังเชื่อมต่อใหม่…</div>
+    <div class="top">
+      <div class="codecol"><button class="code" id="gCode" title="แชร์ลิงก์ให้เพื่อน" aria-label="แชร์ลิงก์ห้องให้เพื่อน"><span id="gCodeTxt"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></svg></button><span class="wm">PokerPEPAE&amp;Fri</span><span class="bl" id="gBlinds"></span></div>
+      <div class="mid" id="gMid"></div>
+      <button class="ic" id="btnCoin" aria-label="ยอดบายอินและสถิติ"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#f4c95d" stroke="#b9821a" stroke-width="2"/><circle cx="16" cy="16" r="10.5" fill="none" stroke="#d79a1e" stroke-width="1"/><polyline points="8,21 13,15 17,18 24,10" fill="none" stroke="#6b4300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="1.8" fill="#6b4300"/></svg></button>
+      <button class="ic" id="btnRoom" aria-label="สมาชิกในห้อง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.2c2.8-.2 4.5 1.8 4.5 5"/></svg><b class="cnt" id="roomCnt"></b></button>
+      <button class="ic" id="btnLeave" aria-label="ออกจากห้อง" style="color:#ff8a93"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><path d="M10 4H5v16h5"/><path d="M15 8l4 4-4 4M19 12H9"/></svg></button>
+    </div>
+    <div class="tablewrap" id="tablewrap">
+      <div class="felt"></div>
+      <div class="tmark" id="tmark"></div>
+      <div class="blindbn" id="blindBn"></div>
+      <div class="center">
+        <div class="potrow"><span id="potchips"></span><div class="potline">พ็อต <b id="gPot">0</b></div></div>
+        <div class="board" id="gBoard"></div>
+        <div class="banner" id="gBanner"></div>
+      </div>
+      <div id="gSeats"></div>
+      <div class="shuf" id="shuf"></div>
+      <canvas id="fx"></canvas>
+      <button class="ic fab" id="btnSnd" aria-label="เสียง">🔊</button>
+      <button class="ic fab" id="btnMic" aria-label="ไมค์"></button>
+      <button class="ic fab" id="btnTour" aria-label="สถานะบายอินและเงินรางวัล">💰</button>
+      <button class="ic fab" id="btnStk" aria-label="สติกเกอร์อารมณ์">😊</button>
+      <div class="stkpop" id="stkPop"></div>
+      <button class="ic fab" id="btnMenu" aria-label="แชทและประวัติ">💬<span class="badge"></span></button>
+    </div>
+    <div class="panel" id="panel"></div>
+  </section>
+</div>
+
+<!-- ลิ้นชัก แชท/ประวัติ/ห้อง -->
+<div class="drawer" id="drawer">
+  <div class="sheet">
+    <div class="sheettitle" id="sheetTitle">👥 สมาชิกในห้อง</div>
+    <div class="tabs" id="tabs">
+      <button data-tab="chat" class="on">แชท</button>
+      <button data-tab="log">ประวัติ</button>
+    </div>
+    <div class="tabbody" id="tabbody"></div>
+    <div id="chatbar">
+      <div class="emo" id="emo"></div>
+      <div class="chatin">
+        <input id="chatText" class="in" maxlength="80" placeholder="พิมพ์ข้อความ…" autocomplete="off">
+        <button id="chatSend" class="b gold">ส่ง</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- หน้าต่างตั้งค่าห้อง (เปิดหลังกดสร้างห้อง) -->
+<div class="drawer" id="createModal">
+  <div class="mbox">
+    <h3>ตั้งค่าห้อง</h3>
+    <label class="f" for="sMode">รูปแบบเกม</label>
+    <select id="sMode" class="in"><option value="normal">เกมปกติ (ซื้อชิปเพิ่มได้ไม่จำกัด)</option><option value="tour">🏆 ทัวร์นาเมนต์</option></select>
+    <div id="normBox">
+      <label class="f" for="sChips">ชิปเริ่มต้นต่อคน</label>
+      <select id="sChips" class="in">
+        <option>500</option><option selected>1000</option><option>2000</option><option>5000</option><option>10000</option>
+      </select>
+      <label class="f" for="sBlinds">บลายด์ (เล็ก/ใหญ่)</label>
+      <select id="sBlinds" class="in">
+        <option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option><option value="50/100">50 / 100</option>
+      </select>
+    </div>
+    <div id="tourBox" style="display:none">
+      <label class="f" for="sBuy">ค่าบายอิน (฿) · ฿1 = 10 ชิป</label>
+      <select id="sBuy" class="in"><option value="50">50 ฿ = 500 ชิป</option><option value="100" selected>100 ฿ = 1,000 ชิป</option><option value="200">200 ฿ = 2,000 ชิป</option><option value="500">500 ฿ = 5,000 ชิป</option></select>
+      <label class="f" for="sTBlinds">บลายด์เริ่มต้น</label>
+      <select id="sTBlinds" class="in"><option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option></select>
+      <label class="f" for="sLevel">บลายด์เพิ่ม 2 เท่าทุก</label>
+      <select id="sLevel" class="in"><option value="5">5 ตา</option><option value="10" selected>10 ตา</option><option value="15">15 ตา</option><option value="20">20 ตา</option></select>
+      <p class="tip" style="font-size:12px;color:var(--mute);margin:8px 0 0">บายอินเพิ่มได้คนละ 2 ครั้ง ภายใน 5 ตาหลังชิปหมด · เหลือ 3 คนสุดท้ายปิดบายอิน · เริ่มแล้วไม่รับคนเพิ่ม · รางวัล 60/30/10%</p>
+    </div>
+    <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
+    <select id="sTime" class="in">
+      <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="sPrivate"> ห้องส่วนตัว (ไม่แสดงในรายการห้อง)</label>
+    <div class="row" style="margin-top:16px">
+      <button id="btnCreateCancel" class="b ghost">ยกเลิก</button>
+      <button id="btnCreateOk" class="b gold">สร้างห้อง</button>
+    </div>
+  </div>
+</div>
+<!-- ตั้งค่าเสียง -->
+<div class="drawer" id="sndModal"><div class="mbox" id="sndBox"></div></div>
+<!-- ผลทัวร์นาเมนต์ / ประวัติ -->
+<div class="drawer" id="resModal"><div class="mbox" id="resBox"></div></div>
+<div class="drawer" id="rulesModal"><div class="mbox rules" id="rulesBox"></div></div>
+<div class="drawer" id="tstModal"><div class="mbox tst" id="tstBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="/sounds/card.js?v=2"></script>
+<script src="/sounds/bgm.js?v=2"></script>
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n) => Number(n).toLocaleString('en-US');
+const SUIT = ['♠', '♥', '♦', '♣'];
+const RK = '23456789TJQKA';
+const EMOJI = ['👍', '😂', '😎', '😭', '🔥', '🤝', '😱', '🍀', '💸', '🙏'];
+
+let session = null;      // {code, token}
+let state = null;        // ข้อมูลล่าสุดจากเซิร์ฟเวอร์
+let es = null;
+let clockOffset = 0;     // เวลาเซิร์ฟเวอร์ - เวลาเครื่อง
+let turnTotal = 1;
+let raiseTo = 0, raiseKey = '';
+let panelSig = '';
+let swapHand = -1; // สลับไพ่ในมือด้วยการลาก (เฉพาะฝั่งเรา ไม่กระทบคนอื่น)
+let lastBoardLen = 0, lastHandNo = -1, lastBoardKey = '';
+let fxKey = '';          // กันพลุซ้ำในตาเดียวกัน
+let lastChatId = null;
+let bubbles = {};        // playerId -> {text, until}
+let unread = false;
+let drawerTab = 'chat';
+let lastToAct = null;
+
+// ---------- ตัวช่วย ----------
+function ls(k, v) {
+  try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* ใช้ไม่ได้ก็ข้าม */ }
+  return null;
+}
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+async function api(path, body) {
+  let r;
+  try {
+    r = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  } catch (e) { toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); throw e; }
+  let d = {};
+  try { d = await r.json(); } catch (e) { /* ว่าง */ }
+  if (!r.ok) { toast(d.error || 'เกิดข้อผิดพลาด'); throw new Error(d.error || 'error'); }
+  return d;
+}
+const act = (type, amount) => { sfx(type === 'fold' ? 'fold' : type === 'check' ? 'check' : type === 'allin' ? 'allin' : type === 'raise' ? 'raise' : 'chip'); return api('action', { ...session, type, amount }).catch(() => {}); };
+
+(function dragHole() {
+  let d = null;
+  document.addEventListener('pointerdown', (e) => {
+    const c = e.target.closest && e.target.closest('.mine .hc .card');
+    if (!c || c.classList.contains('back')) return;
+    const cards = [...c.parentNode.children];
+    if (cards.length !== 2) return;
+    d = { c, x0: e.clientX, i: cards.indexOf(c), w: cards[1].getBoundingClientRect().left - cards[0].getBoundingClientRect().left, id: e.pointerId };
+    try { c.setPointerCapture(e.pointerId); } catch (_) {}
+    c.classList.add('drag');
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!d || e.pointerId !== d.id) return;
+    let dx = e.clientX - d.x0;
+    dx = d.i === 0 ? Math.max(-12, Math.min(d.w + 12, dx)) : Math.min(12, Math.max(-d.w - 12, dx));
+    d.c.style.transform = `translateX(${dx}px)`;
+    const o = d.c.parentNode.children[1 - d.i];
+    o.style.transform = `translateX(${-Math.max(-d.w, Math.min(d.w, dx))}px)`;
+  });
+  const end = (e) => {
+    if (!d || e.pointerId !== d.id) return;
+    const dx = e.clientX - d.x0, go = Math.abs(dx) > d.w * 0.4 && (d.i === 0 ? dx > 0 : dx < 0);
+    d = null;
+    if (go && state) { swapHand = swapHand === state.handNo ? -1 : state.handNo; try { navigator.vibrate && navigator.vibrate(8); } catch (_) {} }
+    panelSig = ''; if (state) render();
+  };
+  document.addEventListener('pointerup', end);
+  document.addEventListener('pointercancel', end);
+})();
+function cardEl(c, cls = '', style = '') {
+  if (c == null) return `<div class="card back ${cls}" style="${style}"></div>`;
+  const r = RK[c % 13], s = Math.floor(c / 13);
+  return `<div class="card ${s === 1 || s === 2 ? 'red' : ''} ${cls}" style="${style}"><b>${r === 'T' ? '10' : r}</b><i>${SUIT[s]}</i></div>`;
+}
+function show(id) {
+  for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id);
+  if (id === 'home') { lastRoomsTxt = null; loadRooms(); }
+}
+const nameOf = (id) => { const p = state && state.players.find((q) => q.id === id); return p ? p.name : '?'; };
+
+// ---------- หน้าแรก ----------
+$('#name').value = ls('pp_name') || '';
+// ถ้าเปิดจากเบราว์เซอร์ในแอป (LINE/Facebook/IG ฯลฯ) ให้แนะนำเปิดใน Safari
+(function () {
+  const ua = navigator.userAgent || '';
+  if (!/Line\/|FBAN|FBAV|Instagram|MicroMessenger|Messenger|TikTok/i.test(ua)) return;
+  const d = document.createElement('div'); d.className = 'iab';
+  d.innerHTML = '<div><b>เปิดใน Safari จะเล่นลื่นกว่า</b>เสียง/ไมค์อาจใช้ไม่ได้ในเบราว์เซอร์ของแอปนี้ กดปุ่ม ⋯ หรือ แชร์ แล้วเลือก "เปิดใน Safari"</div><button id="iabCp">คัดลอกลิงก์</button><button class="x" id="iabX" aria-label="ปิด">✕</button>';
+  document.addEventListener('DOMContentLoaded', () => document.body.appendChild(d));
+  if (document.body) document.body.appendChild(d);
+  d.addEventListener('click', async (e) => {
+    if (e.target.id === 'iabX') d.remove();
+    if (e.target.id === 'iabCp') { try { await navigator.clipboard.writeText(location.href.replace(/[?&]openExternalBrowser=1/, '')); e.target.textContent = 'คัดลอกแล้ว'; } catch (_) { prompt('คัดลอกลิงก์นี้', location.href); } }
+  });
+})();
+const urlRoom = new URLSearchParams(location.search).get('room');
+if (urlRoom) $('#joinCode').value = urlRoom.toUpperCase().slice(0, 4);
+
+function getName() {
+  const n = $('#name').value.trim();
+  if (!n) { toast('ใส่ชื่อก่อนนะ'); $('#name').focus(); return null; }
+  ls('pp_name', n);
+  return n;
+}
+$('#btnCreate').onclick = () => { if (getName()) $('#createModal').classList.add('on'); };
+$('#sMode').onchange = () => { const t = $('#sMode').value === 'tour'; $('#tourBox').style.display = t ? '' : 'none'; $('#normBox').style.display = t ? 'none' : ''; };
+$('#btnCreateCancel').onclick = () => $('#createModal').classList.remove('on');
+$('#createModal').onclick = (e) => { if (e.target.id === 'createModal') $('#createModal').classList.remove('on'); };
+$('#btnCreateOk').onclick = async () => {
+  const name = getName(); if (!name) return;
+  $('#createModal').classList.remove('on');
+  const tour = $('#sMode').value === 'tour';
+  const [sb, bb] = (tour ? $('#sTBlinds').value : $('#sBlinds').value).split('/').map(Number);
+  const settings = { startChips: Number($('#sChips').value), sb, bb, turnTime: Number($('#sTime').value), private: $('#sPrivate').checked };
+  if (tour) Object.assign(settings, { tournament: true, buyIn: Number($('#sBuy').value), levelHands: Number($('#sLevel').value) });
+  try {
+    const d = await api('create', { name, settings });
+    startSession(d);
+  } catch (e) { /* แจ้งไปแล้ว */ }
+};
+async function doJoin(code) {
+  const name = getName(); if (!name) return;
+  const saved = JSON.parse(ls('pp_session') || 'null');
+  try {
+    const d = await api('join', { code, name, token: saved && saved.code === code ? saved.token : undefined });
+    startSession(d);
+  } catch (e) { /* แจ้งไปแล้ว */ }
+}
+async function doWatch(code) {
+  const name = $('#name').value.trim() || 'ผู้ชม'; // ผู้ชมไม่ต้องใส่ชื่อก็ได้
+  try { startSession(await api('watch', { code, name })); } catch (e) { /* แจ้งไปแล้ว */ }
+}
+function typedCode() {
+  const code = $('#joinCode').value.trim().toUpperCase();
+  if (code.length !== 4) { toast('รหัสห้องมี 4 ตัวอักษร'); return null; }
+  return code;
+}
+$('#btnJoin').onclick = () => { const c = typedCode(); if (c) doJoin(c); };
+$('#btnWatch').onclick = () => { const c = typedCode(); if (c) doWatch(c); };
+
+// ---------- รายการห้องออนไลน์ ----------
+let lastRoomsTxt = null;
+const PHASE = (r) => (r.phase === 'over' ? 'จบแล้ว' : r.phase === 'lobby' ? 'รอเริ่มเกม' : r.phase === 'waiting' ? 'รอผู้เล่นบายอิน' : `กำลังเล่น ตาที่ ${r.handNo}`);
+function renderRooms(list) {
+  const el = $('#roomList');
+  if (!list.length) { el.innerHTML = '<p class="hint">ยังไม่มีห้องที่ออนไลน์ตอนนี้ — สร้างห้องใหม่ได้เลย</p>'; return; }
+  el.innerHTML = list.map((r) => `<div class="rm" data-code="${esc(r.code)}">
+    <div class="rh"><b>${esc(r.code)}${r.tournament ? `<span class="tbadge">🏆 ${r.tournament.buyIn}฿</span>` : ''}</b><span>${r.count}/9 คน · ${PHASE(r)}<br>บลายด์ ${r.settings.sb}/${r.settings.bb}${r.spectators ? ` · 👁 ${r.spectators}` : ''}</span></div>
+    <div class="rn">${r.players.map((p) => `<i class="${p.online ? '' : 'off'}">${esc(p.name)}</i>`).join('')}</div>
+    <div class="ra"><button class="b sm green" data-join ${r.full || (r.tournament && r.tournament.started && !r.tournament.lateOpen) ? 'disabled' : ''}>${r.full ? 'ห้องเต็ม' : r.tournament && r.tournament.started && !r.tournament.lateOpen ? 'เริ่มแล้ว' : 'เข้าเล่น'}</button><button class="b sm ghost" data-watch>👁 ดู</button></div></div>`).join('');
+}
+async function loadRooms() {
+  if (session || document.hidden || !$('#home').classList.contains('on')) return;
+  try {
+    const r = await fetch('/api/rooms', { cache: 'no-store' });
+    if (!r.ok) return;
+    const txt = await r.text();
+    if (txt === lastRoomsTxt) return;
+    lastRoomsTxt = txt;
+    renderRooms(JSON.parse(txt));
+  } catch (e) { /* ออฟไลน์ ลองใหม่รอบหน้า */ }
+}
+setInterval(loadRooms, 4000);
+$('#roomList').onclick = (e) => {
+  const rm = e.target.closest('.rm'); if (!rm) return;
+  if (e.target.closest('[data-join]')) doJoin(rm.dataset.code);
+  else if (e.target.closest('[data-watch]')) doWatch(rm.dataset.code);
+};
+$('#joinCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btnJoin').click(); });
+
+function startSession(d) {
+  leaveVoice(true);
+  session = { code: d.code, token: d.token };
+  ls('pp_session', JSON.stringify(session));
+  history.replaceState(null, '', location.pathname);
+  state = null; lastChatId = null; bubbles = {}; lastHandNo = -1; lastBoardKey = ''; lastBoardLen = 0; fxKey = '';
+  connect();
+  joinVoice('talk'); // เข้าห้องปุ๊บ เปิดไมค์พูดคุยอัตโนมัติ
+}
+function dropSession(msg) {
+  leaveVoice(true);
+  if (es) es.close(); es = null;
+  session = null; state = null;
+  ls('pp_session', null);
+  show('home');
+  if (msg) toast(msg);
+}
+
+// ---------- เชื่อมต่อเรียลไทม์ ----------
+function connect() {
+  if (es) es.close();
+  if (!session) return;
+  const q = `code=${encodeURIComponent(session.code)}&token=${encodeURIComponent(session.token)}`;
+  es = new EventSource('/api/events?' + q);
+  es.addEventListener('state', (e) => { setConn(true); onState(JSON.parse(e.data)); });
+  es.addEventListener('signal', (e) => { try { onSignal(JSON.parse(e.data)); } catch (err) { /* ข้อมูลเสียหาย ข้ามไป */ } });
+  es.onopen = () => setConn(true);
+  es.onerror = async () => {
+    setConn(false);
+    try {
+      const r = await fetch('/api/session?' + q);
+      if (r.status === 404 || r.status === 403) dropSession('ห้องนี้ไม่อยู่แล้ว (อาจเซิร์ฟเวอร์เพิ่งรีสตาร์ท)');
+    } catch (e2) { /* ออฟไลน์ ปล่อยให้ลองใหม่เอง */ }
+  };
+}
+function setConn(ok) { $('#conn').classList.toggle('on', !ok && !!session); }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    document.title = 'PokerPEPAE&Fri';
+    if (session && (!es || es.readyState !== 1)) connect();
+  }
+});
+
+let blindWarnKey = '', blindT = 0;
+function blindNotice(text, strong) {
+  const el = $('#blindBn'); if (!el) return;
+  el.textContent = text; el.className = 'blindbn on' + (strong ? ' strong' : '');
+  clearTimeout(blindT); blindT = setTimeout(() => { el.className = 'blindbn'; }, strong ? 5000 : 4000);
+  if (strong) { sfx('allin'); if (navigator.vibrate) navigator.vibrate([120, 80, 120]); } else sfx('raise');
+}
+function onState(s) {
+  clockOffset = s.serverNow - Date.now();
+  const prev = state;
+  state = s;
+  if (!s.you) { dropSession('คุณออกจากห้องแล้ว'); return; }
+  const spectating = !!s.you.spectator;
+  const me = spectating ? null : s.players.find((p) => p.id === s.you.id);
+  if (!spectating && (!me || me.left)) { dropSession('คุณออกจากห้องแล้ว'); return; }
+
+  // แชทใหม่ → บับเบิล
+  const maxId = s.chat.length ? s.chat[s.chat.length - 1].id : 0;
+  if (lastChatId === null) lastChatId = maxId;
+  for (const m of s.chat) {
+    if (m.id > lastChatId) {
+      if (isSticker(m.text)) playStkSound(Number(m.text.slice(4)));
+      bubbles[m.from] = { text: m.text, until: Date.now() + (isSticker(m.text) ? 5500 : 4500) };
+      setTimeout(render, isSticker(m.text) ? 5600 : 4600);
+      if (!$('#drawer').classList.contains('on') || drawerTab !== 'chat') unread = true;
+    }
+  }
+  lastChatId = maxId;
+
+  if (s.tourney && prev && prev.code === s.code && prev.settings && s.settings.bb > prev.settings.bb) blindNotice(`📈 บลายด์เพิ่มเป็น ${fmt(s.settings.sb)}/${fmt(s.settings.bb)}`, true);
+  if (s.tourney && !s.tourney.over && s.phase === 'hand' && s.tourney.nextLevelHand === s.handNo + 1 && blindWarnKey !== s.code + ':' + s.handNo) {
+    blindWarnKey = s.code + ':' + s.handNo;
+    blindNotice(`⏰ ตาหน้าบลายด์เพิ่มเป็น ${fmt(s.tourney.nextSB)}/${fmt(s.tourney.nextBB)}`, false);
+  }
+  if (prev && prev.you && !prev.you.out && s.you.out) { sfx('elim'); toast('คุณตกรอบ — ดูต่อได้อย่างเดียว'); }
+  // ถึงตาเรา
+  if (me && s.toAct === me.id && lastToAct !== me.id) {
+    if (navigator.vibrate) navigator.vibrate(180);
+    sfx('turn');
+    if (document.hidden) document.title = '🔔 ถึงตาคุณ! PokerPEPAE&Fri';
+  }
+  lastToAct = s.toAct;
+  nagSync(s, me);
+
+  if (s.turnDeadline) turnTotal = Math.max(1, s.turnDeadline - s.serverNow);
+  fxPlan = planFx(prev, s);
+  render();
+  checkTourResult(s);
+  runFx(fxPlan, s);
+  fxPlan = NO_FX;
+  syncVoice();
+  renderMic();
+  checkPreDeal();
+
+  // พลุฉลองที่ที่นั่งผู้ชนะ (ครั้งเดียวต่อตา)
+  if (s.phase === 'showdown' && s.result) {
+    const key = s.code + ':' + s.handNo;
+    if (fxKey !== key) { fxKey = key; celebrate(s.result.winners.map((w) => w.id)); }
+  }
+}
+
+// ---------- พลุ ----------
+const fx = { parts: [], raf: 0, ctx: null, w: 0, h: 0 };
+const FX_COLORS = ['#ffd54a', '#ff5d73', '#5ad6a0', '#59b7ff', '#ff9a4d', '#ffffff', '#c77dff'];
+function burst(cx, cy, n) {
+  const main = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, sp = 1.4 + Math.random() * 4.4;
+    fx.parts.push({
+      x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.3,
+      life: 1, decay: 0.011 + Math.random() * 0.012, r: 1.5 + Math.random() * 1.9,
+      color: Math.random() < 0.7 ? main : FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)],
+    });
+  }
+}
+function fxLoop() {
+  const ctx = fx.ctx;
+  ctx.clearRect(0, 0, fx.w, fx.h);
+  fx.parts = fx.parts.filter((p) => p.life > 0);
+  for (const p of fx.parts) {
+    p.vy += 0.06; p.vx *= 0.985; p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  fx.raf = fx.parts.length ? requestAnimationFrame(fxLoop) : 0;
+}
+function celebrate(winnerIds) {
+  const wrap = $('#tablewrap'), canvas = $('#fx');
+  const r = wrap.getBoundingClientRect();
+  if (!r.width) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+  fx.ctx = canvas.getContext('2d'); fx.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  fx.w = r.width; fx.h = r.height;
+  for (const id of winnerIds) {
+    const seat = document.querySelector(`.seat[data-pid="${id}"] .plate`);
+    if (!seat) continue;
+    const pr = seat.getBoundingClientRect();
+    const cx = pr.left + pr.width / 2 - r.left, cy = pr.top + pr.height / 2 - r.top;
+    [0, 420, 900, 1450, 2050, 2700].forEach((t) => setTimeout(() => {
+      burst(cx + (Math.random() - 0.5) * pr.width * 0.7, cy + (Math.random() - 0.5) * pr.height * 0.6 - 8, 36 + Math.floor(Math.random() * 24));
+      if (!fx.raf) fx.raf = requestAnimationFrame(fxLoop);
+    }, t));
+  }
+}
+
+// ---------- ชิปไหล / แจกไพ่ / มงกุฎ ----------
+const NO_FX = { newBets: new Set(), deal: false, prevBets: [], direct: [], payout: null, collect: false };
+let fxPlan = NO_FX;
+let fxHold = { key: '', until: 0 };   // ช่วงที่ยังโชว์กองพ็อตตอนจบตา (รอชิปไหลไปหาผู้ชนะ)
+const DENOMS = [[5000, '#2b2f3a'], [1000, '#e0a82e'], [500, '#8e44ad'], [100, '#2a2a2a'], [25, '#1f9d63'], [5, '#d33a3a'], [1, '#3b82f6']];
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+// กองเหรียญมองจากด้านบน วางสุ่มซ้อนกันให้ดูเป็นธรรมชาติ (ตำแหน่งคงที่ตามลำดับ ไม่กระพริบเวลาวาดใหม่)
+function chipPileHTML(amount, o = {}) {
+  const size = o.size || 14, R = o.R || 7, max = o.max || 6, salt = o.salt || 1, min = o.min || 0;
+  let rest = Math.max(0, Math.floor(amount)), list = [];
+  for (const [v, c] of DENOMS) { const k = Math.floor(rest / v); rest -= k * v; for (let i = 0; i < Math.min(k, 4); i++) list.push(c); }
+  if (!list.length) return '';
+  for (let i = 0; list.length < min && list.length; i++) list.push(list[i % list.length]);
+  if (list.length > max) { const st = list.length / max; list = Array.from({ length: max }, (_, i) => list[Math.floor(i * st)]); }
+  const rnd = rng(salt * 1013 + 7);
+  for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
+  const W = 2 * R + size;
+  const coins = list.map((c) => {
+    const a = rnd() * Math.PI * 2, r = R * Math.sqrt(rnd());
+    return `<i class="coin" style="--c:${c};width:${size}px;height:${size}px;left:${(R + r * Math.cos(a)).toFixed(1)}px;top:${(R + r * Math.sin(a)).toFixed(1)}px;transform:rotate(${Math.floor(rnd() * 360)}deg)"></i>`;
+  }).join('');
+  return `<span class="pile" style="width:${W}px;height:${W}px">${coins}</span>`;
+}
+const CROWN = '<svg class="crown" viewBox="0 0 26 22" aria-hidden="true"><path d="M2 18 L1 6 L8 11 L13 2 L18 11 L25 6 L24 18 Z" fill="#ffd34d" stroke="#b9821a" stroke-width="1.3" stroke-linejoin="round"/><rect x="2" y="18" width="22" height="3" rx="1.2" fill="#f0a91f" stroke="#b9821a" stroke-width="1"/><circle cx="1.5" cy="5.5" r="1.8" fill="#ff5d73"/><circle cx="13" cy="2" r="1.8" fill="#59b7ff"/><circle cx="24.5" cy="5.5" r="1.8" fill="#5ad6a0"/></svg>';
+const chipCount = (amt) => Math.max(2, Math.min(9, Math.ceil(amt / Math.max(1, state ? state.settings.bb : 10))));
+function wrapPos(el) {
+  const wr = $('#tablewrap').getBoundingClientRect(), r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2 - wr.left, y: r.top + r.height / 2 - wr.top };
+}
+function fly(cls, from, to, n, delay, colors) {
+  const layer = $('#tablewrap');
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => {
+      const el = document.createElement('i');
+      el.className = cls;
+      if (colors) el.style.setProperty('--c', colors[i % colors.length]);
+      const j = () => (Math.random() - 0.5) * 12;
+      el.style.opacity = '0';
+      el.style.transform = `translate(${from.x + j()}px,${from.y + j()}px)`;
+      layer.appendChild(el);
+      void el.offsetWidth;
+      el.style.opacity = '1';
+      el.style.transform = `translate(${to.x + j()}px,${to.y + j()}px)`;
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, cls === 'fcard' ? 480 : 740);
+    }, delay + i * 70);
+  }
+}
+const CHIP_COLORS = ['#d33a3a', '#e0a82e', '#1f9d63', '#3b82f6', '#8e44ad'];
+// เทียบสถานะเก่า/ใหม่ แล้ววางแผนว่าจะให้ชิปหรือไพ่ไหลตรงไหน (เรียกก่อนวาดหน้าจอใหม่ เพื่อเก็บตำแหน่งชิปเดิมไว้)
+function planFx(prev, s) {
+  if (!prev || prev.code !== s.code || !prev.you || prev.you.id !== s.you.id) {
+    if (s.phase === 'showdown') fxHold = { key: '', until: 0 };
+    return NO_FX;
+  }
+  const plan = { newBets: new Set(), deal: false, prevBets: [], direct: [], payout: null, collect: false };
+  const sameHand = prev.handNo === s.handNo;
+  const pp = {}; prev.players.forEach((p) => { pp[p.id] = p; });
+  if (s.phase === 'hand' && !sameHand) plan.deal = preDeal.key !== prev.code + ':' + prev.handNo;
+  if (s.phase === 'hand') {
+    for (const p of s.players) {
+      const o = sameHand && pp[p.id] ? pp[p.id].bet : 0;
+      if (p.bet > o) plan.newBets.add(p.id);
+    }
+  }
+  const collect = sameHand && prev.phase === 'hand' && ((s.phase === 'hand' && s.street !== prev.street) || s.phase === 'showdown');
+  if (collect) {
+    plan.collect = true;
+    document.querySelectorAll('.bet[data-bpid]').forEach((el) => {
+      const amt = pp[el.dataset.bpid] ? pp[el.dataset.bpid].bet : 0;
+      if (amt > 0) plan.prevBets.push({ pid: el.dataset.bpid, pos: wrapPos(el), amt });
+    });
+    for (const p of s.players) {
+      const pr = pp[p.id]; if (!pr) continue;
+      const put = pr.chips - p.chips;       // ลงชิปครั้งสุดท้ายที่ปิดรอบพอดี (ไม่เคยโชว์เป็นกองหน้าที่นั่ง)
+      if (put > 0) plan.direct.push({ pid: p.id, amt: put });
+    }
+  }
+  if (s.phase === 'showdown' && s.result && prev.phase !== 'showdown') {
+    fxHold = { key: s.code + ':' + s.handNo, until: Date.now() + 2000 };
+    plan.payout = s.result.winners.map((w) => ({ pid: w.id, amt: w.won }));
+    setTimeout(render, 2100);
+  }
+  return plan;
+}
+function runFx(plan, s) {
+  if (plan === NO_FX) return;
+  if (plan.newBets.size) sfx('chip');
+  if (plan.collect && (plan.prevBets.length || plan.direct.length)) setTimeout(() => sfx('chip'), 150); // ชิปไม่ขยับ (เช่น เทิร์น/ริเวอร์ตอนออลอิน) ไม่ต้องมีเสียงชิป
+  if (plan.payout) setTimeout(() => sfx(plan.payout.some((w) => w.pid === s.you.id) ? 'win' : 'chip'), plan.collect ? 900 : 100);
+  if (plan.deal) for (let i = 0; i < Math.min(8, s.players.filter((p) => p.inHand).length * 2); i++) setTimeout(() => sfx('card'), i * 110);
+  const pot = $('#potchips');
+  const potPos = pot ? wrapPos(pot) : null;
+  const plateOf = (pid) => { const el = document.querySelector(`.seat[data-pid="${pid}"] .plate`); return el ? wrapPos(el) : null; };
+  // ลงชิปเพิ่ม: ชิปไหลจากที่นั่งมาวางกองหน้าที่นั่ง
+  plan.newBets.forEach((pid) => {
+    const p = s.players.find((q) => q.id === pid), from = plateOf(pid), el = document.querySelector(`.bet[data-bpid="${pid}"]`);
+    if (p && from && el) fly('fchip', from, wrapPos(el), Math.min(5, chipCount(p.bet)), 0, CHIP_COLORS);
+  });
+  // จบรอบเดิมพัน: ชิปหน้าที่นั่งทุกคนไหลมารวมที่ Pot
+  let t = 0;
+  if (plan.collect && potPos) {
+    plan.prevBets.forEach((b) => fly('fchip', b.pos, potPos, Math.min(6, chipCount(b.amt)), 0, CHIP_COLORS));
+    plan.direct.forEach((d) => { const from = plateOf(d.pid); if (from) fly('fchip', from, potPos, Math.min(5, chipCount(d.amt)), 0, CHIP_COLORS); });
+    t = plan.prevBets.length || plan.direct.length ? 850 : 0;
+  }
+  // จบตา: Pot ไหลไปหาผู้ชนะ
+  if (plan.payout && potPos) {
+    plan.payout.forEach((w) => { const to = plateOf(w.pid); if (to) fly('fchip', potPos, to, Math.max(4, Math.min(12, chipCount(w.amt))), t, CHIP_COLORS); });
+  }
+  // เริ่มตาใหม่: แจกไพ่จากกลางโต๊ะไปให้ทุกคนทีละใบ
+  if (plan.deal) {
+    const center = wrapPos($('#gBoard'));
+    const seated = s.players.filter((p) => p.inHand);
+    for (let round = 0; round < 2; round++) {
+      seated.forEach((p, k) => { const to = plateOf(p.id); if (to) fly('fcard', center, to, 1, (round * seated.length + k) * 110, null); });
+    }
+  }
+}
+
+// ---------- วาดหน้าจอ ----------
+function render() {
+  if (!state) return;
+  if (state.phase === 'lobby') { renderLobby(); show('lobby'); } else { renderGame(); show('game'); }
+  if (state.phase !== 'lobby' && state.tourney && !rulesShown.has(state.code)) { rulesShown.add(state.code); showRules(state); } // เข้าร่วมกลางเกม (ไม่ผ่านล็อบบี้)
+  if ($('#drawer').classList.contains('on')) renderDrawer();
+}
+
+// openExternalBrowser=1 ทำให้ LINE เด้งไปเปิดใน Safari/เบราว์เซอร์หลักของเครื่องเอง
+function inviteLink() { return location.origin + '/?room=' + state.code + '&openExternalBrowser=1'; }
+async function share() {
+  const url = inviteLink();
+  const text = `มาเล่นโป๊กเกอร์กัน! รหัสห้อง ${state.code}`;
+  if (navigator.share) { try { await navigator.share({ title: 'PokerPEPAE&Fri', text, url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(`${text}\n${url}`); toast('คัดลอกลิงก์แล้ว'); }
+  catch (e) { prompt('คัดลอกลิงก์นี้', url); }
+}
+$('#btnShare').onclick = share;
+$('#gCode').onclick = share;
+
+function renderLobby() {
+  const s = state, me = s.players.find((p) => p.id === s.you.id) || {};
+  const spec = !!s.you.spectator;
+  $('#lbSpec').textContent = s.spectators.length ? '👁 ผู้ชม: ' + s.spectators.join(', ') : '';
+  $('#btnLobbyJoin').style.display = spec ? '' : 'none';
+  $('#btnLobbyJoin').disabled = s.players.length >= 9;
+  $('#lbCode').textContent = s.code;
+  $('#lbCount').textContent = s.players.length;
+  $('#lbPlayers').innerHTML = s.players.map((p) =>
+    `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('');
+  $('#lbInfo').textContent = (s.tourney ? `🏆 ทัวร์นาเมนต์ · บายอิน ${fmt(s.tourney.buyIn)}฿ · ` : '') + `ชิปเริ่มต้น ${fmt(s.settings.startChips)} · บลายด์ ${s.settings.sb}/${s.settings.bb}` + (s.tourney ? ` (x2 ทุก ${s.tourney.every} ตา)` : '') + ' · ' + (s.settings.turnTime ? `${s.settings.turnTime} วินาที/ตา` : 'ไม่จำกัดเวลา');
+  { const c = $('#lbChat'), stick = c.scrollTop + c.clientHeight >= c.scrollHeight - 40;
+    c.innerHTML = s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ทักทายเพื่อนๆ ได้เลย</p>';
+    if (stick) c.scrollTop = c.scrollHeight; }
+  { const lv = $('#lbVoice');
+    lv.innerHTML = (voice.mode === 'talk' ? `<button class="b ${voice.muted ? 'ghost' : 'green'} full" id="lbMute" style="margin-bottom:8px">${voice.muted ? '🔇 ไมค์ปิดอยู่ (กดเพื่อเปิด)' : '🎤 ไมค์เปิดอยู่ (กดเพื่อปิด)'}</button>` : '') + voiceBoxHTML(s);
+    bindVoiceBox(lv);
+    const lm = $('#lbMute'); if (lm) lm.onclick = toggleMute; }
+  if (s.tourney && !rulesShown.has(s.code)) { rulesShown.add(s.code); showRules(s); }
+  $('#btnStart').style.display = me.isHost ? '' : 'none';
+  $('#btnStart').disabled = s.players.length < 2;
+  $('#lbWait').textContent = spec ? '👁 คุณกำลังดูอยู่ (ดูได้อย่างเดียว)' : me.isHost ? (s.players.length < 2 ? 'รอเพื่อนเข้าห้องอย่างน้อย 1 คน' : '') : 'รอเจ้าของห้องกดเริ่มเกม…';
+}
+$('#lbPlayers').onclick = (e) => {
+  const id = e.target.dataset && e.target.dataset.kick;
+  if (id && confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: id }).catch(() => {});
+};
+$('#btnStart').onclick = () => api('start', session).catch(() => {});
+$('#btnLeaveLobby').onclick = leaveRoom;
+async function leaveRoom() {
+  if (!confirm('ออกจากห้องนี้?')) return;
+  try { await api('leave', session); } catch (e) { /* ไม่เป็นไร */ }
+  closeDrawer();
+  dropSession();
+}
+
+function renderGame() {
+  const s = state;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const seatList = s.players.filter((p) => !p.out);
+  const n = Math.max(1, seatList.length);
+  const meIdx = Math.max(0, seatList.indexOf(me)); // ผู้ชม: ให้ผู้เล่นคนแรกอยู่ล่างสุด
+  const res = s.result;
+  const winIds = new Set(res ? res.winners.map((w) => w.id) : []);
+  const hlCards = new Set();
+  if (res && res.showdown) for (const w of res.winners) (res.hands[w.id] ? res.hands[w.id].best : []).forEach((c) => hlCards.add(c));
+  const showHL = hlCards.size > 0;
+
+  $('#gCodeTxt').textContent = s.code;
+  $('#gMid').textContent = `ตาที่ ${s.handNo}`;
+  $('#gBlinds').textContent = `BLINDS ${fmt(s.settings.sb)}/${fmt(s.settings.bb)}`;
+  $('#tablewrap').classList.toggle('tour', !!s.tourney);
+  if (s.tourney) $('#tmark').textContent = 'TOURNAMENT #' + s.tourney.no;
+  if ($('#tstModal').classList.contains('on')) renderTourStatus();
+  $('#roomCnt').textContent = s.players.filter((q) => !q.left).length + (s.specList || []).length;
+  const holdKey = s.code + ':' + s.handNo;
+  const potShown = s.phase === 'showdown' && !(fxHold.key === holdKey && Date.now() < fxHold.until) ? 0 : s.pot;
+  $('#gPot').textContent = fmt(potShown);
+  $('#potchips').innerHTML = chipPileHTML(potShown, { size: 15, R: 14, max: 16, salt: 1, min: Math.min(14, Math.max(3, Math.ceil(potShown / Math.max(1, s.settings.bb)))) });
+  $('#btnMenu').classList.toggle('has', unread);
+
+  // ไพ่กลาง — สร้างใหม่เฉพาะเมื่อไพ่เปลี่ยน (กันแอนิเมชันพลิกไพ่ถูกตัดกลางคัน) และเปิดทีละใบเว้นจังหวะให้ลุ้น
+  const boardKey = s.handNo + ':' + s.community.join(',') + ':' + [...hlCards].join(',');
+  if (boardKey !== lastBoardKey) {
+    const newHand = s.handNo !== lastHandNo;
+    let boardHTML = '';
+    for (let i = 0; i < 5; i++) {
+      if (i < s.community.length) {
+        const c = s.community[i];
+        const isNew = !newHand && i >= lastBoardLen;
+        if (isNew) setTimeout(() => sfx('card'), ((i - lastBoardLen) * 0.65 + 0.1) * 1000);
+        const delay = isNew ? `animation-delay:${((i - lastBoardLen) * 0.65 + 0.1).toFixed(2)}s` : '';
+        const cls = (isNew ? 'deal ' : '') + (showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '');
+        boardHTML += cardEl(c, cls, delay);
+      } else boardHTML += '<div class="slot"></div>';
+    }
+    $('#gBoard').innerHTML = boardHTML;
+    lastBoardKey = boardKey;
+    lastBoardLen = s.community.length; lastHandNo = s.handNo;
+  }
+
+  // หลอดโหลดบางๆ ใต้ไพ่ที่กำลังจะเปิด (ตอนออลอิน เปิดไพ่กลางทีละช่วง)
+  { const bd = $('#gBoard'), old = bd.querySelector('.revbar');
+    const key = s.reveal ? s.handNo + ':' + s.reveal.next : '';
+    if (!s.reveal) { if (old) old.remove(); }
+    else if (!old || old.dataset.k !== key) {
+      if (old) old.remove();
+      const kids = [...bd.children], a = s.reveal.next === 'flop' ? 0 : s.reveal.next === 'turn' ? 3 : 4, z = s.reveal.next === 'flop' ? 2 : a;
+      if (kids[a] && kids[z]) {
+        const L = kids[a].offsetLeft, Rr = kids[z].offsetLeft + kids[z].offsetWidth, bar = document.createElement('div');
+        bar.className = 'revbar'; bar.dataset.k = key;
+        bar.style.cssText = `left:${L}px;width:${Rr - L}px;top:${kids[a].offsetTop + kids[a].offsetHeight + 4}px`;
+        bar.innerHTML = `<i style="animation-duration:${s.reveal.ms}ms;animation-delay:-${Math.max(0, s.reveal.ms - s.reveal.left)}ms"></i>`;
+        bd.appendChild(bar);
+      }
+    } }
+
+  // ข้อความผลตา
+  let banner = '';
+  if (s.phase === 'showdown' && res) {
+    banner = res.winners.map((w) => `<div class="wl"><span class="wn">🏆 ${esc(nameOf(w.id))}</span> <span class="wd">+${fmt(w.won)}${w.handName ? ' · ' + esc(w.handName) : ''}</span></div>`).join('');
+    if (res.pots.length > 1) banner += `<div style="opacity:.75;font-size:12px">มีไซด์พ็อต ${res.pots.length - 1} ก้อน</div>`;
+    banner += '<div class="cdbig"><span class="deckfx"><i></i><i></i><i></i></span>ตาถัดไปใน <b class="cdn">–</b> วินาที</div>';
+  } else if (s.phase === 'shuffle') {
+    banner = '';
+  } else if (s.phase === 'over') {
+    banner = '<div><span class="w">🏁 จบทัวร์นาเมนต์แล้ว</span></div>';
+  } else if (s.phase === 'waiting') {
+    banner = s.nextHandAt ? '<div class="cdbig"><span class="deckfx"><i></i><i></i><i></i></span>ตาใหม่เริ่มใน <b class="cdn">–</b> วินาที</div>' : s.soleId ? `<div><span class="w">🏆 ${esc(nameOf(s.soleId))}</span> ครองชิปทั้งโต๊ะ</div><div style="opacity:.8;font-size:13px">รอผู้เล่นบายอิน</div>` : '<div style="opacity:.8">รอผู้เล่นบายอิน</div>';
+  } else if (s.phase === 'hand') {
+    banner = s.runout ? 'ลุ้นไพ่… 🤞' : { preflop: 'พรีฟลอป', flop: 'ฟลอป', turn: 'เทิร์น', river: 'ริเวอร์' }[s.street];
+    banner = `<span style="opacity:.75">${banner}</span>`;
+  }
+  $('#gBanner').innerHTML = banner;
+
+  // ที่นั่ง
+  const dense = n >= 7;
+  $('#tablewrap').classList.toggle('dense', dense);
+  const rx = dense ? 43 : 41, ry = dense ? 39 : 37;
+  const pdSet = preDealActive(s) ? preDeal.ids : null;
+  const pdFresh = !!pdSet && Date.now() - preDeal.t < 1500;
+  const leadSet = new Set(s.phase === 'hand' && s.runout ? (s.lead || []) : []);
+  let seats = '';
+  seatList.forEach((p, i) => {
+    const pdSeat = !!pdSet && pdSet.has(p.id);
+    const rel = (i - meIdx + n) % n;
+    const th = ((90 + (rel * 360) / n) * Math.PI) / 180;
+    const x = Math.min(dense ? 90 : 89.5, Math.max(dense ? 10 : 10.5, 50 + rx * Math.cos(th))), y = 50 + ry * Math.sin(th);
+    const isMe = !!me && p.id === me.id;
+    const showCards = (!isMe || p.shown) && p.hole.length > 0;
+    const cls = ['seat', isMe ? 'me' : '', p.shown && p.hole.length ? 'mine-shown' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const bl = []; if (p.isDealer) bl.push(['d', 'D']); if (p.isSB) bl.push(['sb', 'SB']); if (p.isBB) bl.push(['bb', 'BB']);
+    const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${bl.length > 1 ? (dense ? 2 : 4) + k * (dense ? 17 : 21) : (dense ? 16 : 20)}px">${x[1]}</span>`).join('');
+    const vm = (s.voice || []).find((m) => m.id === p.id);
+    const vb = vm ? `<span class="vb">${micIcon(vm.mode, vm.muted)}</span>` : '';
+    const mini = showCards ? p.hole.map((c) => cardEl(c, c != null && p.shown ? 'shownc' : c != null && showHL ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : '';
+    let label = p.lastAction;
+    if (!label && s.phase !== 'lobby') {
+      if (p.chips === 0 && !p.inHand) label = 'หมดชิป';
+      else if (!p.inHand) label = 'รอตาหน้า';
+    }
+    if (res && res.showdown && res.hands[p.id] && !p.folded) label = res.hands[p.id].name;
+    if (pdSeat || s.phase === 'shuffle') label = '';
+    const off = !p.connected ? '<div class="act off">ออฟไลน์</div>' : (label ? `<div class="act">${esc(label)}</div>` : '');
+    const bb = bubbles[p.id] && bubbles[p.id].until > Date.now() ? bubbles[p.id] : null;
+    const b = bb ? `<div class="bubble${isSticker(bb.text) ? ' stkb' : ''}">${msgHTML(bb.text)}</div>` : '';
+    seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
+      ${b}<div class="mini${!pdSeat && showCards && p.hole[0] != null ? ' rev' : ''}${p.shown && p.hole[0] != null ? ' shown' : ''}${fxPlan.deal || pdFresh ? ' dealin' : ''}"${fxPlan.deal || pdFresh ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${pdSeat ? cardEl(null) + cardEl(null) : mini}</div>
+      <div class="plate">${winIds.has(p.id) ? CROWN : ''}<div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div>${vb}</div>
+      ${p.eqPct != null && s.runout && s.phase === 'hand' ? `<div class="eqp ${x < 50 ? 'r' : 'l'}${p.eqPct >= 50 ? ' hi' : ''}">${p.eqPct}%</div>` : ''}${badges}${off}</div>`;
+    if (s.phase !== 'showdown' && (p.bet > 0 || (p.allIn && p.inHand && !p.folded))) {
+      const k = dense ? 0.3 : 0.21;
+      const bx = x + (50 - x) * k, by = y + (46 - y) * k;
+      seats += `<div class="bet${fxPlan.newBets.has(p.id) ? ' nb' : ''}" data-bpid="${p.id}" data-lx="${bx.toFixed(1)}" data-ly="${by.toFixed(1)}" style="left:${bx.toFixed(1)}%;top:${by.toFixed(1)}%"><div class="br">${p.bet > 0 ? chipPileHTML(p.bet, { size: 13, R: 6, max: 6, salt: i + 2 }) + '<span>' + fmt(p.bet) + '</span>' : ''}</div>${p.allIn ? '<span class="aitag">ALL-IN</span>' : ''}</div>`;
+    }
+  });
+  $('#gSeats').innerHTML = seats;
+  renderShuffle(s);
+  fixShown();
+  layoutBets();
+  fixBubbles();
+  requestAnimationFrame(() => { fixShown(); layoutBets(); fixBubbles(); });
+
+  renderPanel(me, hlCards);
+}
+
+function status(me) {
+  const s = state;
+  if (s.phase === 'shuffle') return 'สับที่นั่งใหม่ — จั่วไพ่กลางโต๊ะ';
+  if (s.phase === 'over') return 'ทัวร์นาเมนต์จบแล้ว';
+  if (s.phase === 'showdown') return `ตาถัดไปใน <b class="cdn">–</b> วินาที`;
+  if (s.phase === 'waiting') {
+    if (s.nextHandAt) return 'มีคนบายอินแล้ว ตาใหม่เริ่มใน <b class="cdn">–</b> วินาที';
+    return me.chips === 0 ? 'คุณหมดชิป — กดซื้อชิปเพื่อเล่นต่อ' : 'รอเพื่อนบายอิน…';
+  }
+  if (s.runout) return 'ไม่มีใครเดิมพันต่อแล้ว ลุ้นไพ่กันเลย! 🤞';
+  if (s.options) return s.options.toCall > 0 ? `ถึงตาคุณ · ต้องจ่ายเพิ่ม ${fmt(s.options.toCall)}` : 'ถึงตาคุณ · เช็คหรือเดิมพันได้';
+  if (me.folded) return 'คุณโฟลด์แล้ว';
+  if (!me.inHand) return me.chips === 0 ? 'คุณหมดชิปแล้ว' : 'รอเริ่มตาหน้า';
+  if (me.allIn) return 'ออลอิน! ลุ้นเลย 🤞';
+  return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
+}
+
+function potRaise(frac) {
+  const s = state, o = s.options;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const to = Math.round(s.currentBet + frac * (s.pot + o.toCall));
+  return Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, to));
+}
+
+// ---------- แผงล่างของผู้ชม ----------
+function specStatus(s) {
+  if (s.phase === 'shuffle') return 'กำลังจั่วไพ่สับที่นั่งใหม่…';
+  if (s.phase === 'over') return 'ทัวร์นาเมนต์จบแล้ว';
+  if (s.phase === 'showdown') return 'ตาถัดไปใน <b class="cdn">–</b> วินาที';
+  if (s.phase === 'waiting') return s.nextHandAt ? 'ตาใหม่เริ่มใน <b class="cdn">–</b> วินาที' : `🏆 ${esc(s.soleId ? nameOf(s.soleId) : '')} ครองชิปทั้งโต๊ะ · รอผู้เล่นบายอิน`;
+  if (s.runout) return 'กำลังเปิดไพ่… 🤞';
+  if (s.phase === 'hand' && s.toAct) return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
+  return 'กำลังเริ่มตาใหม่…';
+}
+async function specJoin() {
+  const s = state; if (!s || !s.you.spectator) return;
+  const name = (ls('pp_name') || $('#name').value || '').trim() || (prompt('ชื่อของคุณ?') || '').trim();
+  if (!name) return;
+  ls('pp_name', name);
+  const old = session;
+  try {
+    const d = await api('join', { code: old.code, name });
+    api('leave', old).catch(() => {}); // เอาตัวเองออกจากรายชื่อผู้ชม
+    startSession(d);
+    toast(s.phase === 'hand' ? 'เข้านั่งแล้ว เริ่มเล่นตาหน้า' : 'เข้านั่งแล้ว');
+  } catch (e) { /* แจ้งไปแล้ว */ }
+}
+function renderSpecPanel() {
+  const s = state;
+  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.soleId, s.runout, !!s.nextHandAt, s.you.out, s.you.place, !!(s.tourney && s.tourney.result)]);
+  if (sig === panelSig) return;
+  panelSig = sig;
+  const full = s.players.filter((p) => !p.left).length >= 9;
+  const locked = !!(s.tourney && s.tourney.started);
+  const title = s.you.out ? `💀 คุณตกรอบ · อันดับ ${s.you.place} · ดูต่อได้อย่างเดียว` : '👁 โหมดผู้ชม · ดูได้อย่างเดียว';
+  const joinBtn = locked ? '' : `<button class="b green" id="sJoin" ${full ? 'disabled' : ''}>${full ? 'ห้องเต็ม' : 'เข้าร่วมเล่น'}</button>`;
+  const resBtn = s.tourney && s.tourney.result ? '<button class="b gold" id="sRes">ดูผลอันดับ</button>' : '';
+  $('#panel').innerHTML = `<div class="msg" style="margin-top:6px"><div style="font-weight:600;color:var(--gold);font-size:17px">${title}</div>
+    <div style="color:var(--mute);font-size:14px;margin-top:4px">${specStatus(s)}</div></div>
+    <div class="acts" style="margin-top:14px">${joinBtn}${resBtn}<button class="b ghost" id="sLeave">ออกจากห้อง</button></div>`;
+  if ($('#sJoin')) $('#sJoin').onclick = specJoin;
+  if ($('#sRes')) $('#sRes').onclick = () => showResult(s.tourney.result, true);
+  $('#sLeave').onclick = leaveRoom;
+}
+$('#btnLobbyJoin').onclick = specJoin;
+
+let preRaise = 0;
+function eqHTML(e) {
+  if (!e) return '';
+  return `<div class="eqbig${e.trailing ? ' lose' : ''}"><div class="eqn">${e.pct}<small>%</small></div><div class="eql">โอกาสชนะ</div><div class="eqbar"><i style="width:${e.pct}%"></i></div></div>`;
+}
+function outsHTML(e) {
+  if (!e || !e.trailing || !e.outs || !e.outs.length) return '';
+  const step = Math.min(26, Math.floor(300 / Math.max(1, e.outs.length)));
+  const w = step * (e.outs.length - 1) + 28;
+  return `<div class="outsbox"><div class="oh">ตามอยู่ · มี <b>${e.outs.length}</b> outs</div><div class="ofan" style="width:${w}px;max-width:100%">${e.outs.map((c, i) => cardEl(c, 'oc', `--cw:28px;left:${i * step}px`)).join('')}</div></div>`;
+}
+function renderPanel(me, hlCards) {
+  if (!me) { renderSpecPanel(); return; }
+  const s = state, o = s.options;
+  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown, s.you.autoShow, s.eq]);
+  if (sig === panelSig) return;
+  panelSig = sig;
+  // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
+  const rkey = o ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
+  if (o && (rkey !== raiseKey || raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
+  if (o && rkey !== raiseKey && preRaise > 0) { raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, preRaise)); preRaise = 0; }
+  raiseKey = rkey;
+
+  let hole = (me.hole || []).slice();
+  if (swapHand === s.handNo && hole.length === 2) hole.reverse();
+  let h = `<div class="mine"><div class="hc">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}</div>
+    <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="st">${status(me)}</div></div>${eqHTML(s.eq)}</div>${outsHTML(s.eq)}`;
+
+  if (o) {
+    const callAll = !o.canCheck && o.toCall >= me.chips;
+    h += `<div class="acts">
+      <button class="b red" id="aFold">โฟลด์</button>
+      <button class="b green call" id="aCall">${o.canCheck ? 'เช็ค' : callAll ? 'ออลอิน ' + fmt(me.chips) : 'คอล ' + fmt(o.toCall)}</button>
+      ${o.canRaise ? `<button class="b gold" id="aRaise"></button>` : ''}
+    </div>`;
+    if (o.canRaise && o.minRaiseTo < o.maxRaiseTo) {
+      const sb = s.settings.sb, bb = s.settings.bb;
+      const nSteps = Math.ceil((o.maxRaiseTo - o.minRaiseTo) / sb);
+      h += `<div class="raisebar"><div class="sl">
+        <button class="stepbtn" id="rMinus">−</button>
+        <input type="range" id="rSlider" min="0" max="${nSteps}" step="1" value="0">
+        <button class="stepbtn" id="rPlus">+</button></div>
+        <div class="r2"><input id="rNum" class="in" type="number" inputmode="numeric" pattern="[0-9]*" aria-label="ระบุจำนวนเอง" min="${o.minRaiseTo}" max="${o.maxRaiseTo}" value="${raiseTo}">
+          <button class="b sm" data-add="${sb}">+${fmt(sb)}</button><button class="b sm" data-add="${bb}">+${fmt(bb)}</button></div>
+        <div class="pre"><button class="b sm" data-add="${bb * 2}">+${fmt(bb * 2)}</button><button class="b sm" data-add="${bb * 3}">+${fmt(bb * 3)}</button><button class="b sm" data-f="clear">ล้าง</button><button class="b sm allin" data-f="max">ออลอิน</button></div></div>`;
+    }
+  } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
+    const on = !!s.you.pre;
+    h += `<div class="acts waitrow"><label class="preamt"><span>ใส่จำนวนเรสรอไว้</span><input id="aPreAmt" class="in" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="เรสเป็น…" value="${preRaise || ''}"></label><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+  } else if (s.phase === 'hand' && me.inHand && me.folded) {
+    const on = !!s.you.autoShow;
+    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aAuto" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+  } else if (s.phase === 'showdown' && me.hole && me.hole[0] != null && !(s.result && s.result.hands && s.result.hands[me.id])) {
+    const on = !!me.shown;
+    h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aShowT" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+  } else if (s.phase === 'waiting') {
+    const w = s.soleId ? nameOf(s.soleId) : '';
+    h += `<div class="msg">🏆 ${esc(w)} ครองชิปทั้งโต๊ะ<br><span style="color:var(--mute);font-size:13px">${s.nextHandAt ? 'มีคนบายอินแล้ว กำลังเริ่มตาใหม่…' : 'รอผู้เล่นบายอิน แล้วเล่นต่อได้เลย'}</span></div>`;
+  }
+  if (me.chips === 0 && !(s.phase === 'hand' && me.inHand) && s.phase !== 'over') {
+    if (s.tourney) {
+      h += s.tourney.rebuyOpen && me.rebuysLeft > 0
+        ? `<div class="msg"><button class="b gold" id="aRebuy">บายอินเพิ่ม ${fmt(s.tourney.buyIn)}฿ · เหลือ ${me.rebuysLeft} ครั้ง</button><div style="font-size:12px;color:var(--mute);margin-top:4px">ต้องบายอินก่อนเริ่มตาที่ ${me.rebuyBy || '-'}</div></div>`
+        : '<div class="msg" style="color:var(--mute)">ปิดรับบายอินเพิ่มแล้ว</div>';
+    } else h += `<div class="msg"><button class="b gold" id="aRebuy">ซื้อชิปเพิ่ม ${fmt(s.settings.startChips)}</button></div>`;
+  }
+  const panel = $('#panel');
+  panel.innerHTML = h;
+
+  const $p = (q) => panel.querySelector(q);
+  if (o) {
+    $p('#aFold').onclick = () => act('fold');
+    $p('#aCall').onclick = () => act(o.canCheck ? 'check' : 'call');
+    const rb = $p('#aRaise');
+    const upd = () => {
+      if (!rb) return;
+      const isAll = raiseTo >= o.maxRaiseTo;
+      rb.innerHTML = isAll ? `ออลอิน ${fmt(o.maxRaiseTo)}` : `${o.isBet ? 'เดิมพัน' : 'เรสเป็น'} ${fmt(raiseTo)}`;
+      const sl = $p('#rSlider'); if (sl) sl.value = Math.round((raiseTo - o.minRaiseTo) / s.settings.sb);
+      const nm = $p('#rNum'); if (nm && document.activeElement !== nm) nm.value = raiseTo;
+    };
+    upd();
+    if (rb) rb.onclick = () => act(raiseTo >= o.maxRaiseTo ? 'allin' : 'raise', raiseTo);
+    const sl = $p('#rSlider');
+    if (sl) {
+      const sb = s.settings.sb;
+      sl.oninput = () => { raiseTo = Math.min(o.maxRaiseTo, o.minRaiseTo + Number(sl.value) * sb); upd(); };
+      const nm = $p('#rNum');
+      nm.oninput = () => {
+        const v = Math.floor(Number(nm.value));
+        if (nm.value === '' || !Number.isFinite(v)) return;
+        raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, v)); // ปรับเข้าช่วงที่เรสได้
+        upd(true);
+      };
+      nm.onfocus = () => { nm.placeholder = raiseTo; nm.value = ''; }; // แตะแล้วล้างเลข พร้อมพิมพ์ใหม่ทันที
+      nm.onblur = () => { nm.value = raiseTo; nm.placeholder = ''; };
+      nm.onkeydown = (e) => { if (e.key === 'Enter') nm.blur(); };
+      $p('#rMinus').onclick = () => { raiseTo = Math.max(o.minRaiseTo, raiseTo - sb); upd(); };
+      $p('#rPlus').onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + sb); upd(); };
+      panel.querySelectorAll('[data-add]').forEach((b) => {
+        b.onclick = () => { raiseTo = Math.min(o.maxRaiseTo, raiseTo + Number(b.dataset.add)); upd(); };
+      });
+      panel.querySelectorAll('[data-f]').forEach((b) => {
+        b.onclick = () => { raiseTo = b.dataset.f === 'max' ? o.maxRaiseTo : o.minRaiseTo; upd(); };
+      });
+    }
+  }
+  if ($p('#aPre')) $p('#aPre').onclick = () => api('pre', { ...session, on: !s.you.pre }).catch(() => {});
+  if ($p('#aPreAmt')) { const pa = $p('#aPreAmt'); pa.onfocus = () => { pa.select(); }; pa.oninput = () => { preRaise = Math.max(0, parseInt(pa.value, 10) || 0); }; }
+  if ($p('#aAuto')) $p('#aAuto').onclick = () => api('autoshow', { ...session, on: !s.you.autoShow }).catch(() => {});
+  if ($p('#aShowT')) $p('#aShowT').onclick = () => api('showtoggle', { ...session, on: !me.shown }).catch(() => {});
+  const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});
+}
+
+// ---------- นาฬิกา (แถบเวลา + นับถอยหลังตาถัดไป) ----------
+setInterval(() => {
+  if (!state || state.phase === 'lobby') return;
+  const now = Date.now() + clockOffset;
+  if (state.phase === 'hand' && state.turnDeadline && state.toAct) {
+    const seat = document.querySelector(`.seat[data-pid="${state.toAct}"]`);
+    if (seat) {
+      const left = Math.max(0, state.turnDeadline - now);
+      seat.querySelector('.tm i').style.width = Math.min(100, (left / turnTotal) * 100) + '%';
+      seat.classList.toggle('warn', left < 6000);
+    }
+  }
+  checkPreDeal();
+  if (state.phase === 'shuffle' && state.shuffle) {
+    const left = Math.max(0, Math.ceil(((state.shuffle.revealed ? state.shuffle.until : state.shuffle.deadline) - now) / 1000));
+    document.querySelectorAll('.cdn[data-sh]').forEach((e) => { if (e.textContent !== String(left)) e.textContent = left; });
+  }
+  if (state.nextHandAt) {
+    const left = Math.max(0, Math.ceil((state.nextHandAt - now) / 1000));
+    document.querySelectorAll('.cdn').forEach((e) => { if (e.textContent !== String(left)) { e.textContent = left; e.classList.remove('tick'); void e.offsetWidth; e.classList.add('tick'); } });
+  }
+}, 200);
+
+
+// ---------- ไอคอนไมค์ (SVG) ----------
+const SVGA = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+const IC_MIC = `<svg ${SVGA}><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>`;
+const IC_OFF = `<svg ${SVGA}><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path d="M4 4l16 16" stroke="#ff5d6b" stroke-width="3"/></svg>`;
+const IC_EAR = `<svg ${SVGA}><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5" fill="currentColor"/><rect x="17" y="14" width="4" height="7" rx="1.5" fill="currentColor"/></svg>`;
+function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_OFF : IC_MIC; }
+
+// ---------- สติกเกอร์อารมณ์ (2 อันแรกเป็นรูป+เสียงของคุณ ในโฟลเดอร์ public/stickers · ที่เหลือเป็นภาพวาดต้นฉบับ) ----------
+const STK = [
+  { cap: 'หอมฉุย', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: 'มีอีกไหม!', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' }, { cap: 'เงี่ยนโว้ยย', alt: 'เงี่ยนโว้ยย', img: '/stickers/4.jpg', snd: '/stickers/4.mp3' }, { cap: 'hee', alt: 'hee', img: '/stickers/5.jpg', snd: '/stickers/5.mp3' }, { cap: 'อย่าให้มีครั้งที่2', alt: 'อย่าให้มีครั้งที่2', img: '/stickers/6.webp', snd: '/stickers/6.mp3' }, { cap: 'อย่าเสี่ยงกับพี่!', alt: 'อย่าเสี่ยงกับพี่!', img: '/stickers/7.png', snd: '/stickers/7.mp3' }, { cap: 'นี่มันทางของพี่!', alt: 'นี่มันทางของพี่!', img: '/stickers/8.png', snd: '/stickers/8.mp3' }, { cap: 'ขยี้!', alt: 'ขยี้!', img: '/stickers/9.png', snd: '/stickers/9.mp3' }, { cap: 'ไม่คณามือ', alt: 'ไม่คณามือ', img: '/stickers/10.png', snd: '/stickers/10.mp3' }, { cap: 'ไม่ได้แดกกูหรอก', alt: 'ไม่ได้แดกกูหรอก', img: '/stickers/11.png', snd: '/stickers/11.mp3' }, { cap: 'อย่าดีกว่าไอ้น้อง', alt: 'อย่าดีกว่าไอ้น้อง', img: '/stickers/12.png', snd: '/stickers/12.mp3' }, { cap: 'ไอ้เขียวแดกขาด', alt: 'ไอ้เขียวแดกขาด', img: '/stickers/13.png', snd: '/stickers/13.mp3' }, { cap: 'อย่ามาทำซ่า!', alt: 'อย่ามาทำซ่า!', img: '/stickers/14.png', snd: '/stickers/14.mp3' }, { cap: 'เด็กๆไปไอ้น้อง', alt: 'เด็กๆไปไอ้น้อง', img: '/stickers/15.png', snd: '/stickers/15.mp3' },
+  { cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' },
+  { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' },
+  { cap: 'แอบกระซิบ', k: 'wink' }, { cap: 'งง?', k: 'think' }, { cap: 'อาย', k: 'shy' }, { cap: 'หึๆ', k: 'smug' },
+  { cap: 'โฮ!!', k: 'bigcry' }, { cap: 'เยี่ยม!', k: 'thumb' }, { cap: 'ปาร์ตี้!', k: 'party' }, { cap: 'นิ่งๆ', k: 'flat' },
+  { cap: 'รวยแล้ว!', k: 'rich' }, { cap: 'ช็อก!', k: 'shock' }, { cap: 'จุ๊บๆ', k: 'kiss' }, { cap: 'มึน', k: 'dizzy' },
+  { cap: 'ไม่ไหว', k: 'sick' }, { cap: 'ร้ายนะ', k: 'evil' }, { cap: 'ใสซื่อ', k: 'angel' }, { cap: 'ขอโทษ', k: 'sorry' },
+];
+const SK = 'stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"';
+const STK_SKIN = { shock: '#cfe3ff', sick: '#b9e6a0' };
+const STK_PART = {
+  laugh: `<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M27 51Q40 70 53 51Z" fill="#7a1f1f"/><path d="M33 60Q40 55 47 60Q40 66 33 60Z" fill="#ff7b8a"/><path d="M63 40q4 6 0 9q-4-3 0-9" fill="#5ab4ff"/>`,
+  cool: `<rect x="21" y="36" width="17" height="11" rx="4" fill="#111"/><rect x="42" y="36" width="17" height="11" rx="4" fill="#111"/><path d="M38 40h4" stroke="#111" stroke-width="2.5"/><path d="M29 55Q40 63 51 55" ${SK}/>`,
+  cry: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><path d="M30 60Q40 52 50 60" ${SK}/><path d="M28 46q-4 12-1 16q4-2 3-16M52 46q4 12 1 16q-4-2-3-16" fill="#5ab4ff"/>`,
+  angry: `<path d="M23 34L37 40M57 34L43 40" stroke="#b00020" stroke-width="3.5" stroke-linecap="round"/><circle cx="30" cy="45" r="3" fill="#222"/><circle cx="50" cy="45" r="3" fill="#222"/><path d="M30 61Q40 52 50 61" ${SK}/><path d="M60 16l4 5-5 2 4 5" stroke="#e53935" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+  wow: `<circle cx="30" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="50" cy="41" r="6" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="30" cy="41" r="2.5" fill="#222"/><circle cx="50" cy="41" r="2.5" fill="#222"/><ellipse cx="40" cy="58" rx="6" ry="8" fill="#7a1f1f"/>`,
+  sleep: `<path d="M24 43Q30 47 36 43M44 43Q50 47 56 43" ${SK}/><ellipse cx="40" cy="57" rx="4" ry="3" fill="#7a1f1f"/><text x="56" y="22" font-size="14" font-weight="700" fill="#4a7bd6">Z</text><text x="64" y="12" font-size="10" font-weight="700" fill="#4a7bd6">z</text>`,
+  love: `<path d="M30 46C20 40 23 33 30 36C37 33 40 40 30 46ZM50 46C40 40 43 33 50 36C57 33 60 40 50 46Z" fill="#e53950"/><path d="M28 55Q40 66 52 55" ${SK}/>`,
+  panic: `<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 33Q30 30 36 34M44 34Q50 30 56 33" stroke="#222" stroke-width="2.5" fill="none"/><path d="M29 60Q33 55 37 60Q41 55 45 60Q49 55 52 60" ${SK}/><path d="M63 28q5 8 0 12q-5-4 0-12" fill="#5ab4ff"/>`,
+  wink: `<circle cx="30" cy="42" r="3" fill="#222"/><path d="M44 42Q50 36 56 42" ${SK}/><path d="M28 54Q40 66 52 54" ${SK}/><ellipse cx="47" cy="61" rx="4" ry="3" fill="#ff7b8a"/><path d="M62 26l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z" fill="#ffd54a"/>`,
+  think: `<circle cx="30" cy="43" r="3" fill="#222"/><circle cx="50" cy="43" r="3" fill="#222"/><path d="M23 33Q30 27 37 32" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M44 36H57" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M32 60Q38 55 48 60" ${SK}/><text x="60" y="24" font-size="18" font-weight="700" fill="#7b4bd6">?</text>`,
+  shy: `<path d="M25 43Q30 38 35 43M45 43Q50 38 55 43" ${SK}/><circle cx="24" cy="52" r="7" fill="#ff7b8a" opacity=".85"/><circle cx="56" cy="52" r="7" fill="#ff7b8a" opacity=".85"/><path d="M35 58Q40 62 45 58" ${SK}/>`,
+  smug: `<path d="M23 43H37M43 43H57" stroke="#222" stroke-width="4" stroke-linecap="round"/><path d="M23 35L37 37M57 35L43 37" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M29 57Q42 64 53 51" ${SK}/>`,
+  bigcry: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><ellipse cx="40" cy="60" rx="9" ry="8" fill="#7a1f1f"/><path d="M27 46q-8 14-3 24q8-8 6-24M53 46q8 14 3 24q-8-8-6-24" fill="#5ab4ff"/>`,
+  thumb: `<path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M28 52Q40 64 52 52" ${SK}/><rect x="57" y="50" width="8" height="18" rx="4" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/><rect x="50" y="62" width="22" height="16" rx="5" fill="#ffd9a0" stroke="#c98a3b" stroke-width="2"/>`,
+  party: `<path d="M30 17L40 0L50 17Z" fill="#ff5d73" stroke="#c0303f" stroke-width="1.5"/><circle cx="40" cy="1.5" r="3" fill="#ffd54a"/><path d="M24 41Q30 33 36 41M44 41Q50 33 56 41" ${SK}/><path d="M27 51Q40 68 53 51Z" fill="#7a1f1f"/><rect x="8" y="22" width="4" height="4" fill="#59b7ff"/><rect x="69" y="18" width="4" height="4" fill="#ffd54a"/><rect x="72" y="44" width="4" height="4" fill="#5ad6a0"/><rect x="5" y="50" width="4" height="4" fill="#c77dff"/>`,
+  flat: `<circle cx="30" cy="42" r="3" fill="#222"/><circle cx="50" cy="42" r="3" fill="#222"/><path d="M24 35H36M44 35H56" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M31 58H49" ${SK}/>`,
+  rich: `<text x="30" y="49" text-anchor="middle" font-size="17" font-weight="700" fill="#1a9b4a">$</text><text x="50" y="49" text-anchor="middle" font-size="17" font-weight="700" fill="#1a9b4a">$</text><path d="M26 54Q40 70 54 54Z" fill="#7a1f1f"/>`,
+  shock: `<circle cx="30" cy="43" r="2.5" fill="#222"/><circle cx="50" cy="43" r="2.5" fill="#222"/><path d="M32 60Q36 56 40 60Q44 56 48 60" ${SK}/><path d="M22 20v8M30 17v9M50 17v9M58 20v8" stroke="#4a7bd6" stroke-width="2.5" stroke-linecap="round"/>`,
+  kiss: `<path d="M24 42Q30 47 36 42M44 42Q50 47 56 42" ${SK}/><circle cx="40" cy="58" r="4" fill="#e53950"/><path d="M63 34C55 28 58 21 63 24C68 21 71 28 63 34Z" fill="#e53950"/>`,
+  dizzy: `<circle cx="30" cy="42" r="7" fill="none" stroke="#222" stroke-width="2"/><circle cx="30" cy="42" r="3" fill="none" stroke="#222" stroke-width="2"/><circle cx="50" cy="42" r="7" fill="none" stroke="#222" stroke-width="2"/><circle cx="50" cy="42" r="3" fill="none" stroke="#222" stroke-width="2"/><path d="M30 60Q35 55 40 60Q45 65 50 60" ${SK}/>`,
+  sick: `<path d="M24 42L36 42M44 42L56 42" ${SK}/><path d="M29 60Q35 54 40 60Q45 66 51 58" ${SK}/><path d="M62 30q4 7 0 10q-4-3 0-10" fill="#7fb069"/>`,
+  evil: `<path d="M20 26L24 8L34 20ZM60 26L56 8L46 20Z" fill="#d6283a" stroke="#8c1624" stroke-width="1.5"/><path d="M23 36L37 42M57 36L43 42" stroke="#222" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="46" r="3" fill="#222"/><circle cx="50" cy="46" r="3" fill="#222"/><path d="M26 54Q40 68 54 54Z" fill="#7a1f1f"/><path d="M32 54v4M40 55v5M48 54v4" stroke="#fff" stroke-width="2.5"/>`,
+  angel: `<ellipse cx="40" cy="7" rx="15" ry="4.5" fill="none" stroke="#f4c95d" stroke-width="3.2"/><circle cx="30" cy="43" r="3" fill="#222"/><circle cx="50" cy="43" r="3" fill="#222"/><path d="M32 56Q40 62 48 56" ${SK}/>`,
+  sorry: `<circle cx="30" cy="43" r="6" fill="#222"/><circle cx="50" cy="43" r="6" fill="#222"/><circle cx="28" cy="41" r="2" fill="#fff"/><circle cx="48" cy="41" r="2" fill="#fff"/><path d="M22 34L36 30M58 34L44 30" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><path d="M33 60Q40 55 47 60" ${SK}/><path d="M62 36q4 7 0 10q-4-3 0-10" fill="#5ab4ff"/>`,
+};
+const stkBase = (k) => `<circle cx="40" cy="42" r="30" fill="${STK_SKIN[k] || '#ffd9a0'}" stroke="#c98a3b" stroke-width="2"/><path d="M11 38Q12 9 40 10Q68 9 69 38Q58 25 40 27Q22 25 11 38Z" fill="#3a2a1e"/><circle cx="25" cy="50" r="4" fill="#ff9d8a" opacity=".6"/><circle cx="55" cy="50" r="4" fill="#ff9d8a" opacity=".6"/>`;
+const isSticker = (t) => /^::st\d{1,2}$/.test(t) && Number(t.slice(4)) >= 1 && Number(t.slice(4)) <= STK.length;
+function stkHTML(i, noCap) {
+  const d = STK[i - 1];
+  const art = d.img ? `<img class="cust" src="${d.img}" alt="${d.alt || ''}">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${stkBase(d.k)}${STK_PART[d.k]}</svg>`;
+  return `<span class="stk">${art}${d.cap && !noCap ? `<small>${d.cap}</small>` : ''}</span>`;
+}
+const stkBuf = {}, stkLast = {};
+async function playStkSound(n) {
+  const d = STK[n - 1]; if (!d || !d.snd || !snd.on.sfx) return;
+  if (Date.now() - (stkLast[n] || 0) < 800) return;
+  stkLast[n] = Date.now();
+  const ctx = sndInit(); if (!ctx) return;
+  try {
+    if (ctx.state === 'suspended') await ctx.resume();
+    if (!stkBuf[n]) stkBuf[n] = await ctx.decodeAudioData(await (await fetch(d.snd)).arrayBuffer());
+    const src = ctx.createBufferSource(); src.buffer = stkBuf[n]; src.connect(snd.sfxGain); src.start();
+  } catch (e) { /* เล่นเสียงไม่ได้ก็ข้าม */ }
+}
+function preloadStk() {
+  const ctx = sndInit(); if (!ctx) return;
+  STK.forEach((d, i) => { if (d.snd && !stkBuf[i + 1]) fetch(d.snd).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { stkBuf[i + 1] = b; }).catch(() => {}); });
+}
+const STK_CAP_FROM = STK.findIndex((d) => d.cap === '555') + 1; // สติกเกอร์ตั้งแต่ 555 เป็นต้นไปโชว์ข้อความตอนเล่นด้วย
+function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4)), Number(t.slice(4)) < STK_CAP_FROM) : esc(t); }
+$('#stkPop').innerHTML = STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap || d.alt}">${stkHTML(i + 1)}</button>`).join('');
+$('#btnStk').onclick = (e) => { e.stopPropagation(); $('#stkPop').classList.toggle('on'); };
+$('#stkPop').onclick = (e) => {
+  const b = e.target.closest('button[data-stk]'); if (!b || !session) return;
+  $('#stkPop').classList.remove('on');
+  api('chat', { ...session, text: '::st' + b.dataset.stk }).catch(() => {});
+};
+document.addEventListener('click', (e) => { if (!e.target.closest('#stkPop') && !e.target.closest('#btnStk')) $('#stkPop').classList.remove('on'); });
+
+// ---------- จั่วไพ่สับที่นั่ง ----------
+let shufSeen = { n: -1, rev: false };
+function renderShuffle(s) {
+  const el = $('#shuf'), sh = s.shuffle, on = s.phase === 'shuffle' && !!sh;
+  $('#tablewrap').classList.toggle('shufon', on);
+  if (!on) { el.style.display = 'none'; el.innerHTML = ''; shufSeen = { n: -1, rev: false }; return; }
+  el.style.display = 'flex';
+  const me = s.you.id, inIt = sh.ids.includes(me), took = Object.values(sh.taken).includes(me);
+  const lab = (v) => (v === 1 ? 'A' : String(v));
+  const cnt = Object.keys(sh.taken).length;
+  if (shufSeen.n >= 0 && cnt > shufSeen.n) sfx('card');
+  const fresh = sh.revealed && !shufSeen.rev;
+  shufSeen = { n: cnt, rev: sh.revealed };
+  const n = sh.n, ord = sh.order;
+  const roleOf = (id) => {
+    if (!ord) return '';
+    const d = ord[0], sb = ord[n === 2 ? 0 : 1], bb = ord[n === 2 ? 1 : 2];
+    return (id === d ? '<span class="role d">D</span>' : '') + (id === sb ? ' <span class="role sb">SB</span>' : '') + (id === bb ? ' <span class="role bb">BB</span>' : '');
+  };
+  let cards = '';
+  for (let i = 0; i < n; i++) {
+    const pid = sh.taken[i];
+    if (sh.revealed) cards += `<div class="shslot"><div class="shc up${fresh ? ' flipin' : ''}">${lab(sh.vals[i])}</div><div class="who">${pid ? esc(nameOf(pid)) : ''}</div>${pid ? roleOf(pid) : ''}</div>`;
+    else cards += `<div class="shslot"><button class="shc${pid ? ' tk' : ''}${pid === me ? ' mine' : ''}" data-slot="${i}" ${pid || !inIt || took ? 'disabled' : ''}>${pid ? '' : '?'}</button><div class="who">${pid ? esc(nameOf(pid)) : ''}</div></div>`;
+  }
+  const t = sh.revealed ? '🔀 ผลจั่วไพ่ — กำลังย้ายที่นั่ง… <b class="cdn" data-sh="1">–</b>'
+    : `🔀 สับที่นั่งใหม่ · จั่วไพ่ 1 ใบ ${inIt ? (took ? '(รอคนอื่น…)' : '— แตะเลือกเลย!') : '(ดูอย่างเดียว)'} <b class="cdn" data-sh="1">–</b>`;
+  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่สูงสุด = BB · สูงรองลงมา = SB · ใบ A = D (ปุ่ม)</div>`;
+  el.querySelectorAll('button[data-slot]').forEach((b) => { b.onclick = () => api('shuffle', { ...session, slot: Number(b.dataset.slot) }).catch(() => {}); });
+}
+
+// ---------- แจกไพ่ช่วงรอตาถัดไป ----------
+let preDeal = { key: '', ids: new Set(), t: 0 };
+const preDealActive = (s) => preDeal.key === s.code + ':' + s.handNo && (s.phase === 'showdown' || s.phase === 'waiting');
+function checkPreDeal() {
+  return; // ยกเลิกการแจกไพ่ระหว่างรอ — แจกตอนเริ่มตาแทน
+  const s = state;
+  if (!s || !s.nextHandAt || (s.phase !== 'showdown' && s.phase !== 'waiting')) return;
+  const key = s.code + ':' + s.handNo;
+  if (preDeal.key === key || s.handNo % 15 === 0) return;
+  if (s.nextHandAt - (Date.now() + clockOffset) > 3600) return;
+  const ids = s.players.filter((p) => !p.out && !p.left && p.chips > 0).map((p) => p.id);
+  if (ids.length < 2) return;
+  preDeal = { key, ids: new Set(ids), t: Date.now() };
+  render();
+  const center = wrapPos($('#gBoard'));
+  for (let r = 0; r < 2; r++) ids.forEach((id, k) => {
+    const el = document.querySelector(`.seat[data-pid="${id}"] .plate`);
+    if (el) fly('fcard', center, wrapPos(el), 1, (r * ids.length + k) * 110, null);
+  });
+  for (let i = 0; i < Math.min(8, ids.length * 2); i++) setTimeout(() => sfx('card'), i * 110);
+}
+
+// ---------- จัดวางกองชิปไม่ให้ซ้อนทับสิ่งอื่น ----------
+// "ตาถัดไปใน x วินาที" ให้ลอยอยู่กึ่งกลางแถวไพ่กลางโต๊ะ
+function placeCd() {
+  const cd = document.querySelector('#gBanner .cdbig'), bd = $('#gBoard'); if (!cd || !bd) return;
+  cd.style.transform = '';
+  const a = cd.getBoundingClientRect(), b = bd.getBoundingClientRect();
+  cd.style.transform = `translateY(${((b.top + b.bottom) / 2 - (a.top + a.bottom) / 2).toFixed(1)}px)`;
+}
+// ไพ่ที่ผู้เล่นโชว์ ห้ามซ้อนกับไพ่กลาง: ขยับออกด้านข้าง (ไม่ตกขอบจอ) ถ้าไม่พอให้ย่อไพ่ลง
+function fixShown() {
+  const wrap = $('#tablewrap'), board = $('#gBoard'); if (!wrap || !board || !board.offsetWidth) return;
+  const B = board.getBoundingClientRect(), W = wrap.getBoundingClientRect();
+  const lim = { l: Math.max(W.left, 0) + 3, r: Math.min(W.right, innerWidth) - 3 };
+  wrap.querySelectorAll('.seat .mini.rev').forEach((m) => {
+    m.style.transform = ''; m.style.removeProperty('--cw'); m.style.height = '';
+    const cards = [...m.querySelectorAll('.card')]; if (cards.length < 2) return;
+    const box = () => { const r1 = cards[0].getBoundingClientRect(), r2 = cards[cards.length - 1].getBoundingClientRect(); return { l: Math.min(r1.left, r2.left), r: Math.max(r1.right, r2.right), t: Math.min(r1.top, r2.top), b: Math.max(r1.bottom, r2.bottom) }; };
+    let c = box();
+    if (c.r <= B.left - 4 || c.l >= B.right + 4 || c.b <= B.top - 2 || c.t >= B.bottom + 2) return; // ไม่ชนกับไพ่กลาง
+    const goLeft = (c.l + c.r) / 2 < (B.left + B.right) / 2;
+    const fit = () => {
+      c = box();
+      let dx = goLeft ? (B.left - 4) - c.r : (B.right + 4) - c.l;
+      const nl = c.l + dx, nr = c.r + dx;
+      if (nl < lim.l) dx += lim.l - nl; if (nr > lim.r) dx -= nr - lim.r;
+      return { dx, ok: goLeft ? c.r + dx <= B.left - 3 && c.l + dx >= lim.l - 0.5 : c.l + dx >= B.right + 3 && c.r + dx <= lim.r + 0.5 };
+    };
+    let f = fit();
+    if (!f.ok) { // พื้นที่ไม่พอ → ย่อไพ่ลงให้พอดี
+      const avail = goLeft ? (B.left - 4) - lim.l : lim.r - (B.right + 4);
+      const cw = Math.max(16, Math.floor((avail - 2) / 2));
+      m.style.setProperty('--cw', cw + 'px'); m.style.height = Math.round(cw * 1.4) + 'px';
+      f = fit();
+    }
+    m.style.transform = `translateX(${f.dx.toFixed(1)}px)`;
+  });
+}
+function layoutBets() {
+  const wrap = $('#tablewrap'), wr = wrap.getBoundingClientRect();
+  if (!wr.width) return;
+  const rel = (el, pad) => { const r = el.getBoundingClientRect(); return { l: r.left - wr.left - pad, t: r.top - wr.top - pad, r: r.right - wr.left + pad, b: r.bottom - wr.top + pad }; };
+  const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+  const obs = [];
+  const add = (sel, pad) => wrap.querySelectorAll(sel).forEach((e) => { if (e.offsetWidth) obs.push(rel(e, pad)); });
+  add('#gBoard', 6); add('.potrow', 4); add('.seat .plate', 1); add('.seat .mini', 2); add('.seat .act', 1); add('.seat .pos', 1); add('.seat .dbtn', 1); add('.bubble', 8); add('.fab', 2);
+  const bn = $('#gBanner'); if (bn && bn.textContent.trim()) obs.push(rel(bn, 2));
+  const placed = [];
+  wrap.querySelectorAll('.bet[data-bpid]').forEach((b) => {
+    const w = b.offsetWidth, h = b.offsetHeight;
+    let px = (parseFloat(b.dataset.lx) / 100) * wr.width, py = (parseFloat(b.dataset.ly) / 100) * wr.height;
+    { // จุดเริ่มต้น: ชิดขอบโปรไฟล์ด้านที่หันเข้าหาศูนย์กลางโต๊ะ
+      const pl = wrap.querySelector(`.seat[data-pid="${b.dataset.bpid}"] .plate`);
+      if (pl) {
+        const r = pl.getBoundingClientRect(), pw = r.width, ph = r.height, cx = r.left - wr.left + pw / 2, cy = r.top - wr.top + ph / 2;
+        let dx = wr.width / 2 - cx, dy = wr.height * 0.46 - cy; const len = Math.hypot(dx, dy) || 1; dx /= len; dy /= len;
+        const g = 3, tx = Math.abs(dx) > 0.001 ? (pw / 2 + w / 2 + g) / Math.abs(dx) : 1e9, ty = Math.abs(dy) > 0.001 ? (ph / 2 + h / 2 + g) / Math.abs(dy) : 1e9, t = Math.min(tx, ty);
+        px = cx + dx * t; py = cy + dy * t;
+      }
+    }
+    let best = null;
+    { // สแกนรอบโปรไฟล์ เลือกจุดว่างที่ใกล้ขอบโปรไฟล์ที่สุด (เอียงเข้าหาโต๊ะนิดหน่อย)
+      const pl = wrap.querySelector(`.seat[data-pid="${b.dataset.bpid}"] .plate`);
+      const pr = pl ? rel(pl, 0) : { l: px - 20, t: py - 20, r: px + 20, b: py + 20 };
+      const tcx = wr.width / 2, tcy = wr.height * 0.46;
+      for (let oy = -110; oy <= 110; oy += 4) for (let ox = -130; ox <= 130; ox += 4) {
+        const cx = px + ox, cy = py + oy;
+        const box = { l: cx - w / 2, t: cy - h / 2, r: cx + w / 2, b: cy + h / 2 };
+        if (box.l < 2 || box.t < 2 || box.r > wr.width - 2 || box.b > wr.height - 2) continue;
+        if (obs.some((o) => hit(box, o)) || placed.some((o) => hit(box, o))) continue;
+        const gx = Math.max(pr.l - box.r, box.l - pr.r, 0), gy = Math.max(pr.t - box.b, box.t - pr.b, 0);
+        const gp = Math.hypot(gx, gy); if (gp > 70) continue;
+        const sc = gp * 0.8 + Math.hypot(cx - tcx, cy - tcy) * 0.7;
+        if (!best || sc < best.sc) best = { sc, cx, cy, box };
+      }
+    }
+    if (!best) best = { cx: px, cy: py, box: { l: px - w / 2, t: py - h / 2, r: px + w / 2, b: py + h / 2 } };
+    b.style.left = best.cx.toFixed(1) + 'px'; b.style.top = best.cy.toFixed(1) + 'px';
+    placed.push(best.box);
+  });
+}
+// ข้อความ/สติกเกอร์ของผู้เล่นต้องไม่บังไพ่กลาง: ถ้าชนให้ย้ายไปอยู่ใต้ที่นั่ง
+function fixBubbles() {
+  const wrap = $('#tablewrap'); if (!wrap) return;
+  const W = wrap.getBoundingClientRect(), M = 4;
+  const bound = { l: Math.max(W.left, 0) + M, t: W.top + M, r: Math.min(W.right, innerWidth) - M, b: W.bottom - M };
+  const R = (e, pad = 0) => { const r = e.getBoundingClientRect(); return { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad }; };
+  const ov = (a, c) => Math.max(0, Math.min(a.r, c.r) - Math.max(a.l, c.l)) * Math.max(0, Math.min(a.b, c.b) - Math.max(a.t, c.t));
+  const obs = [];
+  wrap.querySelectorAll('.seat .plate, .seat .mini, .seat .act, .seat .pos, #gBoard, .potrow, .fab, #gBanner').forEach((e) => { if (e.offsetWidth && !(e.id === 'gBanner' && !e.textContent.trim())) obs.push({ e, r: R(e, 2) }); });
+  const placed = [];
+  document.querySelectorAll('.seat .bubble').forEach((bb) => {
+    const seat = bb.closest('.seat'), plate = seat.querySelector('.plate');
+    bb.style.cssText = 'transform:none;margin:0;animation:bfade .2s ease-out;visibility:hidden;left:0;top:0;bottom:auto';
+    const w = bb.offsetWidth, h = bb.offsetHeight, P = R(plate), S = seat.getBoundingClientRect();
+    const mini = seat.querySelector('.mini'), mh = mini && mini.offsetHeight > 0 ? mini.offsetHeight : 0;
+    const cx = (P.l + P.r) / 2, cy = (P.t + P.b) / 2;
+    const cand = [
+      [cx - w / 2, P.t - mh - h - 2],   // เหนือโปรไฟล์ (พ้นไพ่)
+      [P.r + 4, cy - h / 2],            // ขวา
+      [P.l - w - 4, cy - h / 2],        // ซ้าย
+      [cx - w / 2, P.b + 18],           // ใต้ (พ้นป้ายสถานะ)
+      [P.r + 4, P.t - h + 10], [P.l - w - 4, P.t - h + 10],
+      [P.r + 4, P.b - 10], [P.l - w - 4, P.b - 10],
+    ];
+    let best = null;
+    for (const [x0, y0] of cand) {
+      const x = Math.min(bound.r - w, Math.max(bound.l, x0)), y = Math.min(bound.b - h, Math.max(bound.t, y0));
+      const box = { l: x, t: y, r: x + w, b: y + h };
+      let sc = Math.abs(x - x0) + Math.abs(y - y0); // ยิ่งถูกดันมาก ยิ่งแย่
+      for (const o of obs) { if (o.e.closest('.seat') === seat && (o.e === plate || o.e.classList.contains('pos'))) { sc += ov(box, o.r) * 50; continue; } sc += ov(box, o.r) * 20; }
+      for (const o of placed) sc += ov(box, o) * 20;
+      if (!best || sc < best.sc) best = { sc, x, y, box };
+      if (sc === 0) break;
+    }
+    bb.style.left = (best.x - S.left).toFixed(1) + 'px'; bb.style.top = (best.y - S.top).toFixed(1) + 'px';
+    bb.style.visibility = '';
+    placed.push(best.box);
+  });
+}
+let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { if (state && state.phase !== 'lobby') render(); }, 150); });
+
+
+// ---------- Tournament: กฎ / สถานะบายอินและเงินรางวัล ----------
+const rulesShown = new Set();
+function showRules(s) {
+  $('#rulesBox').innerHTML = `<h3>🏆 กฎ TOURNAMENT</h3>
+    <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
+    <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
+    <div class="ru r3"><i>🚫</i><span>เมื่อเหลือผู้เล่น <b>3 คนสุดท้าย</b> ไม่สามารถบายอินได้</span></div>
+    <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>55% · 30% · 15%</b> ตามลำดับ</span></div>
+    <div class="ru r5"><i>🎯</i><span><b>Bounty</b> หัวละ <b>20%</b> ของบายอิน (<b>${fmt(s.tourney.bountyEach)} ฿</b> ต่อคนที่กำจัดได้)</span></div>
+    <div class="gl">GOOD LUCK 🍀</div>
+    <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
+  $('#rulesModal').classList.add('on');
+  $('#rulesOk').onclick = () => $('#rulesModal').classList.remove('on');
+}
+function renderTourStatus() {
+  const s = state; if (!s || !s.tourney) return;
+  const T = s.tourney;
+  const rows = s.players.filter((p) => !p.left).map((p) => {
+    const used = 1 + (p.rebuys || 0), left = Math.max(0, T.maxRebuys - (p.rebuys || 0));
+    const st = p.out ? `💀 ตกรอบ อันดับ ${p.place}` : p.chips === 0 ? '⏳ รอบายอินเพิ่ม' : '🟢 ยังอยู่ในเกม';
+    const lf = p.out ? 0 : left;
+    const pct = T.maxRebuys ? Math.round((lf / T.maxRebuys) * 100) : 0;
+    return `<div class="r${p.out ? ' out' : ''}"><span class="nm">${esc(p.name)}${p.id === s.you.id ? ' (คุณ)' : ''}<small>${st}</small></span><span class="rbx${lf ? '' : ' zero'}" title="บายอินเหลือ ${lf}/${T.maxRebuys}"><span class="rbbar"><i style="width:${pct}%"></i></span><small>บายอินแล้ว ${used} ครั้ง · ${fmt(T.buyIn * used)} ฿</small></span></div>`;
+  }).join('');
+  const medals = ['🥇', '🥈', '🥉'];
+  const prz = (T.prizes || []).map((a, i) => `<div class="r"><span style="font-size:22px;width:30px;text-align:center">${medals[i]}</span><span class="nm">อันดับ ${i + 1} · ${[55, 30, 15][i]}%</span><span class="pz">${fmt(a)} ฿</span></div>`).join('');
+  const bty = (T.bounties || []).map((b) => `<div class="r"><span style="font-size:20px;width:30px;text-align:center">${b.kills ? '🎯' : '·'}</span><span class="nm">${esc(b.name)}<small>กำจัดได้ ${b.kills} คน</small></span><span class="pz">${fmt(b.amount)} ฿</span></div>`).join('');
+  $('#tstBox').innerHTML = `<h3>💰 สถานะ Tournament #${T.no}</h3>
+    ${T.startedAt ? `<div class="sub" style="margin:-2px 0 0">🕐 เริ่มเกมเมื่อ ${dt(T.startedAt)}</div>` : ''}
+    ${T.lateOpen ? `<div class="sub" style="margin:2px 0 0;color:#8fe3b5">🟢 ยังเปิดรับผู้เล่นใหม่ จนกว่าบลายด์จะขึ้น</div>` : ''}
+    <h4>สถานะบายอินของผู้เล่น</h4>${rows}
+    <div class="sub" style="margin:8px 0 0">📈 บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</div>
+    <h4>🏆 เงินรางวัล (รวม ${fmt(T.pool)} ฿)</h4>
+    ${prz}
+    <h4>🎯 Bounty (หัวละ ${fmt(T.bountyEach)} ฿)</h4>${bty}
+    <p class="tip" style="font-size:12px;color:var(--mute);margin:6px 0 0">เงินรางวัลอันดับ 1-3 = เงินรวม − Bounty ที่เกิดขึ้นแล้ว (${fmt(T.bountyTotal)} ฿) แล้วแบ่ง 55/30/15% จึงเปลี่ยนไปเรื่อยๆ เมื่อมีคนถูกกำจัดหรือมีคนบายอินเพิ่ม</p>
+    <button class="b gold full" id="tstOk" style="margin-top:12px">ปิด</button>`;
+  $('#tstOk').onclick = () => $('#tstModal').classList.remove('on');
+}
+$('#btnTour').onclick = () => { renderTourStatus(); $('#tstModal').classList.add('on'); };
+$('#tstModal').onclick = (e) => { if (e.target.id === 'tstModal') $('#tstModal').classList.remove('on'); };
+$('#rulesModal').onclick = (e) => { if (e.target.id === 'rulesModal') $('#rulesModal').classList.remove('on'); };
+
+// ---------- แชทในล็อบบี้ ----------
+$('#lbEmo').innerHTML = EMOJI.map((e) => `<button>${e}</button>`).join('') + STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap}" style="padding:0 4px">${stkHTML(i + 1)}</button>`).join('');
+$('#lbEmo').onclick = (e) => {
+  const b = e.target.closest('button'); if (!b || !session) return;
+  api('chat', { ...session, text: b.dataset.stk ? '::st' + b.dataset.stk : b.textContent }).catch(() => {});
+};
+function sendLobbyChat() { const t = $('#lbChatText').value.trim(); if (!t) return; $('#lbChatText').value = ''; api('chat', { ...session, text: t }).catch(() => {}); }
+$('#lbChatSend').onclick = sendLobbyChat;
+$('#lbChatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLobbyChat(); });
+
+
+// ---------- ปุ่มกากบาทปิดทุกหน้าต่างป๊อปอัป ----------
+(function () {
+  const ensureX = (el) => {
+    if (el.firstElementChild && el.firstElementChild.classList.contains('xbtn')) return;
+    const b = document.createElement('button'); b.className = 'xbtn'; b.setAttribute('aria-label', 'ปิด'); b.textContent = '✕';
+    el.insertBefore(b, el.firstChild);
+  };
+  document.querySelectorAll('.mbox, .sheet').forEach((el) => {
+    ensureX(el);
+    new MutationObserver(() => ensureX(el)).observe(el, { childList: true });
+  });
+  ensureX($('#stkPop'));
+  new MutationObserver(() => ensureX($('#stkPop'))).observe($('#stkPop'), { childList: true });
+  document.addEventListener('click', (e) => {
+    const x = e.target.closest && e.target.closest('.xbtn'); if (!x) return;
+    e.stopPropagation();
+    const d = x.closest('.drawer'); if (d) d.classList.remove('on');
+    const sp = x.closest('.stkpop'); if (sp) sp.classList.remove('on');
+  }, true);
+  // กันแตะสองครั้งแล้วซูม (iOS Safari ไม่สนใจ user-scalable=no)
+  let lastTouch = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouch < 350 && !(e.target.closest && e.target.closest('input, textarea'))) e.preventDefault();
+    lastTouch = now;
+  }, { passive: false });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach((t) => document.addEventListener(t, (e) => e.preventDefault()));
+})();
+
+// ---------- ผลทัวร์นาเมนต์ / ประวัติ ----------
+const MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' };
+const dt = (ms) => { try { return new Date(ms).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return String(ms); } };
+function resultHTML(r, meName) {
+  const mins = r.startedAt && r.endedAt ? Math.max(1, Math.round((r.endedAt - r.startedAt) / 60000)) : null;
+  const tot = (x) => (x.prize || 0) + (x.bounty || 0);
+  const netOf = (x) => tot(x) - x.buyIns * r.buyInAmount;
+  const netTxt = (n) => `<small class="net ${n >= 0 ? 'up' : 'dn'}">${n > 0 ? '+' : ''}${fmt(n)}฿</small>`;
+  const rows = r.rows.map((x) => `<div class="rrow"><span class="pl">${MEDAL[x.place] || x.place}${x.tied ? '<small style="display:block;font-size:10px">ร่วม</small>' : ''}</span><span class="nm">${esc(x.name)}${meName && x.name === meName ? ' (คุณ)' : ''}<small>บายอิน ${x.buyIns} ครั้ง (${fmt(x.buyIns * r.buyInAmount)}฿)${x.kills ? ' · 💀×' + x.kills : ''}</small></span><span class="pz">${x.prize ? 'เงินรางวัล ' + fmt(x.prize) + '฿' : ''}${x.bounty ? '<small style="color:var(--gold)">🎯 Bounty ' + fmt(x.bounty) + '฿</small>' : ''}</span><span class="pnet">${netTxt(netOf(x))}</span></span></div>`).join('');
+  const mine = r.rows.find((x) => meName && x.name === meName);
+  const mineBox = mine ? `<div class="netbox ${netOf(mine) >= 0 ? 'up' : 'dn'}"><span>ส่วนต่างของคุณ<small>เงินรางวัล ${fmt(tot(mine))}฿ − บายอิน ${fmt(mine.buyIns * r.buyInAmount)}฿</small></span><b>${netOf(mine) > 0 ? '+' : ''}${fmt(netOf(mine))}฿</b></div>` : '';
+  const sum = r.rows.reduce((a, x) => a + tot(x), 0);
+  let chartBox = '';
+  if (r.chart && r.chart.pts && r.chart.pts.length > 1) {
+    const cs = chartColors({ chart: r.chart });
+    chartBox = `<div class="coinbox" style="margin-top:10px"><h4>📈 กราฟชิป</h4>${chartSVG({ chart: r.chart }, cs)}<div style="display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;margin-top:4px">${r.chart.ids.map((id, i) => `<span><i class="sw" style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;background:${cs[id]}"></i>${esc((r.chart.names || [])[i] || '')}</span>`).join('')}</div></div>`;
+  }
+  return `<h3>🏁 ผลทัวร์นาเมนต์ · ห้อง ${esc(r.code || '')}</h3>${mineBox}${rows}${chartBox}
+    <div class="sub" style="margin:10px 0 0">ส่วนต่าง = เงินรางวัล − ยอดบายอินของแต่ละคน<br>เงินรางวัลรวม <b>${fmt(r.pool)}฿</b> (บายอินทั้งหมด ${r.buyIns} ครั้ง × ${fmt(r.buyInAmount)}฿) · แจกจริง ${fmt(sum)}฿<br>
+    ชิปเริ่มต้น ${fmt(r.chips)} · บลายด์ ${fmt(r.blinds.sb)}/${fmt(r.blinds.bb)} เพิ่ม 2 เท่าทุก ${r.blinds.every} ตา (ตอนจบ ${fmt(r.blinds.lastSB)}/${fmt(r.blinds.lastBB)})<br>
+    ${r.startedAt ? `🕐 เริ่มเกม ${dt(r.startedAt)}<br>` : ''}🏁 จบเกม ${dt(r.endedAt)}<br>
+    เล่นทั้งหมด ${r.hands} ตา${mins ? ' · ใช้เวลา ~' + mins + ' นาที' : ''}</div>`;
+}
+function showResult(r, canClose) {
+  r = { code: state && state.code, ...r };
+  if (!r.chart && state && state.chart) { const nm = {}; state.players.forEach((p) => { nm[p.id] = p.name; }); r.chart = { ...state.chart, names: state.chart.ids.map((id) => nm[id] || '?') }; }
+  const me = state && state.players.find((p) => p.id === (state.you && state.you.id));
+  $('#resBox').innerHTML = resultHTML(r, me ? me.name : (ls('pp_name') || '')) + `<div class="row" style="margin-top:14px"><button class="b ghost" id="resClose">ปิด</button><button class="b gold" id="resLeave">ออกจากห้อง</button></div>`;
+  $('#resModal').classList.add('on');
+  $('#resClose').onclick = () => $('#resModal').classList.remove('on');
+  $('#resLeave').onclick = async () => { $('#resModal').classList.remove('on'); try { await api('leave', session); } catch (e) { /* ไม่เป็นไร */ } dropSession(); };
+}
+function loadHist() { try { return JSON.parse(ls('pp_tour_hist') || '[]'); } catch (e) { return []; } }
+function saveHist(r, code, myName) {
+  const list = loadHist();
+  if (list.some((x) => x.code === code && x.startedAt === r.startedAt)) return;
+  list.unshift({ ...r, code, myName, savedAt: Date.now() });
+  ls('pp_tour_hist', JSON.stringify(list.slice(0, 60)));
+}
+function showHist() {
+  const list = loadHist();
+  const items = list.map((r, i) => {
+    const mine = r.rows.find((x) => x.name === r.myName);
+    return `<div class="hrec" data-i="${i}"><b>${dt(r.startedAt || r.endedAt)}</b> · ห้อง ${esc(r.code)}<small>${r.startedAt ? 'เริ่ม ' + dt(r.startedAt) + ' · จบ ' + dt(r.endedAt) + '<br>' : ''}${r.rows.length} คน · รางวัลรวม ${fmt(r.pool)}฿ · ผู้ชนะ ${esc(r.rows[0] ? r.rows[0].name : '-')}${mine ? ` · คุณได้อันดับ ${mine.place}${mine.prize ? ' (' + fmt(mine.prize) + '฿)' : ''} · ส่วนต่าง ${((mine.prize || 0) - mine.buyIns * r.buyInAmount) > 0 ? '+' : ''}${fmt((mine.prize || 0) - mine.buyIns * r.buyInAmount)}฿` : ''}</small></div>`;
+  }).join('');
+  $('#resBox').innerHTML = `<h3>🏆 ประวัติทัวร์นาเมนต์</h3>${items || '<p class="hint">ยังไม่มีประวัติ — เล่นทัวร์นาเมนต์จนจบแล้วจะบันทึกไว้ที่นี่ (เก็บในเครื่องนี้)</p>'}<button class="b ghost full" id="resClose" style="margin-top:10px">ปิด</button>`;
+  $('#resModal').classList.add('on');
+  $('#resClose').onclick = () => $('#resModal').classList.remove('on');
+  $('#resBox').querySelectorAll('.hrec').forEach((el) => {
+    el.onclick = () => {
+      const r = list[Number(el.dataset.i)];
+      $('#resBox').innerHTML = resultHTML(r, r.myName) + '<div class="row" style="margin-top:14px"><button class="b ghost" id="resBack">← กลับ</button><button class="b gold" id="resClose2">ปิด</button></div>';
+      $('#resBack').onclick = showHist;
+      $('#resClose2').onclick = () => $('#resModal').classList.remove('on');
+    };
+  });
+}
+$('#btnHist').onclick = showHist;
+$('#resModal').onclick = (e) => { if (e.target.id === 'resModal') $('#resModal').classList.remove('on'); };
+let resShown = '';
+function checkTourResult(s) {
+  const r = s.tourney && s.tourney.result;
+  if (!r || s.phase !== 'over') return;
+  const key = s.code + ':' + r.startedAt;
+  if (resShown === key) return;
+  resShown = key;
+  const me = s.players.find((p) => p.id === s.you.id);
+  const nm = {}; s.players.forEach((p) => { nm[p.id] = p.name; });
+  const chart = s.chart ? { ...s.chart, names: s.chart.ids.map((id) => nm[id] || '?') } : null;
+  const full = { ...r, code: s.code, chart };
+  saveHist({ ...r, chart }, s.code, me ? me.name : (ls('pp_name') || ''));
+  sfx('win');
+  showResult(full, true);
+}
+
+// ---------- กราฟชิป ----------
+const LINE_COLORS = ['#f4c95d', '#4fc3f7', '#ef6b73', '#7be495', '#c792ea', '#ff9f43', '#5eead4', '#f78fb3', '#b8c0ff'];
+function chartColors(s) {
+  const m = {};
+  (s.chart ? s.chart.ids : []).forEach((id, i) => { m[id] = LINE_COLORS[i % LINE_COLORS.length]; });
+  return m;
+}
+function chartSVG(s, colors) {
+  const c = s.chart;
+  if (!c || c.pts.length < 2) return '<p class="hint" style="margin:6px 0">กราฟจะขึ้นหลังจบตาแรก</p>';
+  const W = 340, H = 210, L = 52, R = 10, T = 10, B = 24;
+  const pts = c.pts;
+  const xs = pts.map((p) => p[0]);
+  const x0 = xs[0], x1 = xs[xs.length - 1] || x0 + 1;
+  let ymax = 0;
+  pts.forEach((p) => p.slice(1).forEach((v) => { if (v != null && v > ymax) ymax = v; }));
+  ymax = Math.max(ymax, 1);
+  const step = Math.pow(10, Math.floor(Math.log10(ymax)));
+  const top = Math.ceil(ymax / step) * step;
+  const X = (h) => L + ((h - x0) / Math.max(1, x1 - x0)) * (W - L - R);
+  const Y = (v) => T + (1 - v / top) * (H - T - B);
+  let g = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = (top * i) / 4, y = Y(v);
+    g += `<line x1="${L}" x2="${W - R}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.1)"/><text x="${L - 5}" y="${y + 4}" text-anchor="end" fill="#8db5a2" font-size="10">${fmt(Math.round(v))}</text>`;
+  }
+  const every = Math.max(1, Math.ceil((x1 - x0) / 6));
+  for (let h = x0; h <= x1; h += every) g += `<text x="${X(h)}" y="${H - 7}" text-anchor="middle" fill="#8db5a2" font-size="10">${h}</text>`;
+  g += `<text transform="translate(11 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle" fill="#8db5a2" font-size="11">จำนวนชิป</text>`;
+  c.ids.forEach((id, i) => {
+    let d = '', last = null;
+    pts.forEach((p) => {
+      const v = p[i + 1];
+      if (v == null) { last = null; return; }
+      d += (last == null ? 'M' : 'L') + X(p[0]).toFixed(1) + ' ' + Y(v).toFixed(1) + ' ';
+      last = v;
+    });
+    if (d) g += `<path d="${d}" fill="none" stroke="${colors[id]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${g}</svg>`;
+}
+
+// ---------- ลิ้นชัก ----------
+function openDrawer(tab) {
+  drawerTab = tab;
+  $('#drawer').classList.add('on');
+  if (tab === 'chat') { unread = false; $('#btnMenu').classList.remove('has'); }
+  renderDrawer();
+}
+function closeDrawer() { $('#drawer').classList.remove('on'); }
+$('#btnMenu').onclick = () => openDrawer(drawerTab === 'log' ? 'log' : 'chat');
+$('#btnCoin').onclick = () => openDrawer('coin');
+$('#btnRoom').onclick = () => openDrawer('room');
+$('#btnLeave').onclick = leaveRoom;
+$('#drawer').onclick = (e) => { if (e.target.id === 'drawer') closeDrawer(); };
+document.querySelectorAll('.tabs button').forEach((b) => {
+  b.onclick = () => { drawerTab = b.dataset.tab; renderDrawer(); };
+});
+$('#emo').innerHTML = EMOJI.map((e) => `<button>${e}</button>`).join('');
+$('#emo').onclick = (e) => { if (e.target.tagName === 'BUTTON') api('chat', { ...session, text: e.target.textContent }).catch(() => {}); };
+function sendChat() {
+  const t = $('#chatText').value.trim(); if (!t) return;
+  $('#chatText').value = '';
+  api('chat', { ...session, text: t }).catch(() => {});
+}
+$('#chatSend').onclick = sendChat;
+$('#chatText').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat(); });
+
+function renderDrawer() {
+  document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === drawerTab));
+  const isSpec = !!(state && state.you && state.you.spectator);
+  $('#chatbar').style.display = drawerTab === 'chat' ? '' : 'none';
+  $('#drawer').classList.toggle('chatmode', drawerTab === 'chat');
+  const solo = drawerTab === 'room' || drawerTab === 'coin';
+  $('#tabs').style.display = solo ? 'none' : '';
+  $('#sheetTitle').style.display = solo ? 'block' : 'none';
+  $('#sheetTitle').textContent = drawerTab === 'coin' ? 'ยอดบายอินและสถิติ' : '👥 สมาชิกในห้อง';
+  const body = $('#tabbody');
+  const s = state; if (!s) return;
+  const me = s.players.find((p) => p.id === s.you.id) || {};
+  const stick =body.scrollTop + body.clientHeight >= body.scrollHeight - 40;
+  if (drawerTab === 'chat') {
+    body.innerHTML = '<div class="chatl">' + (s.chat.length ? s.chat.map((m) => `<div class="m"><b>${esc(m.name)}</b> ${msgHTML(m.text)}</div>`).join('') : '<p class="hint">ยังไม่มีข้อความ ลองส่งอิโมจิหรือสติกเกอร์ดูสิ</p>') + '</div>';
+  } else if (drawerTab === 'log') {
+    const hc = (c) => cardEl(c, '', '--cw:26px');
+    const opp = (o) => `<span class="op"><span class="hcs">${o.hole.map(hc).join('')}</span><small>${esc(o.name)} · ${esc(o.handName || '')}</small></span>`;
+    const cards = (s.hands || []).slice().reverse().map((x) => {
+      const hue = (x.h * 53) % 360;
+      const ws = x.winners.map((w) => `<div class="hw"><div class="hwt"><b>🏆 ${esc(w.name)}</b><span class="pf ${w.profit >= 0 ? 'up' : 'dn'}">กำไร ${w.profit > 0 ? '+' : ''}${fmt(w.profit)}฿</span></div>
+        <div class="hwd">${w.handName ? esc(w.handName) : (x.showdown ? '' : 'ทุกคนโฟลด์')}${w.won !== w.profit ? ` · ได้พ็อต ${fmt(w.won)}฿` : ''}</div>
+        ${w.hole ? `<div class="hrow"><span class="hl">ไพ่ในมือ</span><span class="hcs">${w.hole.map(hc).join('')}</span>${(x.others || []).length === 1 && x.winners.length === 1 ? opp(x.others[0]) : ''}</div>` : ''}</div>`).join('') + ((x.others || []).length && !(x.others.length === 1 && x.winners.length === 1) ? `<div class="hrow ops"><span class="hl">คู่แข่งที่เปิดสู้</span>${x.others.map(opp).join('')}</div>` : '');
+      return `<div class="hcard" style="--hc:${hue}"><div class="hh">ตาที่ ${x.h}</div>
+        <div class="hrow"><span class="hl">ไพ่กลาง</span><span class="hcs">${x.board.length ? x.board.map(hc).join('') : '<i class="hint">ไม่ได้เปิดไพ่กลาง</i>'}</span></div>${ws}</div>`;
+    }).join('');
+    body.innerHTML = (cards ? '<div class="hcards">' + cards + '</div>' : '') + '<div class="logl">' + s.log.slice().reverse().map((l) => `<p>${esc(l)}</p>`).join('') + '</div>';
+  } else if (drawerTab === 'coin') {
+    const buyIn = s.settings.startChips;
+    const colors = chartColors(s);
+    const T = s.tourney;
+    const rows = (T && T.roster ? T.roster : s.players).map((p) => T
+      ? `<div class="r"><span>${esc(p.name)}${p.out ? ` <i>(${p.left ? 'ออกจากห้อง · ' : ''}ตกรอบ #${p.place})</i>` : ''}</span><span class="rbw"><b>${fmt(T.buyIn * (1 + p.rebuys))}฿</b><span class="rbar" title="บายอินเพิ่มเหลือ ${Math.max(0, T.maxRebuys - p.rebuys)}/${T.maxRebuys}"><i style="width:${Math.max(0, Math.min(100, ((T.maxRebuys - p.rebuys) / T.maxRebuys) * 100))}%"></i></span></span></div>`
+      : `<div class="r"><span>${esc(p.name)}</span><span><b>${fmt(buyIn * (1 + p.rebuys))}</b>${p.rebuys ? ` <i>(ซื้อเพิ่ม ${p.rebuys} ครั้ง)</i>` : ''}</span></div>`).join('')
+      + (T ? `<div class="r" style="border-top:1px solid var(--line);margin-top:4px;padding-top:6px"><span>🏆 เงินรางวัลรวม</span><span><b>${fmt(T.pool)}฿</b></span></div>
+        <div class="r"><span><i>บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</i></span></div>
+        <div class="r"><span><i>${T.rebuyOpen ? 'ยังบายอินเพิ่มได้' : 'ปิดบายอินเพิ่มแล้ว (เหลือ 3 คนสุดท้าย)'}</i></span></div>
+        ${T.result ? '<button class="b gold full" id="dRes" style="margin-top:8px">ดูผลอันดับและเงินรางวัล</button>' : ''}` : '');
+    const lg = s.players.map((p) => {
+      const k = p.kills || 0;
+      return `<div class="lg"><span class="sw" style="background:${colors[p.id] || '#999'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span><span class="sk">${k ? '💀'.repeat(Math.min(k, 5)) + `<i>×${k}</i>` : '<i>–</i>'}</span></div>`;
+    }).join('');
+    body.innerHTML = `<div class="bi"><h4>${T ? 'ยอดบายอินรวม (฿)' : 'ยอดบายอินรวม'}</h4>${rows}</div>
+      <div class="coinbox"><h4>📈 กราฟชิป</h4>${chartSVG(s, colors)}</div>
+      <div class="coinbox"><h4>💀 ตบเกรียนแตก</h4>${lg}</div>`;
+    if ($('#dRes')) $('#dRes').onclick = () => showResult(s.tourney.result, true);
+  } else {
+    body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
+      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
+      ${(s.specList || []).length ? `<div class="vbox"><h4>👁 ผู้ชมที่กำลังดูอยู่ (${s.specList.length})</h4>${s.specList.map((x) => `<div class="vr"><span class="dot ${x.online ? '' : 'off'}"></span><span class="grow">${esc(x.name)}${x.id === s.you.id ? ' (คุณ)' : ''}</span>${x.voice ? `<span>${micIcon(x.voice, x.muted)}</span>` : ''}</div>`).join('')}</div>` : ''}
+      ${voiceBoxHTML(s)}
+`;
+    bindVoiceBox(body);
+    $('#dShare').onclick = share;
+    body.querySelectorAll('[data-kick]').forEach((b) => { b.onclick = () => { if (confirm('เชิญคนนี้ออกจากห้อง?')) api('kick', { ...session, target: b.dataset.kick }).catch(() => {}); }; });
+  }
+  if (drawerTab === 'chat') body.scrollTop = body.scrollHeight;
+}
+
+// ---------- ห้องเสียง (WebRTC เชื่อมตรงระหว่างเครื่อง เซิร์ฟเวอร์ส่งต่อแค่สัญญาณจับคู่) ----------
+const voice = {
+  mode: 'off',            // off | talk | listen
+  muted: false,
+  stream: null, ctx: null,
+  peers: new Map(),       // id -> peer
+  speaking: new Set(),
+  analysers: new Map(),   // id -> {an, buf, until}
+  localMute: new Set(),   // คนที่เราปิดเสียงเองฝั่งเรา
+  orphans: new Map(),     // id -> [ice ที่มาก่อน offer]
+  fails: new Map(),
+  ice: null, busy: false, chain: Promise.resolve(), needTap: false,
+};
+const myId = () => (state && state.you ? state.you.id : null);
+const isSpecNow = () => !!(state && state.you && state.you.spectator);
+const vmember = (id) => ((state && state.voice) || []).find((m) => m.id === id);
+
+async function getIce() {
+  if (voice.ice) return voice.ice;
+  try { voice.ice = (await (await fetch('/api/ice')).json()).iceServers; } catch (e) { /* ใช้ STUN สำรอง */ }
+  if (!voice.ice) voice.ice = [{ urls: 'stun:stun.l.google.com:19302' }];
+  return voice.ice;
+}
+
+function ensureCtx() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!voice.ctx) { try { voice.ctx = new AC(); } catch (e) { return null; } }
+  if (voice.ctx.state === 'suspended') voice.ctx.resume().catch(() => {});
+  return voice.ctx;
+}
+
+function watchStream(id, stream) {
+  const ctx = ensureCtx();
+  if (!ctx) return;
+  unwatch(id);
+  try {
+    const src = ctx.createMediaStreamSource(stream);
+    const an = ctx.createAnalyser(); an.fftSize = 512;
+    src.connect(an);
+    voice.analysers.set(id, { src, an, buf: new Uint8Array(an.fftSize), until: 0 });
+  } catch (e) { /* ตรวจเสียงพูดไม่ได้ก็ยังคุยได้ */ }
+}
+function unwatch(id) {
+  const a = voice.analysers.get(id);
+  if (a) { try { a.src.disconnect(); } catch (e) { /* noop */ } voice.analysers.delete(id); }
+  if (voice.speaking.delete(id)) paintTalking();
+}
+function paintTalking() {
+  document.querySelectorAll('.seat[data-pid]').forEach((el) => el.classList.toggle('talking', voice.speaking.has(el.dataset.pid)));
+}
+setInterval(() => {
+  if (!voice.analysers.size) return;
+  const now = Date.now(); let changed = false;
+  for (const [id, a] of voice.analysers) {
+    a.an.getByteTimeDomainData(a.buf);
+    let sum = 0;
+    for (let i = 0; i < a.buf.length; i++) { const v = (a.buf[i] - 128) / 128; sum += v * v; }
+    const loud = Math.sqrt(sum / a.buf.length) > 0.02;
+    const silent = id === myId() && voice.muted;
+    if (loud && !silent && !voice.localMute.has(id)) a.until = now + 350;
+    const on = a.until > now;
+    if (on !== voice.speaking.has(id)) { on ? voice.speaking.add(id) : voice.speaking.delete(id); changed = true; }
+  }
+  if (changed) paintTalking();
+}, 150);
+
+async function getMic() {
+  return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
+}
+
+async function joinVoice(want) {
+  if (!session || voice.busy) return;
+  voice.busy = true;
+  try {
+    let mode = want;
+    closeAllPeers();
+    if (voice.stream) { voice.stream.getTracks().forEach((t) => t.stop()); voice.stream = null; unwatch(myId()); }
+    if (mode === 'talk') {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nomic');
+        voice.stream = await getMic();
+      } catch (e) {
+        toast(location.protocol === 'http:' && location.hostname !== 'localhost' ? 'ไมค์ใช้ได้เฉพาะเว็บ https' : 'เปิดไมค์ไม่ได้ (ตรวจสอบสิทธิ์ไมค์ในเบราว์เซอร์) เข้าโหมดฟังอย่างเดียวแทน');
+        mode = 'listen';
+      }
+    }
+    ensureCtx();
+    voice.mode = mode; voice.muted = false; voice.fails.clear();
+    if (voice.stream) watchStream(myId(), voice.stream);
+    await getIce();
+    await api('voice', { ...session, mode, muted: false });
+  } catch (e) { voice.mode = 'off'; }
+  voice.busy = false;
+  renderMic(); refreshVoiceUI(); syncVoice();
+}
+
+function leaveVoice(silent) {
+  const was = voice.mode !== 'off';
+  closeAllPeers();
+  if (voice.stream) { voice.stream.getTracks().forEach((t) => t.stop()); voice.stream = null; }
+  for (const id of [...voice.analysers.keys()]) unwatch(id);
+  voice.mode = 'off'; voice.muted = false; voice.orphans.clear(); voice.fails.clear(); voice.needTap = false;
+  if (was && !silent && session) api('voice', { ...session, mode: 'off' }).catch(() => {});
+  renderMic();
+}
+
+function toggleMute() {
+  if (voice.mode !== 'talk' || !voice.stream) return;
+  voice.muted = !voice.muted;
+  voice.stream.getAudioTracks().forEach((t) => { t.enabled = !voice.muted; });
+  if (voice.muted) { voice.speaking.delete(myId()); paintTalking(); }
+  api('voice', { ...session, mode: 'talk', muted: voice.muted }).catch(() => {});
+  refreshVoiceUI();
+}
+
+// ----- เชื่อมต่อกับแต่ละคน -----
+function sendSignal(to, data) {
+  voice.chain = voice.chain.then(() => fetch('/api/signal', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...session, to, data }),
+  }).catch(() => {}));
+}
+
+function closePeer(id) {
+  const p = voice.peers.get(id);
+  if (!p) return;
+  voice.peers.delete(id);
+  p.closed = true;
+  clearTimeout(p.timer);
+  try { p.pc.ontrack = p.pc.onicecandidate = p.pc.onconnectionstatechange = null; p.pc.close(); } catch (e) { /* noop */ }
+  if (p.audio) { try { p.audio.pause(); p.audio.srcObject = null; p.audio.remove(); } catch (e) { /* noop */ } }
+  if (p.srcNode) { try { p.srcNode.disconnect(); p.gain.disconnect(); } catch (e) { /* noop */ } }
+  unwatch(id);
+}
+function closeAllPeers() { for (const id of [...voice.peers.keys()]) closePeer(id); }
+
+function newPeer(id, remoteMode) {
+  const pc = new RTCPeerConnection({ iceServers: voice.ice || [{ urls: 'stun:stun.l.google.com:19302' }] });
+  const p = { id, pc, sid: Math.random().toString(36).slice(2, 10), remoteSid: null, remoteMode, pending: [], haveRemote: false, status: 'connecting', audio: null, closed: false, timer: null };
+  voice.peers.set(id, p);
+  pc.onicecandidate = (e) => { if (e.candidate) sendSignal(id, { t: 'ice', sid: p.sid, for: p.remoteSid || undefined, c: e.candidate }); };
+  pc.ontrack = (e) => attachRemote(p, e.streams && e.streams[0] ? e.streams[0] : new MediaStream([e.track]));
+  pc.onconnectionstatechange = () => onPeerState(p);
+  return p;
+}
+
+function attachRemote(p, stream) {
+  if (!p.audio) {
+    const a = document.createElement('audio');
+    a.autoplay = true; a.playsInline = true; a.setAttribute('playsinline', '');
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    p.audio = a;
+  }
+  p.audio.srcObject = stream;
+  // เสียงเพื่อนผ่าน WebAudio เพื่อให้ปรับวอลุ่มได้ (iOS ปรับ volume ของ <audio> ไม่ได้)
+  const ctx = ensureCtx();
+  if (ctx && !p.gain) {
+    try { p.gain = ctx.createGain(); p.srcNode = ctx.createMediaStreamSource(stream); p.srcNode.connect(p.gain); p.gain.connect(ctx.destination); } catch (e) { p.gain = null; }
+  }
+  p.audio.muted = p.gain ? true : (voice.localMute.has(p.id) || !snd.on.voice);
+  applyVoiceVol();
+  const pl = p.audio.play();
+  if (pl && pl.catch) pl.catch(() => { voice.needTap = true; refreshVoiceUI(); });
+  watchStream(p.id, stream);
+}
+// iOS บางทีไม่ยอมเล่นเสียงจนกว่าจะแตะหน้าจอ
+document.addEventListener('click', () => {
+  if (voice.mode === 'off') return;
+  ensureCtx();
+  voice.peers.forEach((p) => { if (p.audio && p.audio.paused) p.audio.play().then(() => { voice.needTap = false; refreshVoiceUI(); }).catch(() => {}); });
+}, true);
+
+function addLocalTracks(p, offerer) {
+  if (voice.mode === 'talk' && voice.stream) {
+    voice.stream.getAudioTracks().forEach((t) => p.pc.addTrack(t, voice.stream));
+  } else if (offerer) {
+    p.pc.addTransceiver('audio', { direction: 'recvonly' });
+  }
+}
+
+async function startCall(id, remoteMode) {
+  const p = newPeer(id, remoteMode);
+  try {
+    addLocalTracks(p, true);
+    const offer = await p.pc.createOffer();
+    await p.pc.setLocalDescription(offer);
+    if (p.closed) return;
+    sendSignal(id, { t: 'offer', sid: p.sid, sdp: p.pc.localDescription.sdp });
+  } catch (e) { setPeerStatus(p, 'bad'); }
+}
+
+async function onSignal(msg) {
+  if (voice.mode === 'off' || !msg || !msg.data) return;
+  const { from, data } = msg;
+  let p = voice.peers.get(from);
+  try {
+    if (data.t === 'offer') {
+      if (p && p.remoteSid === data.sid) return;      // ซ้ำ
+      if (p) closePeer(from);
+      const v = vmember(from);
+      p = newPeer(from, v ? v.mode : 'talk');
+      p.remoteSid = data.sid;
+      await p.pc.setRemoteDescription({ type: 'offer', sdp: data.sdp });
+      if (p.closed) return;
+      addLocalTracks(p, false);
+      const ans = await p.pc.createAnswer();
+      await p.pc.setLocalDescription(ans);
+      p.haveRemote = true;
+      const early = (voice.orphans.get(from) || []).filter((o) => o.sid === data.sid);
+      voice.orphans.delete(from);
+      early.forEach((o) => p.pending.push(o.c));
+      sendSignal(from, { t: 'answer', sid: p.sid, for: data.sid, sdp: p.pc.localDescription.sdp });
+      flushPending(p);
+    } else if (data.t === 'answer') {
+      if (!p || data.for !== p.sid || p.remoteSid) return;
+      p.remoteSid = data.sid;
+      await p.pc.setRemoteDescription({ type: 'answer', sdp: data.sdp });
+      p.haveRemote = true;
+      flushPending(p);
+    } else if (data.t === 'ice') {
+      if (!p) {                                        // มาก่อน offer เก็บไว้ก่อน
+        const list = voice.orphans.get(from) || [];
+        if (list.length < 40) list.push({ sid: data.sid, c: data.c });
+        voice.orphans.set(from, list);
+        return;
+      }
+      if (data.for && data.for !== p.sid) return;       // ของรอบเก่า
+      if (p.remoteSid && data.sid !== p.remoteSid) return;
+      p.pending.push(data.c);
+      if (p.haveRemote) flushPending(p);
+    }
+  } catch (e) { if (p) setPeerStatus(p, 'bad'); }
+}
+
+function flushPending(p) {
+  const list = p.pending.splice(0);
+  list.forEach((c) => { p.pc.addIceCandidate(c).catch(() => {}); });
+}
+
+function setPeerStatus(p, st) {
+  if (p.status === st) return;
+  p.status = st;
+  refreshVoiceUI();
+}
+
+function onPeerState(p) {
+  if (p.closed) return;
+  const st = p.pc.connectionState;
+  if (st === 'connected') { voice.fails.delete(p.id); setPeerStatus(p, 'ok'); }
+  else if (st === 'failed') {
+    const n = (voice.fails.get(p.id) || 0) + 1;
+    voice.fails.set(p.id, n);
+    closePeer(p.id);
+    if (n >= 3) { toast('ต่อเสียงกับ ' + nameOf(p.id) + ' ไม่ได้ (เครือข่ายอาจบล็อก)'); const dead = { id: p.id, status: 'bad', dead: true, pc: { close() {} }, closed: false }; voice.peers.set(p.id, dead); refreshVoiceUI(); return; }
+    setTimeout(syncVoice, 1500);
+  }
+}
+
+// เทียบรายชื่อห้องเสียงจากเซิร์ฟเวอร์กับสายที่ต่ออยู่
+function syncVoice() {
+  if (voice.mode === 'off' || !state || voice.busy) return;
+  const me = vmember(myId());
+  if (!me) { rejoinVoice(); return; }
+  const others = (state.voice || []).filter((m) => m.id !== myId());
+  const ids = new Set(others.map((m) => m.id));
+  for (const id of [...voice.peers.keys()]) if (!ids.has(id)) closePeer(id);
+  for (const id of [...voice.orphans.keys()]) if (!ids.has(id)) voice.orphans.delete(id);
+  for (const m of others) {
+    const need = voice.mode === 'talk' || m.mode === 'talk';
+    let p = voice.peers.get(m.id);
+    if (p && (p.remoteMode !== m.mode || !need)) { voice.fails.delete(m.id); closePeer(m.id); p = null; }
+    if (!need || p) continue;
+    if ((voice.fails.get(m.id) || 0) >= 3) continue;
+    if (myId() < m.id) startCall(m.id, m.mode);          // id น้อยกว่าเป็นฝ่ายโทรหา
+    // ฝ่ายอื่นรอ offer (สร้าง peer ตอนได้รับ)
+  }
+  // เมื่อโหมดเปลี่ยน ปรับ remoteMode ของสายที่รออยู่
+  for (const p of voice.peers.values()) { const m = vmember(p.id); if (m) p.remoteMode = m.mode; }
+}
+
+let rejoining = false;
+async function rejoinVoice() {
+  if (rejoining || !session) return;
+  rejoining = true;
+  try {
+    closeAllPeers();
+    let mode = voice.mode;
+    if (mode === 'talk' && (!voice.stream || voice.stream.getAudioTracks().every((t) => t.readyState === 'ended'))) {
+      try { voice.stream = await getMic(); watchStream(myId(), voice.stream); } catch (e) { mode = 'listen'; voice.mode = 'listen'; }
+    }
+    if (voice.stream) voice.stream.getAudioTracks().forEach((t) => { t.enabled = !voice.muted; });
+    await api('voice', { ...session, mode, muted: mode === 'talk' && voice.muted });
+  } catch (e) { /* ลองใหม่รอบถัดไป */ }
+  setTimeout(() => { rejoining = false; }, 1500);
+}
+
+// ----- หน้าตา -----
+function renderMic() {
+  const b = $('#btnMic'); if (!b) return;
+  b.classList.remove('mic-on', 'mic-muted', 'mic-listen');
+  if (voice.mode === 'talk') { b.classList.add(voice.muted ? 'mic-muted' : 'mic-on'); b.innerHTML = micIcon('talk', voice.muted); }
+  else if (voice.mode === 'listen') { b.classList.add('mic-listen'); b.innerHTML = micIcon('listen'); }
+  else b.innerHTML = micIcon('talk', false);
+}
+$('#btnMic').onclick = () => {
+  if (!session) return;
+  if (voice.mode === 'off') joinVoice('talk');
+  else if (voice.mode === 'talk') toggleMute();
+  else joinVoice('talk');
+};
+
+function refreshVoiceUI() {
+  renderMic();
+  if (state && state.phase === 'lobby' && $('#lobby').classList.contains('on')) renderLobby();
+  if ($('#drawer').classList.contains('on') && (drawerTab === 'room' || drawerTab === 'coin') && state) renderDrawer();
+}
+
+function voiceBoxHTML(s) {
+  const spec = !!(s.you && s.you.spectator);
+  const list = (s.voice || []);
+  const on = voice.mode !== 'off';
+  const rows = list.map((m) => {
+    const self = m.id === s.you.id;
+    const p = voice.peers.get(m.id);
+    let st = '';
+    if (!self && on) {
+      if (!(voice.mode === 'talk' || m.mode === 'talk')) st = '<small>ฟังอยู่ทั้งคู่</small>';
+      else if (p && p.status === 'ok') st = '<small class="ok">เชื่อมต่อแล้ว</small>';
+      else if (p && p.status === 'bad') st = '<small class="bad">ต่อไม่ได้</small>';
+      else st = '<small>กำลังเชื่อมต่อ…</small>';
+    }
+    const icon = micIcon(m.mode, m.muted);
+    const mute = !self && on ? `<button class="b sm ghost" data-vmute="${m.id}">${voice.localMute.has(m.id) ? '🔈 เปิดเสียงเขา' : '🔇 ปิดเสียงเขา'}</button>` : '';
+    return `<div class="vr"><span>${icon}</span><span class="grow">${esc(m.name)}${self ? ' (คุณ)' : ''} ${st}</span>${mute}</div>`;
+  }).join('');
+  const btns = !on
+    ? '<button class="b green full" data-vjoin="talk">🎤 เข้าห้องเสียง (พูดได้)</button><button class="b ghost full" style="margin-top:8px" data-vjoin="listen">🎧 ฟังอย่างเดียว</button>'
+    : `<button class="b ghost full" data-vleave="1">ออกจากห้องเสียง</button>${voice.mode === 'listen' ? '<button class="b green full" style="margin-top:8px" data-vjoin="talk">🎤 เปิดไมค์พูด</button>' : ''}`;
+  return `<div class="vbox"><h4>🎤 ห้องเสียง</h4>${rows || '<p class="hint" style="margin:4px 0">ยังไม่มีใครในห้องเสียง</p>'}
+    <div style="margin-top:8px">${btns}</div>
+    ${voice.needTap ? '<p class="tip">แตะหน้าจอหนึ่งครั้งเพื่อเปิดเสียง</p>' : ''}
+    <p class="tip">${'ไมค์เปิดให้อัตโนมัติเมื่อเข้าห้อง · กดปุ่ม 🎤 เพื่อปิด/เปิดไมค์ · แนะนำให้ใส่หูฟังกันเสียงสะท้อน'}</p></div>`;
+}
+function bindVoiceBox(root) {
+  root.querySelectorAll('[data-vjoin]').forEach((b) => { b.onclick = () => joinVoice(b.dataset.vjoin); });
+  root.querySelectorAll('[data-vleave]').forEach((b) => { b.onclick = () => { leaveVoice(); renderDrawer(); }; });
+  root.querySelectorAll('[data-vmute]').forEach((b) => {
+    b.onclick = () => {
+      const id = b.dataset.vmute;
+      if (voice.localMute.has(id)) voice.localMute.delete(id); else voice.localMute.add(id);
+      applyVoiceVol();
+      if (voice.localMute.has(id)) { voice.speaking.delete(id); paintTalking(); }
+      renderDrawer();
+    };
+  });
+}
+
+// ---------- เสียง: เพลงพื้นหลัง / เอฟเฟกต์ / เสียงเพื่อน (สร้างเสียงเองด้วย WebAudio ไม่ต้องมีไฟล์เสียง) ----------
+const snd = { on: { bgm: true, sfx: true, voice: true, turn: true }, vol: { bgm: 0.5, sfx: 0.7, voice: 1, turn: 0.9 }, master: null, bgmGain: null, sfxGain: null, turnGain: null, track: 'music', card: 'classic', timer: 0, nextT: 0, step: 0, noiseBuf: null };
+try { const sv = JSON.parse(ls('pp_snd') || 'null'); if (sv) { Object.assign(snd.on, sv.on); Object.assign(snd.vol, sv.vol); } } catch (e) { /* ใช้ค่าเริ่มต้น */ }
+function saveSnd() { ls('pp_snd', JSON.stringify({ on: snd.on, vol: snd.vol, track: snd.track, card: snd.card })); }
+function sndInit() {
+  const ctx = ensureCtx();
+  if (!ctx) return null;
+  if (!snd.master) {
+    snd.master = ctx.createGain(); snd.master.connect(ctx.destination);
+    snd.bgmGain = ctx.createGain(); snd.sfxGain = ctx.createGain(); snd.turnGain = ctx.createGain();
+    snd.sfxGain.connect(snd.master); snd.turnGain.connect(snd.master);
+    // เสียงก้องเบาๆ ให้เพลงนุ่ม
+    const dl = ctx.createDelay(1); dl.delayTime.value = 0.34;
+    const fb = ctx.createGain(); fb.gain.value = 0.32;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1700;
+    snd.bgmGain.connect(snd.master); snd.bgmGain.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(snd.master);
+    const len = ctx.sampleRate; snd.noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = snd.noiseBuf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  }
+  return ctx;
+}
+function applySnd() {
+  const ctx = sndInit(); if (!ctx) return;
+  const t = ctx.currentTime;
+  snd.bgmGain.gain.setTargetAtTime(snd.on.bgm ? snd.vol.bgm * 0.45 : 0, t, 0.08);
+  snd.sfxGain.gain.setTargetAtTime(snd.on.sfx ? snd.vol.sfx : 0, t, 0.03);
+  snd.turnGain.gain.setTargetAtTime(snd.on.turn ? snd.vol.turn : 0, t, 0.03);
+  applyVoiceVol();
+  if (snd.on.bgm && snd.vol.bgm > 0) startBgm(); else stopBgm();
+}
+function applyVoiceVol() {
+  const ctx = voice.ctx;
+  voice.peers.forEach((p) => {
+    const g = snd.on.voice && !voice.localMute.has(p.id) ? snd.vol.voice : 0;
+    if (p.gain && ctx) p.gain.gain.setTargetAtTime(g, ctx.currentTime, 0.03);
+    else if (p.audio) { p.audio.muted = g === 0; try { p.audio.volume = Math.min(1, g); } catch (e) { /* iOS ปรับไม่ได้ */ } }
+  });
+}
+const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+function bgmNote(f, t, dur, type, vol, att, lpf) {
+  const ctx = voice.ctx;
+  const o = ctx.createOscillator(), g = ctx.createGain(), fl = ctx.createBiquadFilter();
+  o.type = type; o.frequency.value = f; fl.type = 'lowpass'; fl.frequency.value = lpf || 2200;
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(fl); fl.connect(g); g.connect(snd.bgmGain);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function bgmHat(t, vol) {
+  const ctx = voice.ctx; if (!ctx || !snd.noiseBuf) return;
+  const src = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+  src.buffer = snd.noiseBuf; fl.type = 'highpass'; fl.frequency.value = 7000;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+  src.connect(fl); fl.connect(g); g.connect(snd.bgmGain); src.start(t); src.stop(t + 0.09);
+}
+function bgmKick(t) {
+  const ctx = voice.ctx; if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.frequency.setValueAtTime(125, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.12);
+  g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+  o.connect(g); g.connect(snd.bgmGain); o.start(t); o.stop(t + 0.22);
+}
+const curTrack = () => (window.BGM_TRACKS || []).find((x) => x.id === snd.track) || (window.BGM_TRACKS || [])[0];
+const BGM_H = { note: bgmNote, hat: bgmHat, kick: bgmKick, mtof, state: {} };
+function bgmStep(step, t) { const tr = curTrack(); if (tr) tr.step(step, t, BGM_H); }
+function startBgm() {
+  if (snd.timer) return;
+  const ctx = voice.ctx; if (!ctx) return;
+  snd.nextT = ctx.currentTime + 0.15;
+  snd.timer = setInterval(() => {
+    const c = voice.ctx; if (!c || c.state !== 'running') return;
+    if (snd.nextT < c.currentTime) snd.nextT = c.currentTime + 0.1;
+    while (snd.nextT < c.currentTime + 0.7) { const tr = curTrack(); bgmStep(snd.step, snd.nextT); snd.nextT += 60 / (tr ? tr.bpm : 104) / 2; snd.step++; }
+  }, 150);
+}
+function stopBgm() { clearInterval(snd.timer); snd.timer = 0; }
+
+// เตือนด้วยกระดิ่งทุก 5 วินาที ถ้าถึงตาเราแล้วยังไม่ตัดสินใจ
+let nagT = null, nagKey = '';
+function nagSync(s, me) {
+  const on = !!(me && s.phase === 'hand' && s.toAct === me.id && s.options);
+  const key = on ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
+  if (key === nagKey) return;
+  clearInterval(nagT); nagT = null; nagKey = key;
+  if (on) nagT = setInterval(ringBell, 5000);
+}
+function ringBell() {
+  sfx('bell');
+  try { navigator.vibrate && navigator.vibrate([90, 60, 90]); } catch (_) {}
+  let b = document.getElementById('bellFx');
+  if (!b) { b = document.createElement('div'); b.id = 'bellFx'; b.textContent = '🔔'; b.setAttribute('aria-hidden', 'true'); document.body.appendChild(b); }
+  b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring');
+}
+function tone(f, dur, o = {}) {
+  if (!snd.on[o.bus || 'sfx']) return;
+  const ctx = sndInit(); if (!ctx) return;
+  const t = ctx.currentTime + (o.delay || 0);
+  const osc = ctx.createOscillator(), g = ctx.createGain();
+  osc.type = o.type || 'sine';
+  osc.frequency.setValueAtTime(f, t);
+  if (o.slide) osc.frequency.exponentialRampToValueAtTime(Math.max(40, f + o.slide), t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(o.vol || 0.3, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g); g.connect(o.bus === 'turn' ? snd.turnGain : snd.sfxGain); osc.start(t); osc.stop(t + dur + 0.03);
+}
+function noiseHit(dur, o = {}) {
+  if (!snd.on.sfx) return;
+  const ctx = sndInit(); if (!ctx || !snd.noiseBuf) return;
+  const t = ctx.currentTime + (o.delay || 0);
+  const src = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+  src.buffer = snd.noiseBuf; fl.type = 'bandpass'; fl.frequency.value = o.freq || 3000; fl.Q.value = o.q || 0.9;
+  g.gain.setValueAtTime(o.vol || 0.3, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(fl); fl.connect(g); g.connect(snd.sfxGain); src.start(t); src.stop(t + dur + 0.02);
+}
+let chipBuf = null, chipLoading = false;
+function loadChip() {
+  const ctx = sndInit(); if (!ctx || chipBuf || chipLoading) return; chipLoading = true;
+  fetch('/sounds/chip.mp3').then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { chipBuf = b; }).catch(() => { chipLoading = false; });
+}
+function chipSynth() { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); }
+const SFX = {
+  bell: () => { [0, 0.22].forEach((d) => [1175, 1760, 2349, 3136].forEach((f, i) => tone(f, 1.1 - i * 0.18, { bus: 'turn', vol: [0.34, 0.2, 0.12, 0.07][i], delay: d }))); },
+  click: () => tone(1250, 0.06, { type: 'triangle', vol: 0.16, slide: -450 }),
+  card: () => { const o = (window.CARD_SOUNDS || []).find((x) => x.id === snd.card) || (window.CARD_SOUNDS || [])[0]; if (o) o.play({ tone, noiseHit }); },
+  chip: () => {
+    const ctx = sndInit();
+    if (ctx && chipBuf) { // เสียงชิปจริงจากไฟล์ sounds/chip.mp3
+      const src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = chipBuf; g.gain.value = 0.9; src.connect(g); g.connect(snd.sfxGain); src.start(); return;
+    }
+    loadChip(); chipSynth();
+  },
+  chipSynth: () => chipSynth(),
+  _old: () => { tone(2400, 0.09, { type: 'triangle', vol: 0.17 }); tone(3200, 0.08, { type: 'triangle', vol: 0.13, delay: 0.045 }); noiseHit(0.05, { freq: 6500, vol: 0.12 }); },
+  fold: () => tone(340, 0.24, { vol: 0.24, slide: -170 }),
+  check: () => { tone(190, 0.1, { vol: 0.42, slide: -70 }); tone(190, 0.1, { vol: 0.42, slide: -70, delay: 0.13 }); },
+  raise: () => { SFX.chip(); tone(520, 0.16, { type: 'triangle', vol: 0.2, delay: 0.09, slide: 220 }); },
+  allin: () => { [392, 523, 659, 784].forEach((f, i) => tone(f, 0.3, { type: 'triangle', vol: 0.2, delay: i * 0.07 })); SFX.chip(); },
+  turn: () => [659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, 0.34, { vol: 0.34, delay: i * 0.12, bus: 'turn', type: i > 2 ? 'triangle' : 'sine' })),
+  win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.45, { type: 'triangle', vol: 0.24, delay: i * 0.1 })),
+  elim: () => [392, 330, 262].forEach((f, i) => tone(f, 0.4, { vol: 0.3, delay: i * 0.18 })),
+};
+function sfx(name) { try { if (SFX[name]) SFX[name](); } catch (e) { /* เสียงเล่นไม่ได้ก็ข้าม */ } }
+
+// เริ่มเสียงเมื่อแตะหน้าจอครั้งแรก (ข้อกำหนดของ iOS/เบราว์เซอร์) และมีเสียงคลิกทุกปุ่ม
+let sndArmed = false;
+document.addEventListener('pointerdown', () => {
+  if (!sndArmed) { sndArmed = true; applySnd(); setTimeout(() => { preloadStk(); loadChip(); }, 600); }
+  else { const c = ensureCtx(); if (c && c.state === 'suspended') c.resume().catch(() => {}); }
+}, true);
+document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('button, select, label.chk')) sfx('click'); }, true);
+
+function sndRowHTML(key, icon, label) {
+  return `<div class="snd-row"><div class="t"><span>${icon} ${label}</span><button class="tg ${snd.on[key] ? 'on' : ''}" data-tg="${key}" aria-label="เปิดปิด${label}"></button></div>
+    <input type="range" min="0" max="100" value="${Math.round(snd.vol[key] * 100)}" data-vol="${key}" aria-label="ระดับเสียง${label}"></div>`;
+}
+function pickHTML(key, label, list) {
+  return `<div class="snd-row"><div class="t"><span>🎼 ${label}</span></div><div class="pk">${(list || []).map((x) => `<button class="pkb${snd[key] === x.id ? ' on' : ''}" data-pk="${key}" data-id="${x.id}">${x.name}</button>`).join('')}</div></div>`;
+}
+function openSnd() {
+  $('#sndBox').innerHTML = `<h3>🔊 ตั้งค่าเสียง</h3>${sndRowHTML('bgm', '🎵', 'เพลงพื้นหลัง')}${sndRowHTML('sfx', '🔔', 'เสียงเอฟเฟกต์')}${sndRowHTML('turn', '⏰', 'เสียงเตือนถึงตา')}${sndRowHTML('voice', '🎙️', 'เสียงไมค์เพื่อน')}
+    <p class="tip" style="font-size:12px;color:var(--mute);margin:8px 0 0">iPhone: ถ้าไม่มีเสียง ลองปิดโหมดเงียบ (สวิตช์ข้างเครื่อง) และเพิ่มระดับเสียงเครื่อง</p>
+    <button class="b gold full" id="sndClose" style="margin-top:12px">ตกลง</button>`;
+  $('#sndModal').classList.add('on');
+  $('#sndClose').onclick = () => $('#sndModal').classList.remove('on');
+  $('#sndBox').querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; snd.on[k] = !snd.on[k]; b.classList.toggle('on', snd.on[k]); saveSnd(); applySnd(); if (k === 'sfx' && snd.on.sfx) sfx('chip'); if (k === 'turn' && snd.on.turn) sfx('turn'); }; });
+  $('#sndBox').querySelectorAll('[data-pk]').forEach((b) => {
+    b.onclick = () => {
+      const key = b.dataset.pk; snd[key] = b.dataset.id; saveSnd();
+      $('#sndBox').querySelectorAll(`[data-pk="${key}"]`).forEach((x) => x.classList.toggle('on', x === b));
+      if (key === 'card') { const was = snd.on.sfx; sfx('card'); if (!was) toast('เสียงเอฟเฟกต์ปิดอยู่'); }
+      else { snd.step = 0; BGM_H.state = {}; if (!snd.on.bgm) { snd.on.bgm = true; saveSnd(); const tg = $('#sndBox').querySelector('[data-tg="bgm"]'); if (tg) tg.classList.add('on'); } applySnd(); }
+    };
+  });
+  $('#sndBox').querySelectorAll('[data-vol]').forEach((r) => {
+    r.oninput = () => { snd.vol[r.dataset.vol] = Number(r.value) / 100; saveSnd(); applySnd(); };
+    r.onchange = () => { if (r.dataset.vol === 'sfx') sfx('chip'); if (r.dataset.vol === 'turn') sfx('turn'); };
+  });
+}
+$('#btnSnd').onclick = openSnd;
+$('#btnSnd2').onclick = openSnd;
+$('#sndModal').onclick = (e) => { if (e.target.id === 'sndModal') $('#sndModal').classList.remove('on'); };
+
+// ---------- เริ่มต้น ----------
+(function init() {
+  const saved = JSON.parse(ls('pp_session') || 'null');
+  if (saved && saved.code && saved.token && !(urlRoom && urlRoom.toUpperCase() !== saved.code)) {
+    session = saved; show('game'); connect();
+  } else show('home');
+})();
+</script>
+</body>
+</html>
