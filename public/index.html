@@ -491,8 +491,8 @@ html,body,*{touch-action:manipulation}
 .cf.on .cfk{background:linear-gradient(#2fc888,#1d9a68);box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 10px rgba(47,200,136,.5)}
 .cf.on .cfk::after{left:31px}
 .cf.on .cft b{color:#ffe9a8}
-.seat.mine-shown{z-index:90}
-.seat.mine-shown .mini{z-index:90}
+.seat.mine-shown{z-index:95}
+.seat.mine-shown .mini{z-index:95}
 .rrow .pz b{display:block;font-size:15px}
 .bet{background:none!important;padding:0!important}
 .bet .br>span:not(.pile){background:rgba(0,0,0,.6);border-radius:10px;padding:1px 8px}
@@ -540,6 +540,9 @@ html,body,*{touch-action:manipulation}
 .eqbar{height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden;width:90%}
 .eqbar i{display:block;height:100%;background:#7be08a;border-radius:3px}
 .eqbig.lose .eqbar i{background:#ff9b6b}
+.eqp{position:absolute;bottom:calc(100% + 3px);height:48px;display:flex;align-items:center;font-weight:800;font-size:15px;color:#ff9b6b;text-shadow:0 1px 3px #000;white-space:nowrap;z-index:4}
+.eqp.hi{color:#7be08a}
+.eqp.r{left:calc(100% - 2px)}.eqp.l{right:calc(100% - 2px)}
 .outsbox{margin:6px auto 0;padding:5px 8px 6px;border:1px solid rgba(255,155,107,.5);border-radius:10px;background:rgba(255,155,107,.07);text-align:center}
 .outsbox .oh{font-size:12px;color:#ffb48f;margin-bottom:4px}
 .outsbox .ofan{position:relative;height:calc(28px * 1.4);margin:0 auto}
@@ -675,9 +678,9 @@ html,body,*{touch-action:manipulation}
       <label class="f" for="sBuy">ค่าบายอิน (฿) · ฿1 = 10 ชิป</label>
       <select id="sBuy" class="in"><option value="50">50 ฿ = 500 ชิป</option><option value="100" selected>100 ฿ = 1,000 ชิป</option><option value="200">200 ฿ = 2,000 ชิป</option><option value="500">500 ฿ = 5,000 ชิป</option></select>
       <label class="f" for="sTBlinds">บลายด์เริ่มต้น</label>
-      <select id="sTBlinds" class="in"><option value="5/10">5 / 10</option><option value="10/20" selected>10 / 20</option><option value="25/50">25 / 50</option></select>
+      <select id="sTBlinds" class="in"><option value="5/10" selected>5 / 10</option><option value="10/20">10 / 20</option><option value="25/50">25 / 50</option></select>
       <label class="f" for="sLevel">บลายด์เพิ่ม 2 เท่าทุก</label>
-      <select id="sLevel" class="in"><option value="5">5 ตา</option><option value="10" selected>10 ตา</option><option value="15">15 ตา</option><option value="20">20 ตา</option></select>
+      <select id="sLevel" class="in"><option value="5">5 ตา</option><option value="10">10 ตา</option><option value="15" selected>15 ตา</option><option value="20">20 ตา</option></select>
       <p class="tip" style="font-size:12px;color:var(--mute);margin:8px 0 0">บายอินเพิ่มได้คนละ 2 ครั้ง ภายใน 5 ตาหลังชิปหมด · เหลือ 3 คนสุดท้ายปิดบายอิน · เริ่มแล้วไม่รับคนเพิ่ม · รางวัล 60/30/10%</p>
     </div>
     <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
@@ -832,7 +835,14 @@ async function doJoin(code) {
   const name = getName(); if (!name) return;
   const saved = JSON.parse(ls('pp_session') || 'null');
   try {
-    const d = await api('join', { code, name, token: saved && saved.code === code ? saved.token : undefined });
+    const tok = saved && saved.code === code ? saved.token : undefined;
+    const d = await api('join', { code, name, token: tok });
+    if (d.needConfirm) {
+      showRules({ tourney: d.tourney }, async () => {
+        try { const d2 = await api('join', { code, name, token: tok, confirm: true }); rulesShown.add(d2.code); startSession(d2); } catch (e) { /* แจ้งไปแล้ว */ }
+      });
+      return;
+    }
     startSession(d);
   } catch (e) { /* แจ้งไปแล้ว */ }
 }
@@ -1298,7 +1308,7 @@ function renderGame() {
     const x = Math.min(dense ? 90 : 89.5, Math.max(dense ? 10 : 10.5, 50 + rx * Math.cos(th))), y = 50 + ry * Math.sin(th);
     const isMe = !!me && p.id === me.id;
     const showCards = (!isMe || p.shown) && p.hole.length > 0;
-    const cls = ['seat', isMe ? 'me' : '', isMe && p.shown ? 'mine-shown' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
+    const cls = ['seat', isMe ? 'me' : '', p.shown && p.hole.length ? 'mine-shown' : '', s.toAct === p.id && s.phase === 'hand' ? 'turn' : '', p.folded ? 'folded' : '', winIds.has(p.id) ? 'win' : '', leadSet.has(p.id) ? 'lead' : '', voice.speaking.has(p.id) ? 'talking' : ''].join(' ');
     const bl = []; if (p.isDealer) bl.push(['d', 'D']); if (p.isSB) bl.push(['sb', 'SB']); if (p.isBB) bl.push(['bb', 'BB']);
     const badges = bl.map((x, k) => `<span class="pos ${x[0]}" style="top:${bl.length > 1 ? (dense ? 2 : 4) + k * (dense ? 17 : 21) : (dense ? 16 : 20)}px">${x[1]}</span>`).join('');
     const vm = (s.voice || []).find((m) => m.id === p.id);
@@ -1317,7 +1327,7 @@ function renderGame() {
     seats += `<div class="${cls}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-pid="${p.id}">
       ${b}<div class="mini${!pdSeat && showCards && p.hole[0] != null ? ' rev' : ''}${p.shown && p.hole[0] != null ? ' shown' : ''}${fxPlan.deal || pdFresh ? ' dealin' : ''}"${fxPlan.deal || pdFresh ? ` style="animation-delay:${((n + i) * 0.11 + 0.35).toFixed(2)}s"` : ''}>${pdSeat ? cardEl(null) + cardEl(null) : mini}</div>
       <div class="plate">${winIds.has(p.id) ? CROWN : ''}<div class="nm">${esc(p.name)}</div><div class="ch">${fmt(p.chips)}</div><div class="tm"><i></i></div>${vb}</div>
-      ${badges}${off}</div>`;
+      ${p.eqPct != null && s.runout && s.phase === 'hand' ? `<div class="eqp ${x < 50 ? 'r' : 'l'}${p.eqPct >= 50 ? ' hi' : ''}">${p.eqPct}%</div>` : ''}${badges}${off}</div>`;
     if (s.phase !== 'showdown' && (p.bet > 0 || (p.allIn && p.inHand && !p.folded))) {
       const k = dense ? 0.3 : 0.21;
       const bx = x + (50 - x) * k, by = y + (46 - y) * k;
@@ -1368,14 +1378,20 @@ function specStatus(s) {
   if (s.phase === 'hand' && s.toAct) return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
   return 'กำลังเริ่มตาใหม่…';
 }
-async function specJoin() {
+function specJoin() {
+  const s = state; if (!s || !s.you.spectator) return;
+  if (s.tourney) { showRules({ tourney: { buyIn: s.tourney.buyIn, bountyEach: s.tourney.bountyEach } }, () => specJoinGo(true)); return; }
+  specJoinGo(false);
+}
+async function specJoinGo(confirmed) {
   const s = state; if (!s || !s.you.spectator) return;
   const name = (ls('pp_name') || $('#name').value || '').trim() || (prompt('ชื่อของคุณ?') || '').trim();
   if (!name) return;
   ls('pp_name', name);
   const old = session;
   try {
-    const d = await api('join', { code: old.code, name });
+    const d = await api('join', { code: old.code, name, confirm: confirmed });
+    rulesShown.add(d.code);
     api('leave', old).catch(() => {}); // เอาตัวเองออกจากรายชื่อผู้ชม
     startSession(d);
     toast(s.phase === 'hand' ? 'เข้านั่งแล้ว เริ่มเล่นตาหน้า' : 'เข้านั่งแล้ว');
@@ -1383,11 +1399,11 @@ async function specJoin() {
 }
 function renderSpecPanel() {
   const s = state;
-  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.soleId, s.runout, !!s.nextHandAt, s.you.out, s.you.place, !!(s.tourney && s.tourney.result)]);
+  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.soleId, s.runout, !!s.nextHandAt, s.you.out, s.you.place, !!(s.tourney && s.tourney.result), !!(s.tourney && s.tourney.lateOpen)]);
   if (sig === panelSig) return;
   panelSig = sig;
   const full = s.players.filter((p) => !p.left).length >= 9;
-  const locked = !!(s.tourney && s.tourney.started);
+  const locked = !!(s.tourney && s.tourney.started && !s.tourney.lateOpen) || !!s.you.out;
   const title = s.you.out ? `💀 คุณตกรอบ · อันดับ ${s.you.place} · ดูต่อได้อย่างเดียว` : '👁 โหมดผู้ชม · ดูได้อย่างเดียว';
   const joinBtn = locked ? '' : `<button class="b green" id="sJoin" ${full ? 'disabled' : ''}>${full ? 'ห้องเต็ม' : 'เข้าร่วมเล่น'}</button>`;
   const resBtn = s.tourney && s.tourney.result ? '<button class="b gold" id="sRes">ดูผลอันดับ</button>' : '';
@@ -1606,7 +1622,8 @@ function preloadStk() {
   const ctx = sndInit(); if (!ctx) return;
   STK.forEach((d, i) => { if (d.snd && !stkBuf[i + 1]) fetch(d.snd).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { stkBuf[i + 1] = b; }).catch(() => {}); });
 }
-function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4)), true) : esc(t); }
+const STK_CAP_FROM = STK.findIndex((d) => d.cap === '555') + 1; // สติกเกอร์ตั้งแต่ 555 เป็นต้นไปโชว์ข้อความตอนเล่นด้วย
+function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4)), Number(t.slice(4)) < STK_CAP_FROM) : esc(t); }
 $('#stkPop').innerHTML = STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap || d.alt}">${stkHTML(i + 1)}</button>`).join('');
 $('#btnStk').onclick = (e) => { e.stopPropagation(); $('#stkPop').classList.toggle('on'); };
 $('#stkPop').onclick = (e) => {
@@ -1793,7 +1810,7 @@ let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setT
 
 // ---------- Tournament: กฎ / สถานะบายอินและเงินรางวัล ----------
 const rulesShown = new Set();
-function showRules(s) {
+function showRules(s, onJoin) {
   $('#rulesBox').innerHTML = `<h3>🏆 กฎ TOURNAMENT</h3>
     <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
     <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
@@ -1801,9 +1818,11 @@ function showRules(s) {
     <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>55% · 30% · 15%</b> ตามลำดับ</span></div>
     <div class="ru r5"><i>🎯</i><span><b>Bounty</b> หัวละ <b>20%</b> ของบายอิน (<b>${fmt(s.tourney.bountyEach)} ฿</b> ต่อคนที่กำจัดได้)</span></div>
     <div class="gl">GOOD LUCK 🍀</div>
-    <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
+    ${onJoin ? `<div class="acts" style="margin-top:10px"><button class="b ghost" id="rulesNo">ไม่เข้าร่วม</button><button class="b gold" id="rulesOk" style="font-size:18px">เข้าร่วม</button></div>`
+      : `<button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`}`;
   $('#rulesModal').classList.add('on');
-  $('#rulesOk').onclick = () => $('#rulesModal').classList.remove('on');
+  $('#rulesOk').onclick = () => { $('#rulesModal').classList.remove('on'); if (onJoin) onJoin(); };
+  if (onJoin) $('#rulesNo').onclick = () => $('#rulesModal').classList.remove('on');
 }
 function renderTourStatus() {
   const s = state; if (!s || !s.tourney) return;
@@ -2048,8 +2067,8 @@ function renderDrawer() {
     const buyIn = s.settings.startChips;
     const colors = chartColors(s);
     const T = s.tourney;
-    const rows = s.players.map((p) => T
-      ? `<div class="r"><span>${esc(p.name)}${p.out ? ` <i>(ตกรอบ #${p.place})</i>` : ''}</span><span class="rbw"><b>${fmt(T.buyIn * (1 + p.rebuys))}฿</b><span class="rbar" title="บายอินเพิ่มเหลือ ${Math.max(0, T.maxRebuys - p.rebuys)}/${T.maxRebuys}"><i style="width:${Math.max(0, Math.min(100, ((T.maxRebuys - p.rebuys) / T.maxRebuys) * 100))}%"></i></span></span></div>`
+    const rows = (T && T.roster ? T.roster : s.players).map((p) => T
+      ? `<div class="r"><span>${esc(p.name)}${p.out ? ` <i>(${p.left ? 'ออกจากห้อง · ' : ''}ตกรอบ #${p.place})</i>` : ''}</span><span class="rbw"><b>${fmt(T.buyIn * (1 + p.rebuys))}฿</b><span class="rbar" title="บายอินเพิ่มเหลือ ${Math.max(0, T.maxRebuys - p.rebuys)}/${T.maxRebuys}"><i style="width:${Math.max(0, Math.min(100, ((T.maxRebuys - p.rebuys) / T.maxRebuys) * 100))}%"></i></span></span></div>`
       : `<div class="r"><span>${esc(p.name)}</span><span><b>${fmt(buyIn * (1 + p.rebuys))}</b>${p.rebuys ? ` <i>(ซื้อเพิ่ม ${p.rebuys} ครั้ง)</i>` : ''}</span></div>`).join('')
       + (T ? `<div class="r" style="border-top:1px solid var(--line);margin-top:4px;padding-top:6px"><span>🏆 เงินรางวัลรวม</span><span><b>${fmt(T.pool)}฿</b></span></div>
         <div class="r"><span><i>บลายด์ตอนนี้ ${fmt(s.settings.sb)}/${fmt(s.settings.bb)} → ตาที่ ${T.nextLevelHand} เป็น ${fmt(T.nextSB)}/${fmt(T.nextBB)}</i></span></div>
@@ -2065,7 +2084,7 @@ function renderDrawer() {
     if ($('#dRes')) $('#dRes').onclick = () => showResult(s.tourney.result, true);
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
-      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
+      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}${((s.tourney && s.tourney.roster) || []).filter((r) => r.left && !s.players.some((p) => p.id === r.id)).map((r) => `<li style="opacity:.7"><span class="dot off"></span><span class="grow">${esc(r.name)} <i>(ออกจากห้องแล้ว · อันดับ ${r.place})</i></span>${me.isHost ? `<button class="b sm ghost" data-kick="${r.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
       ${(s.specList || []).length ? `<div class="vbox"><h4>👁 ผู้ชมที่กำลังดูอยู่ (${s.specList.length})</h4>${s.specList.map((x) => `<div class="vr"><span class="dot ${x.online ? '' : 'off'}"></span><span class="grow">${esc(x.name)}${x.id === s.you.id ? ' (คุณ)' : ''}</span>${x.voice ? `<span>${micIcon(x.voice, x.muted)}</span>` : ''}</div>`).join('')}</div>` : ''}
       ${voiceBoxHTML(s)}
 `;

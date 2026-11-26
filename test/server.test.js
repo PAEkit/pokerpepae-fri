@@ -48,6 +48,17 @@ function sse(code, token) {
   assert.strictEqual((await fetch(base + '/../server.js')).status === 200 && false, false);
   const trav = await fetch(base + '/%2e%2e/server.js');
   assert.notStrictEqual(trav.status, 200, 'ห้ามอ่านไฟล์นอก public');
+  {
+    const cc = await post('create', { name: 'H', settings: { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 10, turnTime: 0 } });
+    await post('join', { code: cc.body.code, name: 'X' });
+    const st = await post('start', { code: cc.body.code, token: cc.body.token });
+    assert.strictEqual(st.status, 200);
+    const nj = await post('join', { code: cc.body.code, name: 'Late' });
+    assert.strictEqual(nj.body.needConfirm, true, 'ผู้เข้าใหม่ต้องยืนยันหลังอ่านกฎ');
+    const nj2 = await post('join', { code: cc.body.code, name: 'Late', confirm: true });
+    assert(nj2.body.token, 'ยืนยันแล้วเข้าได้');
+    console.log('✓ late join confirm');
+  }
   console.log('✓ static files');
 
   // สร้างห้อง + เข้าห้อง

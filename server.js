@@ -153,7 +153,12 @@ async function handleApi(req, res, url) {
   }
   if (route === '/api/join') {
     const ctx = lookup(body.code, null);
-    const p = ctx.room.addPlayer(body.name, body.token);
+    const rm = ctx.room;
+    // ทัวร์นาเมนต์เริ่มแล้ว: ให้ผู้เข้าใหม่ยืนยันหลังอ่านกฎก่อน (คนเดิมที่กลับเข้าห้องไม่ต้อง)
+    if (rm.tour && rm.tour.started && rm.lateOpen() && !body.confirm && !(body.token && rm.playerByToken(body.token))) {
+      return json(res, 200, { needConfirm: true, code: rm.code, tourney: { buyIn: rm.settings.buyIn, bountyEach: rm.bountyPerHead() } });
+    }
+    const p = rm.addPlayer(body.name, body.token);
     return json(res, 200, { code: ctx.room.code, token: p.token });
   }
 
