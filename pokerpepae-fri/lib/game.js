@@ -169,6 +169,16 @@ class Room extends EventEmitter {
   kick(host, targetId) {
     if (host.id !== this.hostId) throw new UserError('เฉพาะเจ้าของห้องเท่านั้น');
     const t = this.playerById(targetId);
+    if (!t && this.tour && this.tour.started && !this.tour.over) {
+      // ผู้เล่นที่ออกจากห้องไปแล้ว: ลบออกจากรายชื่อและไม่นับบายอิน
+      const f = this.tour.finishers.find((x) => x.id === targetId);
+      if (!f) throw new UserError('ไม่พบผู้เล่น');
+      const q = this.players.find((x) => x.id === targetId);
+      if (q) q.kicked = true;
+      this.tourRemove({ id: f.id, name: f.name });
+      this.touch();
+      return;
+    }
     if (!t || t === host) throw new UserError('ไม่พบผู้เล่น');
     t.kicked = true;
     this.leave(t);

@@ -527,6 +527,18 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert.strictEqual(r.tour.finishers.find((f) => f.name === 'D').place, 3, 'อันดับคนที่ออกก่อนเลื่อนขึ้น');
   }
   console.log('✓ kick removes buy-in');
+  // ลบผู้เล่นที่ออกไปแล้ว: เอาบายอินออกจากเงินรางวัล
+  {
+    const r = new Room('KL', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 50, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, tourEndDelay: 0, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+    const q = ['A', 'B', 'C'].map((n) => r.addPlayer(n));
+    r.tour.started = true; r.handNo = 3;
+    r.leave(q[2]);
+    assert.strictEqual(r.totalBuyIns(), 3);
+    r.kick(q[0], q[2].id);
+    assert.strictEqual(r.totalBuyIns(), 2, 'ลบคนที่ออกไปแล้ว บายอินไม่นับ');
+    assert(!r.viewFor(q[0].token).tourney.roster.some((x) => x.name === 'C'));
+  }
+  console.log('✓ kick left player');
   console.log('ALL PASSED');
   process.exit(0);
 })();

@@ -835,7 +835,14 @@ async function doJoin(code) {
   const name = getName(); if (!name) return;
   const saved = JSON.parse(ls('pp_session') || 'null');
   try {
-    const d = await api('join', { code, name, token: saved && saved.code === code ? saved.token : undefined });
+    const tok = saved && saved.code === code ? saved.token : undefined;
+    const d = await api('join', { code, name, token: tok });
+    if (d.needConfirm) {
+      showRules({ tourney: d.tourney }, async () => {
+        try { const d2 = await api('join', { code, name, token: tok, confirm: true }); rulesShown.add(d2.code); startSession(d2); } catch (e) { /* แจ้งไปแล้ว */ }
+      });
+      return;
+    }
     startSession(d);
   } catch (e) { /* แจ้งไปแล้ว */ }
 }
@@ -1371,14 +1378,20 @@ function specStatus(s) {
   if (s.phase === 'hand' && s.toAct) return `รอ ${esc(nameOf(s.toAct))} ตัดสินใจ…`;
   return 'กำลังเริ่มตาใหม่…';
 }
-async function specJoin() {
+function specJoin() {
+  const s = state; if (!s || !s.you.spectator) return;
+  if (s.tourney) { showRules({ tourney: { buyIn: s.tourney.buyIn, bountyEach: s.tourney.bountyEach } }, () => specJoinGo(true)); return; }
+  specJoinGo(false);
+}
+async function specJoinGo(confirmed) {
   const s = state; if (!s || !s.you.spectator) return;
   const name = (ls('pp_name') || $('#name').value || '').trim() || (prompt('ชื่อของคุณ?') || '').trim();
   if (!name) return;
   ls('pp_name', name);
   const old = session;
   try {
-    const d = await api('join', { code: old.code, name });
+    const d = await api('join', { code: old.code, name, confirm: confirmed });
+    rulesShown.add(d.code);
     api('leave', old).catch(() => {}); // เอาตัวเองออกจากรายชื่อผู้ชม
     startSession(d);
     toast(s.phase === 'hand' ? 'เข้านั่งแล้ว เริ่มเล่นตาหน้า' : 'เข้านั่งแล้ว');
@@ -1386,11 +1399,11 @@ async function specJoin() {
 }
 function renderSpecPanel() {
   const s = state;
-  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.soleId, s.runout, !!s.nextHandAt, s.you.out, s.you.place, !!(s.tourney && s.tourney.result)]);
+  const sig = JSON.stringify(['spec', s.phase, s.handNo, s.street, s.toAct, s.players.length, s.soleId, s.runout, !!s.nextHandAt, s.you.out, s.you.place, !!(s.tourney && s.tourney.result), !!(s.tourney && s.tourney.lateOpen)]);
   if (sig === panelSig) return;
   panelSig = sig;
   const full = s.players.filter((p) => !p.left).length >= 9;
-  const locked = !!(s.tourney && s.tourney.started);
+  const locked = !!(s.tourney && s.tourney.started && !s.tourney.lateOpen) || !!s.you.out;
   const title = s.you.out ? `💀 คุณตกรอบ · อันดับ ${s.you.place} · ดูต่อได้อย่างเดียว` : '👁 โหมดผู้ชม · ดูได้อย่างเดียว';
   const joinBtn = locked ? '' : `<button class="b green" id="sJoin" ${full ? 'disabled' : ''}>${full ? 'ห้องเต็ม' : 'เข้าร่วมเล่น'}</button>`;
   const resBtn = s.tourney && s.tourney.result ? '<button class="b gold" id="sRes">ดูผลอันดับ</button>' : '';
@@ -1797,7 +1810,7 @@ let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setT
 
 // ---------- Tournament: กฎ / สถานะบายอินและเงินรางวัล ----------
 const rulesShown = new Set();
-function showRules(s) {
+function showRules(s, onJoin) {
   $('#rulesBox').innerHTML = `<h3>🏆 กฎ TOURNAMENT</h3>
     <div class="ru r1"><i>💰</i><span>บายอิน <b>${fmt(s.tourney.buyIn)} ฿</b></span></div>
     <div class="ru r2"><i>🔁</i><span>สามารถบายอินเพิ่มได้ <b>2 ครั้ง</b> หลังจากชิปหมด</span></div>
@@ -1805,9 +1818,11 @@ function showRules(s) {
     <div class="ru r4"><i>🏅</i><span>เงินรางวัล <b>55% · 30% · 15%</b> ตามลำดับ</span></div>
     <div class="ru r5"><i>🎯</i><span><b>Bounty</b> หัวละ <b>20%</b> ของบายอิน (<b>${fmt(s.tourney.bountyEach)} ฿</b> ต่อคนที่กำจัดได้)</span></div>
     <div class="gl">GOOD LUCK 🍀</div>
-    <button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`;
+    ${onJoin ? `<div class="acts" style="margin-top:10px"><button class="b ghost" id="rulesNo">ไม่เข้าร่วม</button><button class="b gold" id="rulesOk" style="font-size:18px">เข้าร่วม</button></div>`
+      : `<button class="b gold full" id="rulesOk" style="margin-top:10px;font-size:18px">รับทราบ ลุยเลย!</button>`}`;
   $('#rulesModal').classList.add('on');
-  $('#rulesOk').onclick = () => $('#rulesModal').classList.remove('on');
+  $('#rulesOk').onclick = () => { $('#rulesModal').classList.remove('on'); if (onJoin) onJoin(); };
+  if (onJoin) $('#rulesNo').onclick = () => $('#rulesModal').classList.remove('on');
 }
 function renderTourStatus() {
   const s = state; if (!s || !s.tourney) return;
@@ -2069,7 +2084,7 @@ function renderDrawer() {
     if ($('#dRes')) $('#dRes').onclick = () => showResult(s.tourney.result, true);
   } else {
     body.innerHTML = `<button class="b ghost full" id="dShare">🔗 ส่งลิงก์เชิญเพื่อน (รหัส ${esc(s.code)})</button>
-      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
+      <ul class="plist" style="margin-top:10px">${s.players.map((p) => `<li><span class="dot ${p.connected ? '' : 'off'}"></span><span class="grow">${esc(p.name)} · ${fmt(p.chips)}</span>${p.isHost ? '<span class="tag">เจ้าของห้อง</span>' : ''}${me.isHost && p.id !== me.id ? `<button class="b sm ghost" data-kick="${p.id}">เชิญออก</button>` : ''}</li>`).join('')}${((s.tourney && s.tourney.roster) || []).filter((r) => r.left && !s.players.some((p) => p.id === r.id)).map((r) => `<li style="opacity:.7"><span class="dot off"></span><span class="grow">${esc(r.name)} <i>(ออกจากห้องแล้ว · อันดับ ${r.place})</i></span>${me.isHost ? `<button class="b sm ghost" data-kick="${r.id}">เชิญออก</button>` : ''}</li>`).join('')}</ul>
       ${(s.specList || []).length ? `<div class="vbox"><h4>👁 ผู้ชมที่กำลังดูอยู่ (${s.specList.length})</h4>${s.specList.map((x) => `<div class="vr"><span class="dot ${x.online ? '' : 'off'}"></span><span class="grow">${esc(x.name)}${x.id === s.you.id ? ' (คุณ)' : ''}</span>${x.voice ? `<span>${micIcon(x.voice, x.muted)}</span>` : ''}</div>`).join('')}</div>` : ''}
       ${voiceBoxHTML(s)}
 `;
