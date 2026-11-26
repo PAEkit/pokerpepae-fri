@@ -201,6 +201,11 @@ async function handleApi(req, res, url) {
     return json(res, 200, { ok: true });
   }
 
+  if (route === '/api/chair') {
+    ctx.room.sitChair(needMember(ctx), body.chair === null || body.chair === undefined ? null : body.chair);
+    return json(res, 200, { ok: true });
+  }
+
   const p = needPlayer(ctx);
   switch (route) {
     case '/api/action': ctx.room.act(p, { type: body.type, amount: body.amount }); break;

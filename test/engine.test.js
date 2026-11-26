@@ -539,6 +539,28 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert(!r.viewFor(q[0].token).tourney.roster.some((x) => x.name === 'C'));
   }
   console.log('✓ kick left player');
+  // เก้าอี้ผู้ชม 3 ตัว
+  {
+    const r = new Room('CH', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 });
+    r.addPlayer('A');
+    const s1 = r.addSpectator('S1'), s2 = r.addSpectator('S2');
+    r.sitChair(s1, 0);
+    assert.strictEqual(r.viewFor(s2.token).chairs[0].name, 'S1');
+    assert.throws(() => r.sitChair(s2, 0), /นั่งเก้าอี้ตัวนี้แล้ว/);
+    assert.throws(() => r.sitChair(s2, 3), /ไม่ถูกต้อง/);
+    r.sitChair(s1, 2); r.sitChair(s2, 0);
+    assert.deepStrictEqual(r.viewFor(s2.token).chairs.map((c) => c && c.name), ['S2', null, 'S1']);
+    r.removeSpectator(s1);
+    assert.strictEqual(r.viewFor(s2.token).chairs[2], null, 'ผู้ชมออก เก้าอี้ว่าง');
+  }
+  {
+    const r = new Room('CO', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 50, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 });
+    const [a, b] = ['A', 'B'].map((n) => r.addPlayer(n));
+    assert.throws(() => r.sitChair(a, 1), /ตกรอบ/, 'ผู้เล่นที่ยังอยู่นั่งไม่ได้');
+    b.out = true; r.sitChair(b, 1);
+    assert.strictEqual(r.viewFor(a.token).chairs[1].name, 'B', 'ผู้ที่ตกรอบนั่งได้');
+  }
+  console.log('✓ spectator chairs');
   console.log('ALL PASSED');
   process.exit(0);
 })();
