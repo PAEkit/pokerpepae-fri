@@ -413,6 +413,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   const D = room.players[room.dealerIdx].name, SB = room.players[room.sbIdx].name, BB = room.players[room.bbIdx].name;
   assert.deepStrictEqual([D, SB, BB], [nm('D'), nm('SB'), nm('BB')], 'ตำแหน่ง D/SB/BB ต้องตรงกับผลจั่ว');
   assert.strictEqual(room.players.filter((p) => p.inHand).length, 4);
+  assert.deepStrictEqual([room.players[0].name, room.players[1].name, room.players[3].name], [SB, BB, D], 'ไพ่สูงสุด=SB รองลงมา=BB ตำแหน่งสุดท้ายตามเข็ม(ไพ่ต่ำสุด)=D');
   room.destroy();
   console.log('✓ shuffle seating, show cards');
 })();
@@ -563,6 +564,19 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert.strictEqual(r.viewFor(a.token).chairs[1].name, 'B', 'ผู้ที่ตกรอบนั่งได้');
   }
   console.log('✓ spectator chairs');
+  // เหลือ 2 คน ไม่สับที่นั่ง (ทุกโหมด)
+  {
+    const r = new Room('H2', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 1, shufRevealDelay: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
+    const [a, b] = ['A', 'B'].map((n) => r.addPlayer(n));
+    r.start(a);
+    for (let k = 0; k < 3; k++) {
+      for (let i = 0; i < 40 && r.phase === 'hand'; i++) { const p = r.players[r.toActIdx]; if (!p) break; const o = r.optionsFor(p); r.act(p, { type: o.canCheck ? 'check' : 'fold' }); }
+      r.startHand();
+      assert.notStrictEqual(r.phase, 'shuffle', '2 คนไม่ต้องจั่วไพ่สลับที่นั่ง');
+    }
+    r.destroy();
+  }
+  console.log('✓ no shuffle with 2 players');
   console.log('ALL PASSED');
   process.exit(0);
 })();

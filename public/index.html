@@ -300,7 +300,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--gold)}
 .vb svg{width:12px;height:12px}
 .vbox .vr svg{width:17px;height:17px;vertical-align:middle}
 #btnStk{left:6px;right:auto;bottom:4px;width:34px;height:32px;font-size:17px;border-radius:11px}
-.stkpop{position:absolute;left:6px;bottom:42px;z-index:60;background:#0c2a20;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.55);width:min(92%,300px)}
+.stkpop{position:absolute;left:6px;bottom:42px;z-index:200;background:#0c2a20;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.55);width:min(92%,300px)}
 .stkpop.on{display:grid}
 .stkpop button{border:0;background:rgba(255,255,255,.07);border-radius:10px;padding:3px 0 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .stkpop .stk svg,.stkpop .stk img{width:50px;height:50px}
@@ -1615,7 +1615,8 @@ function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_O
 
 // ---------- สติกเกอร์อารมณ์ (2 อันแรกเป็นรูป+เสียงของคุณ ในโฟลเดอร์ public/stickers · ที่เหลือเป็นภาพวาดต้นฉบับ) ----------
 const STK = [
-  { cap: 'หอมฉุย', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: 'มีอีกไหม!', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' }, { cap: 'เงี่ยนโว้ยย', alt: 'เงี่ยนโว้ยย', img: '/stickers/4.jpg', snd: '/stickers/4.mp3' }, { cap: 'hee', alt: 'hee', img: '/stickers/5.jpg', snd: '/stickers/5.mp3' }, { cap: 'อย่าให้มีครั้งที่2', alt: 'อย่าให้มีครั้งที่2', img: '/stickers/6.webp', snd: '/stickers/6.mp3' }, { cap: 'อย่าเสี่ยงกับพี่!', alt: 'อย่าเสี่ยงกับพี่!', img: '/stickers/7.png', snd: '/stickers/7.mp3' }, { cap: 'นี่มันทางของพี่!', alt: 'นี่มันทางของพี่!', img: '/stickers/8.png', snd: '/stickers/8.mp3' }, { cap: 'ขยี้!', alt: 'ขยี้!', img: '/stickers/9.png', snd: '/stickers/9.mp3' }, { cap: 'ไม่คณามือ', alt: 'ไม่คณามือ', img: '/stickers/10.png', snd: '/stickers/10.mp3' }, { cap: 'ไม่ได้แดกกูหรอก', alt: 'ไม่ได้แดกกูหรอก', img: '/stickers/11.png', snd: '/stickers/11.mp3' }, { cap: 'อย่าดีกว่าไอ้น้อง', alt: 'อย่าดีกว่าไอ้น้อง', img: '/stickers/12.png', snd: '/stickers/12.mp3' }, { cap: 'ไอ้เขียวแดกขาด', alt: 'ไอ้เขียวแดกขาด', img: '/stickers/13.png', snd: '/stickers/13.mp3' }, { cap: 'อย่ามาทำซ่า!', alt: 'อย่ามาทำซ่า!', img: '/stickers/14.png', snd: '/stickers/14.mp3' }, { cap: 'เด็กๆไปไอ้น้อง', alt: 'เด็กๆไปไอ้น้อง', img: '/stickers/15.png', snd: '/stickers/15.mp3' },
+  { cap: 'หอมฉุย', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: 'มีอีกไหม!', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' }, { cap: 'เงี่ยนโว้ยย', alt: 'เงี่ยนโว้ยย', img: '/stickers/4.jpg', snd: '/stickers/4.mp3' }, { cap: 'hee', alt: 'hee', img: '/stickers/5.jpg', snd: '/stickers/5.mp3' }, { cap: 'อย่าให้มีครั้งที่2', alt: 'อย่าให้มีครั้งที่2', img: '/stickers/6.webp', snd: '/stickers/6.mp3' }, { cap: 'อย่าเสี่ยงกับพี่!', alt: 'อย่าเสี่ยงกับพี่!', img: '/stickers/7.png', snd: '/stickers/7.mp3' }, { cap: 'นี่มันทางของพี่!', alt: 'นี่มันทางของพี่!', img: '/stickers/8.png', snd: '/stickers/8.mp3' }, { cap: 'ขยี้!', alt: 'ขยี้!', img: '/stickers/9.png', snd: '/stickers/9.mp3' }, { cap: 'ไม่คณามือ', alt: 'ไม่คณามือ', img: '/stickers/10.png', snd: '/stickers/10.mp3' }, { cap: 'ไม่ได้แดกกูหรอก', alt: 'ไม่ได้แดกกูหรอก', img: '/stickers/11.png', snd: '/stickers/11.mp3' }, { cap: 'อย่าดีกว่าไอ้น้อง', alt: 'อย่าดีกว่าไอ้น้อง', img: '/stickers/12.png', snd: '/stickers/12.mp3' }, { cap: 'ไอ้เขียวแดกขาด', alt: 'ไอ้เขียวแดกขาด', img: '/stickers/13.png', snd: '/stickers/13.mp3' }, { cap: 'อย่ามาทำซ่า!', alt: 'อย่ามาทำซ่า!', img: '/stickers/14.png', snd: '/stickers/14.mp3' }, { cap: 'เด็กๆไปไอ้น้อง', alt: 'เด็กๆไปไอ้น้อง', img: '/stickers/15.png', snd: '/stickers/15.mp3' }, { cap: 'บอกแล้วว่ากินนิ่มๆ', alt: 'บอกแล้วว่ากินนิ่มๆ', img: '/stickers/24.png', snd: '/stickers/24.mp3' },
+  { cap: 'Hi', alt: 'Hi', img: '/stickers/16.png' }, { cap: 'Superb!', alt: 'Superb!', img: '/stickers/17.png' }, { cap: 'คิดถึงนะครับ', alt: 'คิดถึงนะครับ', img: '/stickers/18.png' }, { cap: 'เย้!!!!', alt: 'เย้!!!!', img: '/stickers/19.png' }, { cap: 'สู้ ๆ นะครับ', alt: 'สู้ ๆ นะครับ', img: '/stickers/20.png' }, { cap: 'Good night!', alt: 'Good night!', img: '/stickers/21.png' }, { cap: '555', alt: '555', img: '/stickers/22.png' }, { cap: '', alt: 'สาธุ', img: '/stickers/23.png' },
   { cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' },
   { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' },
   { cap: 'แอบกระซิบ', k: 'wink' }, { cap: 'งง?', k: 'think' }, { cap: 'อาย', k: 'shy' }, { cap: 'หึๆ', k: 'smug' },
@@ -1674,7 +1675,7 @@ function preloadStk() {
   const ctx = sndInit(); if (!ctx) return;
   STK.forEach((d, i) => { if (d.snd && !stkBuf[i + 1]) fetch(d.snd).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((b) => { stkBuf[i + 1] = b; }).catch(() => {}); });
 }
-const STK_CAP_FROM = STK.findIndex((d) => d.cap === '555') + 1; // สติกเกอร์ตั้งแต่ 555 เป็นต้นไปโชว์ข้อความตอนเล่นด้วย
+const STK_CAP_FROM = STK.findIndex((d) => d.k === 'laugh') + 1; // สติกเกอร์ตั้งแต่ 555 เป็นต้นไปโชว์ข้อความตอนเล่นด้วย
 function msgHTML(t) { return isSticker(t) ? stkHTML(Number(t.slice(4)), Number(t.slice(4)) < STK_CAP_FROM) : esc(t); }
 $('#stkPop').innerHTML = STK.map((d, i) => `<button data-stk="${i + 1}" aria-label="${d.cap || d.alt}">${stkHTML(i + 1)}</button>`).join('');
 $('#btnStk').onclick = (e) => { e.stopPropagation(); $('#stkPop').classList.toggle('on'); };
@@ -1701,7 +1702,7 @@ function renderShuffle(s) {
   const n = sh.n, ord = sh.order;
   const roleOf = (id) => {
     if (!ord) return '';
-    const d = ord[0], sb = ord[n === 2 ? 0 : 1], bb = ord[n === 2 ? 1 : 2];
+    const sb = ord[0], bb = ord[1], d = n === 2 ? ord[0] : ord[n - 1];
     return (id === d ? '<span class="role d">D</span>' : '') + (id === sb ? ' <span class="role sb">SB</span>' : '') + (id === bb ? ' <span class="role bb">BB</span>' : '');
   };
   let cards = '';
@@ -1712,7 +1713,7 @@ function renderShuffle(s) {
   }
   const t = sh.revealed ? '🔀 ผลจั่วไพ่ — กำลังย้ายที่นั่ง… <b class="cdn" data-sh="1">–</b>'
     : `🔀 สับที่นั่งใหม่ · จั่วไพ่ 1 ใบ ${inIt ? (took ? '(รอคนอื่น…)' : '— แตะเลือกเลย!') : '(ดูอย่างเดียว)'} <b class="cdn" data-sh="1">–</b>`;
-  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่สูงสุด = BB · สูงรองลงมา = SB · ใบ A = D (ปุ่ม)</div>`;
+  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่สูงสุด = SB · รองลงมา = BB · ไล่ตามเข็มจนไพ่ต่ำสุด (A) = D (ปุ่ม)</div>`;
   el.querySelectorAll('button[data-slot]').forEach((b) => { b.onclick = () => api('shuffle', { ...session, slot: Number(b.dataset.slot) }).catch(() => {}); });
 }
 
