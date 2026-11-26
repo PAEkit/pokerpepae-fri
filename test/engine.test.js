@@ -509,6 +509,8 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert.strictEqual(ea.pct + eb.pct, 100); assert(!ea.trailing && ea.outs.length === 0);
     assert(eb.trailing && eb.outs.length === 12, 'KK vs AQ♥ บนบอร์ด 9♥5♥2♣ มี 12 outs: ' + eb.outs.length);
     assert.strictEqual(ea.pct, 54);
+    assert.strictEqual(ea.dangers.length, 12, 'KK: ไพ่ที่ทำให้ AQ♥ แซง 12 ใบ');
+    assert.deepStrictEqual(ea.dangers, eb.outs, 'ไพ่แซง = outs ของคนตาม');
     assert.strictEqual(r.viewFor(a.token).eq.hasOwnProperty('other'), false);
     r.runout = false; assert.strictEqual(r.viewFor(a.token).eq, null, 'ไม่แสดงระหว่างเดิมพัน');
   }

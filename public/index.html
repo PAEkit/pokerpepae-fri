@@ -544,20 +544,24 @@ html,body,*{touch-action:manipulation}
 .eqp{position:absolute;left:50%;bottom:calc(100% + 1px);transform:translateX(-50%);font-weight:800;font-size:14px;line-height:1;color:#ff9b6b;text-shadow:0 1px 3px #000,0 0 2px #000;white-space:nowrap;pointer-events:none}
 .eqp.hi{color:#7be08a}
 .outsbox{margin:6px auto 0;padding:5px 8px 6px;border:1px solid rgba(255,155,107,.5);border-radius:10px;background:rgba(255,155,107,.07);text-align:center}
+.outsbox.danger{border-color:rgba(255,93,107,.6);background:rgba(255,93,107,.07)}
+.outsbox.danger .oh{color:#ff8a93}
 .outsbox .oh{font-size:12px;color:#ffb48f;margin-bottom:4px}
 .outsbox .ofan{position:relative;height:calc(28px * 1.4);margin:0 auto}
 .outsbox .ofan .oc{position:absolute;top:0;--cw:28px}
 
-.chairs{position:absolute;left:calc(100% - 112px);top:-3px;display:flex;gap:4px;transform:rotate(22deg);transform-origin:0 0;z-index:2;pointer-events:none}
-.chair{position:relative;width:32px;height:42px;border:0;background:none;padding:0;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.chairs{position:absolute;left:calc(100% - 133px);top:-23px;display:flex;gap:3px;transform:rotate(12deg);transform-origin:0 0;z-index:2;pointer-events:none}
+.chair{position:relative;width:28px;height:37px;border:0;background:none;padding:0;pointer-events:auto;-webkit-tap-highlight-color:transparent}
 .chair.ro{pointer-events:none}
 .chair img{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5));pointer-events:none}
-.chair .free{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.9);color:#a01d2a;font-weight:900;font-size:15px;line-height:17px;text-align:center;animation:chpulse 1.4s infinite}
+.chair .free{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.9);color:#a01d2a;font-weight:900;font-size:13px;line-height:15px;text-align:center;animation:chpulse 1.4s infinite}
 @keyframes chpulse{50%{opacity:.35}}
-.chair .pp{position:absolute;left:50%;top:40%;width:28px;margin:-14px 0 0 -14px;pointer-events:none}
+.chair .pp{position:absolute;left:50%;top:34%;width:22px;margin:-11px 0 0 -11px;pointer-events:none}
 .chair.pop .pp{animation:chsit .9s cubic-bezier(.3,1.4,.5,1) both}
-@keyframes chsit{0%{transform:translateY(-36px) scale(1.5);opacity:0}45%{transform:translateY(0) scale(.85);opacity:1}65%{transform:scale(1.1)}82%{transform:scale(.97)}100%{transform:none}}
-.chair .cn{position:absolute;left:50%;bottom:calc(100% + 1px);transform:translateX(-50%) rotate(-22deg);font-size:9px;line-height:1.3;color:#fff;background:rgba(0,0,0,.6);padding:0 5px;border-radius:7px;white-space:nowrap;max-width:64px;overflow:hidden;text-overflow:ellipsis}
+@keyframes chsit{0%{transform:translateY(-32px) scale(1.5);opacity:0}45%{transform:translateY(0) scale(.85);opacity:1}65%{transform:scale(1.1)}82%{transform:scale(.97)}100%{transform:none}}
+.chair .cn{position:absolute;left:50%;top:22px;transform:translateX(-50%) rotate(-12deg);display:flex;align-items:center;gap:1px;font-size:8px;line-height:1.25;color:#fff;background:rgba(0,0,0,.65);padding:0 3px;border-radius:6px;white-space:nowrap;max-width:38px}
+.chair .cn svg{width:1em;height:1em;flex:none}
+.chair .cn b{font-weight:400;overflow:hidden;text-overflow:ellipsis}
 .chair.me .cn{background:var(--gold);color:#3a2a00;font-weight:700}
 </style>
 </head>
@@ -1236,18 +1240,19 @@ function chairPerson(id) {
   const c = CH_COL[h % CH_COL.length];
   return `<svg class="pp" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="27" rx="16" ry="9" fill="${c}"/><rect x="2" y="23" width="7" height="13" rx="3.5" fill="${c}"/><rect x="31" y="23" width="7" height="13" rx="3.5" fill="${c}"/><circle cx="20" cy="17" r="8.5" fill="#3a2a1e"/><circle cx="20" cy="19" r="6.8" fill="#ffd9a0"/></svg>`;
 }
+function chairMic(s, id) { const vm = (s.voice || []).find((m) => m.id === id); return vm ? micIcon(vm.mode, vm.muted) : ''; }
 function renderChairs(s) {
   const box = $('#chairs'); if (!box) return;
   const ch = s.chairs || [null, null, null];
   const canSit = !!(s.you && s.you.spectator);
   const mineIdx = ch.findIndex((c) => c && s.you && c.id === s.you.id);
-  const sig = JSON.stringify([ch, canSit, mineIdx]);
+  const sig = JSON.stringify([ch, canSit, mineIdx, ch.map((c) => c && (s.voice || []).find((m) => m.id === c.id)).map((v) => v ? v.mode + v.muted : '')]);
   if (sig === chairSig) return;
   chairSig = sig;
   box.innerHTML = ch.map((c, i) => {
     const mine = i === mineIdx, pop = c && (!chairPrev[i] || chairPrev[i].id !== c.id) && chairInit;
     const clickable = canSit && (!c || mine);
-    return `<button class="chair${mine ? ' me' : ''}${pop ? ' pop' : ''}${clickable ? '' : ' ro'}" data-ch="${i}" aria-label="${c ? esc(c.name) : 'เก้าอี้ว่าง'}"><img src="/chair.png" alt="">${c ? chairPerson(c.id) + `<span class="cn">${esc(c.name)}</span>` : (canSit ? '<span class="free">+</span>' : '')}</button>`;
+    return `<button class="chair${mine ? ' me' : ''}${pop ? ' pop' : ''}${clickable ? '' : ' ro'}" data-ch="${i}" aria-label="${c ? esc(c.name) : 'เก้าอี้ว่าง'}"><img src="/chair.png" alt="">${c ? chairPerson(c.id) + `<span class="cn">${chairMic(s, c.id)}<b>${esc(c.name)}</b></span>` : (canSit ? '<span class="free">+</span>' : '')}</button>`;
   }).join('');
   chairPrev = ch.map((c) => c); chairInit = true;
 }
@@ -1466,10 +1471,13 @@ function eqHTML(e) {
   return `<div class="eqbig${e.trailing ? ' lose' : ''}"><div class="eqn">${e.pct}<small>%</small></div><div class="eql">โอกาสชนะ</div><div class="eqbar"><i style="width:${e.pct}%"></i></div></div>`;
 }
 function outsHTML(e) {
-  if (!e || !e.trailing || !e.outs || !e.outs.length) return '';
-  const step = Math.min(26, Math.floor(300 / Math.max(1, e.outs.length)));
-  const w = step * (e.outs.length - 1) + 28;
-  return `<div class="outsbox"><div class="oh">ตามอยู่ · มี <b>${e.outs.length}</b> outs</div><div class="ofan" style="width:${w}px;max-width:100%">${e.outs.map((c, i) => cardEl(c, 'oc', `--cw:28px;left:${i * step}px`)).join('')}</div></div>`;
+  if (!e) return '';
+  const lead = !e.trailing, list = lead ? (e.dangers || []) : (e.outs || []);
+  if (!list.length) return '';
+  const step = Math.min(26, Math.floor(300 / Math.max(1, list.length)));
+  const w = step * (list.length - 1) + 28;
+  const head = lead ? `นำอยู่ · มี <b>${list.length}</b> ใบที่แซงเราได้` : `ตามอยู่ · มี <b>${list.length}</b> outs`;
+  return `<div class="outsbox${lead ? ' danger' : ''}"><div class="oh">${head}</div><div class="ofan" style="width:${w}px;max-width:100%">${list.map((c, i) => cardEl(c, 'oc', `--cw:28px;left:${i * step}px`)).join('')}</div></div>`;
 }
 function renderPanel(me, hlCards) {
   if (!me) { renderSpecPanel(); return; }
