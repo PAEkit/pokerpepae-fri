@@ -577,6 +577,12 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     r.destroy();
   }
   console.log('✓ no shuffle with 2 players');
+  {
+    const r = new Room('W', { tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 });
+    assert.strictEqual(r.winAt(1), 5); assert.strictEqual(r.winAt(40), 5, 'บลายด์ขึ้น 3 ครั้ง ยัง 5 ตา');
+    assert.strictEqual(r.winAt(41), 3, 'บลายด์ขึ้นครบ 4 ครั้ง เหลือ 3 ตา');
+  }
+  console.log('✓ rebuy window 5 → 3');
   console.log('ALL PASSED');
   process.exit(0);
 })();
