@@ -702,7 +702,7 @@ html,body,*{touch-action:manipulation}
     </div>
     <label class="f" for="sTime">เวลาตัดสินใจต่อตา</label>
     <select id="sTime" class="in">
-      <option value="0">ไม่จำกัด</option><option value="15">15 วินาที</option><option value="30" selected>30 วินาที</option><option value="60">60 วินาที</option>
+      <option value="10">10 วินาที</option><option value="15" selected>15 วินาที</option><option value="20">20 วินาที</option><option value="25">25 วินาที</option><option value="30">30 วินาที</option><option value="45">45 วินาที</option><option value="60">60 วินาที</option>
     </select>
     <label class="chk"><input type="checkbox" id="sPrivate"> ห้องส่วนตัว (ไม่แสดงในรายการห้อง)</label>
     <div class="row" style="margin-top:16px">
@@ -1656,7 +1656,8 @@ const stkBase = (k) => `<circle cx="40" cy="42" r="30" fill="${STK_SKIN[k] || '#
 const isSticker = (t) => /^::st\d{1,2}$/.test(t) && Number(t.slice(4)) >= 1 && Number(t.slice(4)) <= STK.length;
 function stkHTML(i, noCap) {
   const d = STK[i - 1];
-  const art = d.img ? `<img class="cust" src="${d.img}" alt="${d.alt || ''}">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${stkBase(d.k)}${STK_PART[d.k]}</svg>`;
+  const src = d.img && noCap && /\.webp$/.test(d.img) ? `${d.img}?t=${Date.now()}` : d.img; // ภาพเคลื่อนไหวเล่นรอบเดียว: ใส่พารามิเตอร์ให้เริ่มเล่นใหม่ทุกครั้งที่ส่ง
+  const art = d.img ? `<img class="cust" src="${src}" alt="${d.alt || ''}">` : `<svg viewBox="0 0 80 80" aria-hidden="true">${stkBase(d.k)}${STK_PART[d.k]}</svg>`;
   return `<span class="stk">${art}${d.cap && !noCap ? `<small>${d.cap}</small>` : ''}</span>`;
 }
 const stkBuf = {}, stkLast = {};
