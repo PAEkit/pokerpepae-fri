@@ -550,7 +550,7 @@ html,body,*{touch-action:manipulation}
 .outsbox .ofan{position:relative;height:calc(28px * 1.4);margin:0 auto}
 .outsbox .ofan .oc{position:absolute;top:0;--cw:28px}
 
-.chairs{position:absolute;left:calc(100% - 133px);top:-23px;display:flex;gap:3px;transform:rotate(12deg);transform-origin:0 0;z-index:2;pointer-events:none}
+.chairs{position:absolute;left:calc(100% - 143px);top:-23px;display:flex;gap:3px;transform:rotate(15deg);transform-origin:0 0;z-index:2;pointer-events:none}
 .chair{position:relative;width:28px;height:37px;border:0;background:none;padding:0;pointer-events:auto;-webkit-tap-highlight-color:transparent}
 .chair.ro{pointer-events:none}
 .chair img{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5));pointer-events:none}
@@ -559,7 +559,7 @@ html,body,*{touch-action:manipulation}
 .chair .pp{position:absolute;left:50%;top:34%;width:22px;margin:-11px 0 0 -11px;pointer-events:none}
 .chair.pop .pp{animation:chsit .9s cubic-bezier(.3,1.4,.5,1) both}
 @keyframes chsit{0%{transform:translateY(-32px) scale(1.5);opacity:0}45%{transform:translateY(0) scale(.85);opacity:1}65%{transform:scale(1.1)}82%{transform:scale(.97)}100%{transform:none}}
-.chair .cn{position:absolute;left:50%;top:22px;transform:translateX(-50%) rotate(-12deg);display:flex;align-items:center;gap:1px;font-size:8px;line-height:1.25;color:#fff;background:rgba(0,0,0,.65);padding:0 3px;border-radius:6px;white-space:nowrap;max-width:38px}
+.chair .cn{position:absolute;left:50%;top:22px;transform:translateX(-50%) rotate(-15deg);display:flex;align-items:center;gap:1px;font-size:8px;line-height:1.25;color:#fff;background:rgba(0,0,0,.65);padding:0 3px;border-radius:6px;white-space:nowrap;max-width:38px}
 .chair .cn svg{width:1em;height:1em;flex:none}
 .chair .cn b{font-weight:400;overflow:hidden;text-overflow:ellipsis}
 .chair.me .cn{background:var(--gold);color:#3a2a00;font-weight:700}
@@ -1232,9 +1232,9 @@ async function leaveRoom() {
 }
 
 
-// ---------- เก้าอี้ผู้ชม (3 ตัว ข้างโต๊ะ) ----------
+// ---------- เก้าอี้ผู้ชม (4 ตัว ข้างโต๊ะ) ----------
 const CH_COL = ['#3b82f6', '#22c55e', '#f59e0b', '#a855f7', '#ef4444', '#14b8a6'];
-let chairSig = '', chairPrev = [null, null, null], chairInit = false;
+let chairSig = '', chairPrev = [null, null, null, null], chairInit = false;
 function chairPerson(id) {
   let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   const c = CH_COL[h % CH_COL.length];
@@ -1243,7 +1243,7 @@ function chairPerson(id) {
 function chairMic(s, id) { const vm = (s.voice || []).find((m) => m.id === id); return vm ? micIcon(vm.mode, vm.muted) : ''; }
 function renderChairs(s) {
   const box = $('#chairs'); if (!box) return;
-  const ch = s.chairs || [null, null, null];
+  const ch = s.chairs || [null, null, null, null];
   const canSit = !!(s.you && s.you.spectator);
   const mineIdx = ch.findIndex((c) => c && s.you && c.id === s.you.id);
   const sig = JSON.stringify([ch, canSit, mineIdx, ch.map((c) => c && (s.voice || []).find((m) => m.id === c.id)).map((v) => v ? v.mode + v.muted : '')]);
@@ -1616,7 +1616,7 @@ function micIcon(mode, muted) { return mode === 'listen' ? IC_EAR : muted ? IC_O
 // ---------- สติกเกอร์อารมณ์ (2 อันแรกเป็นรูป+เสียงของคุณ ในโฟลเดอร์ public/stickers · ที่เหลือเป็นภาพวาดต้นฉบับ) ----------
 const STK = [
   { cap: 'หอมฉุย', alt: 'วะฮ่าๆ', img: '/stickers/1.png', snd: '/stickers/1.mp3' }, { cap: 'มีอีกไหม!', alt: 'โมโห', img: '/stickers/2.jpg', snd: '/stickers/2.mp3' }, { cap: '', alt: 'ไอ้สัส', img: '/stickers/3.jpg', snd: '/stickers/3.mp3' }, { cap: 'เงี่ยนโว้ยย', alt: 'เงี่ยนโว้ยย', img: '/stickers/4.jpg', snd: '/stickers/4.mp3' }, { cap: 'hee', alt: 'hee', img: '/stickers/5.jpg', snd: '/stickers/5.mp3' }, { cap: 'อย่าให้มีครั้งที่2', alt: 'อย่าให้มีครั้งที่2', img: '/stickers/6.webp', snd: '/stickers/6.mp3' }, { cap: 'อย่าเสี่ยงกับพี่!', alt: 'อย่าเสี่ยงกับพี่!', img: '/stickers/7.png', snd: '/stickers/7.mp3' }, { cap: 'นี่มันทางของพี่!', alt: 'นี่มันทางของพี่!', img: '/stickers/8.png', snd: '/stickers/8.mp3' }, { cap: 'ขยี้!', alt: 'ขยี้!', img: '/stickers/9.png', snd: '/stickers/9.mp3' }, { cap: 'ไม่คณามือ', alt: 'ไม่คณามือ', img: '/stickers/10.png', snd: '/stickers/10.mp3' }, { cap: 'ไม่ได้แดกกูหรอก', alt: 'ไม่ได้แดกกูหรอก', img: '/stickers/11.png', snd: '/stickers/11.mp3' }, { cap: 'อย่าดีกว่าไอ้น้อง', alt: 'อย่าดีกว่าไอ้น้อง', img: '/stickers/12.png', snd: '/stickers/12.mp3' }, { cap: 'ไอ้เขียวแดกขาด', alt: 'ไอ้เขียวแดกขาด', img: '/stickers/13.png', snd: '/stickers/13.mp3' }, { cap: 'อย่ามาทำซ่า!', alt: 'อย่ามาทำซ่า!', img: '/stickers/14.png', snd: '/stickers/14.mp3' }, { cap: 'เด็กๆไปไอ้น้อง', alt: 'เด็กๆไปไอ้น้อง', img: '/stickers/15.png', snd: '/stickers/15.mp3' }, { cap: 'บอกแล้วว่ากินนิ่มๆ', alt: 'บอกแล้วว่ากินนิ่มๆ', img: '/stickers/24.png', snd: '/stickers/24.mp3' },
-  { cap: 'สวัสดีค่ะ', alt: 'สวัสดีค่ะ', img: '/stickers/25.png', snd: '/stickers/25.mp3' }, { cap: 'คุณพี่อยู่จังหวัดอะไร', alt: 'คุณพี่อยู่จังหวัดอะไร', img: '/stickers/26.png', snd: '/stickers/26.mp3' }, { cap: 'คุณพี่อยู่จังหวัดอะไรค้า', alt: 'คุณพี่อยู่จังหวัดอะไรค้า', img: '/stickers/27.png', snd: '/stickers/27.mp3' }, { cap: 'ผมจะให้คุณ', alt: 'ผมจะให้คุณ', img: '/stickers/28.png' }, { cap: 'Hi', alt: 'Hi', img: '/stickers/16.png' }, { cap: 'Superb!', alt: 'Superb!', img: '/stickers/17.png' }, { cap: 'คิดถึงนะครับ', alt: 'คิดถึงนะครับ', img: '/stickers/18.png' }, { cap: 'เย้!!!!', alt: 'เย้!!!!', img: '/stickers/19.png' }, { cap: 'สู้ ๆ นะครับ', alt: 'สู้ ๆ นะครับ', img: '/stickers/20.png' }, { cap: 'Good night!', alt: 'Good night!', img: '/stickers/21.png' }, { cap: '555', alt: '555', img: '/stickers/22.png' }, { cap: '', alt: 'สาธุ', img: '/stickers/23.png' },
+  { cap: 'สวัสดีค่ะ', alt: 'สวัสดีค่ะ', img: '/stickers/25.png', snd: '/stickers/25.mp3' }, { cap: 'คุณพี่อยู่จังหวัดอะไร', alt: 'คุณพี่อยู่จังหวัดอะไร', img: '/stickers/26.png', snd: '/stickers/26.mp3' }, { cap: 'คุณพี่อยู่จังหวัดอะไรค้า', alt: 'คุณพี่อยู่จังหวัดอะไรค้า', img: '/stickers/27.png', snd: '/stickers/27.mp3' }, { cap: 'บริจาคให้1000', alt: 'บริจาคให้1000', img: '/stickers/29.png', snd: '/stickers/29.mp3' }, { cap: 'เอาชื่อขึ้นหน้าจอไหมค่ะ', alt: 'เอาชื่อขึ้นหน้าจอไหมค่ะ', img: '/stickers/30.png', snd: '/stickers/30.mp3' }, { cap: 'E sus', alt: 'E sus', img: '/stickers/31.png', snd: '/stickers/31.mp3' }, { cap: 'ขอบพระคุณ', alt: 'ขอบพระคุณ', img: '/stickers/32.png', snd: '/stickers/32.mp3' }, { cap: 'Hi', alt: 'Hi', img: '/stickers/16.png' }, { cap: 'Superb!', alt: 'Superb!', img: '/stickers/17.png' }, { cap: 'คิดถึงนะครับ', alt: 'คิดถึงนะครับ', img: '/stickers/18.png' }, { cap: 'เย้!!!!', alt: 'เย้!!!!', img: '/stickers/19.png' }, { cap: 'สู้ ๆ นะครับ', alt: 'สู้ ๆ นะครับ', img: '/stickers/20.png' }, { cap: 'Good night!', alt: 'Good night!', img: '/stickers/21.png' }, { cap: '555', alt: '555', img: '/stickers/22.png' }, { cap: '', alt: 'สาธุ', img: '/stickers/23.png' },
   { cap: '555', k: 'laugh' }, { cap: 'เท่!', k: 'cool' }, { cap: 'ฮือๆ', k: 'cry' }, { cap: 'โมโห!', k: 'angry' },
   { cap: 'ว้าว!', k: 'wow' }, { cap: 'ง่วง', k: 'sleep' }, { cap: 'รักเลย', k: 'love' }, { cap: 'ตายแล้ว', k: 'panic' },
   { cap: 'แอบกระซิบ', k: 'wink' }, { cap: 'งง?', k: 'think' }, { cap: 'อาย', k: 'shy' }, { cap: 'หึๆ', k: 'smug' },

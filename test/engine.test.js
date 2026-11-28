@@ -542,7 +542,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert(!r.viewFor(q[0].token).tourney.roster.some((x) => x.name === 'C'));
   }
   console.log('✓ kick left player');
-  // เก้าอี้ผู้ชม 3 ตัว
+  // เก้าอี้ผู้ชม 4 ตัว
   {
     const r = new Room('CH', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 });
     r.addPlayer('A');
@@ -550,9 +550,9 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     r.sitChair(s1, 0);
     assert.strictEqual(r.viewFor(s2.token).chairs[0].name, 'S1');
     assert.throws(() => r.sitChair(s2, 0), /นั่งเก้าอี้ตัวนี้แล้ว/);
-    assert.throws(() => r.sitChair(s2, 3), /ไม่ถูกต้อง/);
+    assert.throws(() => r.sitChair(s2, 4), /ไม่ถูกต้อง/);
     r.sitChair(s1, 2); r.sitChair(s2, 0);
-    assert.deepStrictEqual(r.viewFor(s2.token).chairs.map((c) => c && c.name), ['S2', null, 'S1']);
+    assert.deepStrictEqual(r.viewFor(s2.token).chairs.map((c) => c && c.name), ['S2', null, 'S1', null]);
     r.removeSpectator(s1);
     assert.strictEqual(r.viewFor(s2.token).chairs[2], null, 'ผู้ชมออก เก้าอี้ว่าง');
   }
