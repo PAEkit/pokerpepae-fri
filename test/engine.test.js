@@ -564,6 +564,32 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert.strictEqual(r.viewFor(a.token).chairs[1].name, 'B', 'ผู้ที่ตกรอบนั่งได้');
   }
   console.log('✓ spectator chairs');
+  // ออฟไลน์เกิน 10 ตา = ปรับแพ้
+  {
+    const mk = (opts) => new Room('OF', opts, { shuffleEvery: 0, nextHandDelay: 1e9 });
+    const r = mk({ tournament: true, buyIn: 100, sb: 10, bb: 20, levelHands: 50, turnTime: 0 });
+    const [a, b, c] = ['A', 'B', 'C'].map((n) => r.addPlayer(n));
+    r.start(a);
+    c.connected = false;
+    for (let i = 1; i <= 10; i++) { r.handNo = i; r.checkOffline(); }
+    assert(!c.out && c.offHands === 10, 'ออฟไลน์ 10 ตายังไม่ตกรอบ');
+    c.connected = true; r.handNo = 11; r.checkOffline();
+    assert.strictEqual(c.offHands, 0, 'กลับมาออนไลน์ = นับใหม่');
+    c.connected = false;
+    for (let i = 12; i <= 22; i++) { r.handNo = i; r.checkOffline(); r.checkOffline(); }
+    assert(c.out, 'ออฟไลน์เกิน 10 ตา = ตกรอบ');
+    assert.strictEqual(c.place, 3);
+    assert(!a.out && !b.out);
+  }
+  {
+    const r = mk2();
+    function mk2() { return new Room('OG', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9 }); }
+    const [a, b] = ['A', 'B'].map((n) => r.addPlayer(n));
+    b.connected = false;
+    for (let i = 1; i <= 11; i++) { r.handNo = i; r.checkOffline(); }
+    assert(b.left, 'ห้องธรรมดา: ออฟไลน์เกิน 10 ตา ถูกเชิญออก');
+  }
+  console.log('✓ offline > 10 hands');
   // เหลือ 2 คน ไม่สับที่นั่ง (ทุกโหมด)
   {
     const r = new Room('H2', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 1, shufRevealDelay: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
