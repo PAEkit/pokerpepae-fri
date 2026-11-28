@@ -400,6 +400,7 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   room.startHand(); foldHand();
   room.startHand();                               // ตาที่ 2 จบแล้ว → ต้องเข้า phase สับที่นั่ง
   assert.strictEqual(room.phase, 'shuffle');
+  room.shuf.vals = [3, 1, 4, 2];                  // กำหนดไพ่ตายตัว: ps0=3, ps1=A, ps2=4, ps3=2
   const sv = room.viewFor(ps[1].token).shuffle;
   assert.strictEqual(sv.n, 4); assert.strictEqual(sv.vals, null, 'ห้ามเห็นค่าไพ่ก่อนเปิด');
   assert.throws(() => room.pickShuffle(ps[0], 9), /ไม่ถูกต้อง/);
@@ -413,7 +414,8 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
   const D = room.players[room.dealerIdx].name, SB = room.players[room.sbIdx].name, BB = room.players[room.bbIdx].name;
   assert.deepStrictEqual([D, SB, BB], [nm('D'), nm('SB'), nm('BB')], 'ตำแหน่ง D/SB/BB ต้องตรงกับผลจั่ว');
   assert.strictEqual(room.players.filter((p) => p.inHand).length, 4);
-  assert.deepStrictEqual([room.players[0].name, room.players[1].name, room.players[3].name], [SB, BB, D], 'ไพ่สูงสุด=SB รองลงมา=BB ตำแหน่งสุดท้ายตามเข็ม(ไพ่ต่ำสุด)=D');
+  assert.deepStrictEqual([room.players[0].name, room.players[1].name, room.players[3].name], [SB, BB, D], 'ไพ่ A=SB, ไพ่ 2=BB, ไล่ขึ้นไปจนไพ่สูงสุดตำแหน่งสุดท้าย=D');
+  assert.deepStrictEqual([room.players[0].name, room.players[1].name, room.players[2].name, room.players[3].name], ['B', 'D', 'A', 'C'], 'ลำดับ A,2,3,4');
   room.destroy();
   console.log('✓ shuffle seating, show cards');
 })();

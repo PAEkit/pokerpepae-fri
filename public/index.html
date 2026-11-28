@@ -1714,7 +1714,7 @@ function renderShuffle(s) {
   }
   const t = sh.revealed ? '🔀 ผลจั่วไพ่ — กำลังย้ายที่นั่ง… <b class="cdn" data-sh="1">–</b>'
     : `🔀 สับที่นั่งใหม่ · จั่วไพ่ 1 ใบ ${inIt ? (took ? '(รอคนอื่น…)' : '— แตะเลือกเลย!') : '(ดูอย่างเดียว)'} <b class="cdn" data-sh="1">–</b>`;
-  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่สูงสุด = SB · รองลงมา = BB · ไล่ตามเข็มจนไพ่ต่ำสุด (A) = D (ปุ่ม)</div>`;
+  el.innerHTML = `<div class="st">${t}</div><div class="shgrid">${cards}</div><div class="st" style="font-size:12px">ไพ่ A = SB · ไพ่ 2 = BB · ไล่ตามเข็มจนไพ่สูงสุด = D (ปุ่ม)</div>`;
   el.querySelectorAll('button[data-slot]').forEach((b) => { b.onclick = () => api('shuffle', { ...session, slot: Number(b.dataset.slot) }).catch(() => {}); });
 }
 
