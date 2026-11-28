@@ -532,10 +532,14 @@ html,body,*{touch-action:manipulation}
 .rbx .rbbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#f4c95d,#ffe39a);letter-spacing:0}
 .rbx small{font-size:12px!important;color:#e9f3ee!important}
 .rbx.zero small{color:var(--mute)!important}
-.acts.waitrow{align-items:flex-end;justify-content:space-between}
-.preamt{display:flex;flex-direction:column;gap:4px;flex:1;max-width:170px;margin-bottom:4px}
-.preamt span{font-size:12px;color:var(--mute)}
-.preamt .in{height:44px;font-size:18px;text-align:center}
+.acts.waitrow{align-items:flex-end;justify-content:flex-end}
+/* Auto Fold: ปุ่มเล็กมุมซ้ายล่างสุดของช่อง Action เห็นทุกช่วงยกเว้นตอนถึงตาตัวเอง คงสถานะไว้จนกดปิด */
+.panel{position:relative}
+.afold{position:absolute;left:10px;bottom:8px;transform:scale(1.3);transform-origin:left bottom;z-index:3;display:flex;align-items:center;gap:5px;height:22px;padding:0 6px 0 7px;border-radius:11px;border:1px solid var(--line);background:rgba(0,0,0,.35);color:var(--mute);font-size:10.5px;font-weight:700;letter-spacing:.2px;cursor:pointer}
+.afold i{width:24px;height:13px;border-radius:7px;background:#4a5a52;position:relative;flex:none;transition:background .15s}
+.afold i::after{content:'';position:absolute;left:2px;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;transition:left .15s}
+.afold.on{border-color:var(--gold);color:var(--gold);background:rgba(244,201,93,.15)}
+.afold.on i{background:#1d9a68}.afold.on i::after{left:13px}
 
 .eqbig{position:absolute;left:0;top:0;bottom:0;width:calc(50% - 50px);display:flex;flex-direction:column;justify-content:center;gap:2px;padding-left:4px}
 .eqn{font-size:24px;font-weight:800;line-height:1;color:#7be08a}.eqn small{font-size:13px;margin-left:1px}
@@ -1468,7 +1472,6 @@ function renderSpecPanel() {
 }
 $('#btnLobbyJoin').onclick = specJoin;
 
-let preRaise = 0;
 function eqHTML(e) {
   if (!e) return '';
   return `<div class="eqbig${e.trailing ? ' lose' : ''}"><div class="eqn">${e.pct}<small>%</small></div><div class="eql">โอกาสชนะ</div><div class="eqbar"><i style="width:${e.pct}%"></i></div></div>`;
@@ -1485,19 +1488,19 @@ function outsHTML(e) {
 function renderPanel(me, hlCards) {
   if (!me) { renderSpecPanel(); return; }
   const s = state, o = s.options;
-  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown, s.you.autoShow, s.eq]);
+  const sig = JSON.stringify([s.phase, s.handNo, s.street, s.toAct, s.currentBet, me.chips, me.bet, me.folded, me.inHand, me.isHost, s.you.handName, s.soleId, s.runout, !!s.nextHandAt, s.result && s.result.winners.length, !!o, o && o.minRaiseTo, o && o.maxRaiseTo, s.players.length, me.rebuysLeft, me.rebuyBy, s.tourney && s.tourney.rebuyOpen, s.you.pre, me.shown, s.you.autoShow, s.you.autoFold, s.eq]);
   if (sig === panelSig) return;
   panelSig = sig;
   // ทุกครั้งที่ถึงตาใหม่ ค่าเรสกลับเป็นต่ำสุดเสมอ
   const rkey = o ? [s.handNo, s.street, s.currentBet, me.bet].join('|') : '';
   if (o && (rkey !== raiseKey || raiseTo < o.minRaiseTo || raiseTo > o.maxRaiseTo)) raiseTo = o.minRaiseTo;
-  if (o && rkey !== raiseKey && preRaise > 0) { raiseTo = Math.max(o.minRaiseTo, Math.min(o.maxRaiseTo, preRaise)); preRaise = 0; }
   raiseKey = rkey;
 
   let hole = (me.hole || []).slice();
   if (swapHand === s.handNo && hole.length === 2) hole.reverse();
   let h = `<div class="mine"><div class="hc">${hole.length ? hole.map((c) => cardEl(c, hlCards.size ? (hlCards.has(c) ? 'hl' : 'dim') : '')).join('') : ''}</div>
     <div class="mi"><div class="hn">${esc(s.you.handName || '')}</div><div class="st">${status(me)}</div></div>${eqHTML(s.eq)}</div>${outsHTML(s.eq)}`;
+  if (!s.you.spectator && !o) h += `<button class="afold${s.you.autoFold ? ' on' : ''}" id="aFoldAuto" role="switch" aria-checked="${!!s.you.autoFold}"><span>Auto Fold</span><i></i></button>`;
 
   if (o) {
     const callAll = !o.canCheck && o.toCall >= me.chips;
@@ -1519,7 +1522,7 @@ function renderPanel(me, hlCards) {
     }
   } else if (s.phase === 'hand' && me.inHand && !me.folded && !me.allIn && !s.runout) {
     const on = !!s.you.pre;
-    h += `<div class="acts waitrow"><label class="preamt"><span>ใส่จำนวนเรสรอไว้</span><input id="aPreAmt" class="in" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="เรสเป็น…" value="${preRaise || ''}"></label><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
+    h += `<div class="acts waitrow"><button class="cf${on ? ' on' : ''}" id="aPre" role="switch" aria-checked="${on}"><span class="cft"><b>Check/Fold</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
   } else if (s.phase === 'hand' && me.inHand && me.folded) {
     const on = !!s.you.autoShow;
     h += `<div class="acts"><button class="cf${on ? ' on' : ''}" id="aAuto" role="switch" aria-checked="${on}"><span class="cft"><b>โชว์ไพ่</b></span><span class="cfs">${on ? 'ON' : 'OFF'}</span><i class="cfk"></i></button></div>`;
@@ -1579,7 +1582,7 @@ function renderPanel(me, hlCards) {
     }
   }
   if ($p('#aPre')) $p('#aPre').onclick = () => api('pre', { ...session, on: !s.you.pre }).catch(() => {});
-  if ($p('#aPreAmt')) { const pa = $p('#aPreAmt'); pa.onfocus = () => { pa.select(); }; pa.oninput = () => { preRaise = Math.max(0, parseInt(pa.value, 10) || 0); }; }
+  if ($p('#aFoldAuto')) $p('#aFoldAuto').onclick = () => api('autofold', { ...session, on: !s.you.autoFold }).catch(() => {});
   if ($p('#aAuto')) $p('#aAuto').onclick = () => api('autoshow', { ...session, on: !s.you.autoShow }).catch(() => {});
   if ($p('#aShowT')) $p('#aShowT').onclick = () => api('showtoggle', { ...session, on: !me.shown }).catch(() => {});
   const rbuy = $p('#aRebuy'); if (rbuy) rbuy.onclick = () => api('rebuy', session).catch(() => {});

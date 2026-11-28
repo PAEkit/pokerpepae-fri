@@ -215,6 +215,7 @@ async function handleApi(req, res, url) {
     case '/api/show': ctx.room.showCards(p); break;
     case '/api/showtoggle': ctx.room.setShow(p, !!body.on); break;
     case '/api/autoshow': ctx.room.setAutoShow(p, !!body.on); break;
+    case '/api/autofold': ctx.room.setAutoFold(p, !!body.on); break;
     case '/api/pre': ctx.room.setPre(p, !!body.on); break;
     case '/api/shuffle': ctx.room.pickShuffle(p, body.slot); break;
     case '/api/chat': ctx.room.say(p, body.text); break;

@@ -592,6 +592,55 @@ console.log(`✓ simulated ${total} hands, chips always conserved`);
     assert(b.left, 'ห้องธรรมดา: ออฟไลน์เกิน 10 ตา ถูกเชิญออก');
   }
   console.log('✓ offline > 10 hands');
+  // Auto Fold: ถึงตาแล้วทำให้เอง และคงสถานะข้ามตาจนกว่าจะปิดเอง
+  {
+    const r = new Room('AF', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0, preDelay: 0 });
+    const [a, b, c] = ['A', 'B', 'C'].map((n) => r.addPlayer(n));
+    r.start(a);
+    r.setAutoFold(b, true);
+    assert.strictEqual(r.viewFor(b.token).you.autoFold, true);
+    let guard = 0;
+    while (r.phase === 'hand' && guard++ < 20) { const cur = r.players[r.toActIdx]; if (!cur) break; if (cur === b) break; const o = r.optionsFor(cur); r.act(cur, { type: o.canCheck ? 'check' : 'call' }); }
+    assert(b.folded || b.lastAction, 'ผู้เล่น Auto Fold ถูกโฟลด์/เช็คให้เอง');
+    assert(b.autoFold, 'ยังคงสถานะหลังจบตา');
+    r.startHand();
+    assert(b.autoFold, 'คงสถานะข้ามตา');
+    r.setAutoFold(b, false);
+    assert.strictEqual(b.autoFold, false);
+  }
+  console.log('✓ auto fold');
+  // Auto Fold คงสถานะยาวๆ: 30 ตา รวมสลับที่นั่ง/หลุดเน็ตกลับมา ต้องยังเปิดอยู่จนกว่าจะปิดเอง
+  {
+    const r = new Room('LONG', { startChips: 100000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 4, shufRevealDelay: 0, shufPickTimeout: 1e9, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0, preDelay: 0 });
+    const ps = ['A', 'B', 'C', 'D'].map((n) => r.addPlayer(n)); const b = ps[1];
+    r.start(ps[0]); r.setAutoFold(b, true);
+    for (let h = 0; h < 30; h++) {
+      if (r.phase === 'shuffle') { for (const p of ps) if (!(p.id in r.shuf.picks)) r.autoPick(p); r.finishShuffle(); }
+      for (let g = 0; r.phase === 'hand' && g < 60; g++) { const cur = r.players[r.toActIdx]; if (!cur) break; assert.notStrictEqual(cur, b, 'ผู้เล่น Auto Fold ต้องไม่ค้างรอ'); const o = r.optionsFor(cur); r.act(cur, { type: o.canCheck ? 'check' : 'call' }); }
+      assert.strictEqual(b.autoFold, true, `ตาที่ ${r.handNo} ต้องยังเปิดอยู่`);
+      if (h % 7 === 3) { r.setConnected(b, false); r.setConnected(b, true); }
+      r.startHand();
+    }
+    r.setAutoFold(b, false); r.startHand();
+    assert.strictEqual(b.autoFold, false);
+  }
+  console.log('✓ auto fold persists 30 hands');
+  // Auto Fold หมอบทุกครั้ง แม้เช็คได้ฟรี (เป็น BB แล้วคนอื่นแค่คอล ก็ต้องหมอบ ไม่ใช่เช็ค)
+  {
+    const r = new Room('AF2', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0, preDelay: 0 });
+    const ps = ['A', 'B', 'C'].map((n) => r.addPlayer(n)); const b = ps[1];
+    r.start(ps[0]); r.setAutoFold(b, true);
+    let freeFold = 0, selfActs = 0;
+    for (let h = 0; h < 12; h++) {
+      const bb = r.players[r.bbIdx];
+      for (let g = 0; r.phase === 'hand' && g < 40; g++) { const cur = r.players[r.toActIdx]; if (!cur) break; assert.notStrictEqual(cur, b); const o = r.optionsFor(cur); r.act(cur, { type: o.canCheck ? 'check' : 'call' }); }
+      if (bb === b && b.folded) freeFold++;
+      if (b.lastAction === 'เช็ค' || b.lastAction === 'คอล') selfActs++;
+      r.startHand();
+    }
+    assert(freeFold > 0, 'ต้องเคยเป็น BB แล้วหมอบ'); assert.strictEqual(selfActs, 0, 'ต้องไม่เช็ค/คอลเอง');
+  }
+  console.log('✓ auto fold always folds');
   // เหลือ 2 คน ไม่สับที่นั่ง (ทุกโหมด)
   {
     const r = new Room('H2', { startChips: 1000, sb: 5, bb: 10, turnTime: 0 }, { shuffleEvery: 1, shufRevealDelay: 0, nextHandDelay: 1e9, runoutDelay: 0, runoutFirstDelay: 0, resumeDelay: 0 });
